@@ -238,7 +238,7 @@
     </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v3.2</div>
+<div id="appVersionBadge" class="app-version">v3.3</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -276,7 +276,7 @@ let cards = rawCards.map(c => ({
     included: true
 }));
 
-const APP_VERSION = '3.2';
+const APP_VERSION = '3.3';
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
@@ -324,12 +324,15 @@ for (const card of cards) {
 function getCardByName(name) {
     return cardLookup.get(name) || cardLookupNormalized.get(normalizeCardKey(name)) || null;
 }
-function getCardBySlug(slug) {
-    let key = String(slug || '')
+function makeCardSlug(v) {
+    return String(v || '')
         .toLowerCase()
         .replace(/\./g, '')
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
+}
+function getCardBySlug(slug) {
+    let key = makeCardSlug(slug);
     let prev;
     do {
         prev = key;
@@ -338,6 +341,13 @@ function getCardBySlug(slug) {
         key = key.replace(/-evolution$/g, '');
     } while (key !== prev);
     return cardLookupBySlug.get(key) || null;
+}
+function extractCardFlagsFromSlug(slug) {
+    const key = String(slug || '').toLowerCase();
+    return {
+        isEvo: /-(?:ev|evo)\d+($|,)|-(?:evolution|evolved)($|,)/i.test(key),
+        isHeroism: /-hero($|,)/i.test(key)
+    };
 }
 
 const femaleSet = new Set([
@@ -1320,6 +1330,47 @@ function extractOpponentDeckNames(battle) {
     }
     return [];
 }
+function normalizeImportedCardEntry(rawCard) {
+    const asObject = rawCard && typeof rawCard === 'object' ? rawCard : null;
+    const rawName = asObject ? (asObject.name || asObject.cardName || asObject.card?.name || asObject.id || asObject.key || '') : String(rawCard || '');
+    const slug = makeCardSlug(rawName);
+    const bySlug = getCardBySlug(slug);
+    const byName = getCardByName(rawName);
+    const base = bySlug || byName;
+    if (!base) return null;
+
+    const slugFlags = extractCardFlagsFromSlug(slug);
+    const textHints = String(rawName || '').toLowerCase();
+    const isEvoHint = slugFlags.isEvo ||
+        /evolution|evolved|evo/i.test(textHints) ||
+        Boolean(asObject?.isEvo || asObject?.isEvolution || asObject?.evolution || asObject?.evolved || asObject?.evolutionCard) ||
+        Number(asObject?.evolutionLevel || asObject?.evoLevel || asObject?.evo || 0) > 0;
+    const isHeroHint = slugFlags.isHeroism ||
+        /hero/i.test(textHints) ||
+        Boolean(asObject?.isHeroism || asObject?.heroism || asObject?.isHero || asObject?.hero);
+
+    const isEvo = Boolean(isEvoHint && base.evolution);
+    const isHeroism = Boolean(isHeroHint && base.heroism && !isEvo);
+    return { name: base.name, isEvo, isHeroism };
+}
+function extractOpponentDeckEntries(battle) {
+    const opponents = Array.isArray(battle?.opponent) ? battle.opponent : [];
+    for (const opp of opponents) {
+        if (Array.isArray(opp.deck) && opp.deck.length) {
+            const mapped = opp.deck.map(normalizeImportedCardEntry).filter(Boolean);
+            if (mapped.length >= 8) return mapped.slice(0, 8);
+        }
+        if (Array.isArray(opp.cards) && opp.cards.length) {
+            const mapped = opp.cards.map(normalizeImportedCardEntry).filter(Boolean);
+            if (mapped.length >= 8) return mapped.slice(0, 8);
+        }
+    }
+    if (Array.isArray(battle?.opponentCards)) {
+        const mapped = battle.opponentCards.map(normalizeImportedCardEntry).filter(Boolean);
+        if (mapped.length >= 8) return mapped.slice(0, 8);
+    }
+    return [];
+}
 
 async function fetchTextViaCorsProxy(targetUrl) {
     const proxies = [
@@ -1412,16 +1463,18 @@ async function fetchOpponentDeckFromRoyaleApiPages(tag) {
 
     const opponentDeckSlugs = decks[1] || [];
     const unresolved = [];
-    const names = opponentDeckSlugs.map(slug => {
+    const entries = opponentDeckSlugs.map(slug => {
         const card = getCardBySlug(slug);
         if (!card) unresolved.push(slug);
-        return card?.name || null;
+        if (!card) return null;
+        const flags = extractCardFlagsFromSlug(slug);
+        return { name: card.name, isEvo: Boolean(flags.isEvo && card.evolution), isHeroism: Boolean(flags.isHeroism && card.heroism && !flags.isEvo) };
     }).filter(Boolean);
 
-    if (names.length < 8) {
+    if (entries.length < 8) {
         throw new Error(`Не удалось распознать карты: ${unresolved.slice(0, 3).join(', ')}${unresolved.length > 3 ? '...' : ''}`);
     }
-    return names.slice(0, 8);
+    return entries.slice(0, 8);
 }
 
 async function fetchBattleLogWithFallback(tag) {
@@ -1453,15 +1506,15 @@ async function fetchBattleLogWithFallback(tag) {
     throw new Error(lastReason);
 }
 
-function findOpponentDeckNamesFromBattles(battles) {
+function findOpponentDeckEntriesFromBattles(battles) {
     for (const battle of battles) {
-        const names = extractOpponentDeckNames(battle);
-        if (names.length >= 8) return names.slice(0, 8);
+        const entries = extractOpponentDeckEntries(battle);
+        if (entries.length >= 8) return entries.slice(0, 8);
     }
     return [];
 }
 
-async function fetchOpponentDeckNames(tag) {
+async function fetchOpponentDeckEntries(tag) {
     const reasons = [];
     const sources = [
         {
@@ -1473,17 +1526,17 @@ async function fetchOpponentDeckNames(tag) {
             run: async () => {
                 const battles = await fetchBattleLogWithFallback(tag);
                 if (!battles.length) throw new Error('Лог боёв пуст.');
-                const names = findOpponentDeckNamesFromBattles(battles);
-                if (names.length < 8) throw new Error('В последних боях не нашлась колода соперника 1x1.');
-                return names;
+                const entries = findOpponentDeckEntriesFromBattles(battles);
+                if (entries.length < 8) throw new Error('В последних боях не нашлась колода соперника 1x1.');
+                return entries;
             }
         }
     ];
 
     for (const source of sources) {
         try {
-            const names = await source.run();
-            if (Array.isArray(names) && names.length >= 8) return names.slice(0, 8);
+            const entries = await source.run();
+            if (Array.isArray(entries) && entries.length >= 8) return entries.slice(0, 8);
             reasons.push(`${source.label}: пустая колода`);
         } catch (e) {
             reasons.push(`${source.label}: ${e.message || 'ошибка'}`);
@@ -1518,21 +1571,26 @@ async function loadLastOpponentDeck() {
 
     setDeckName('Загружаю колоду соперника...');
     try {
-        const opponentDeckNames = await fetchOpponentDeckNames(tag);
-        if (opponentDeckNames.length < 8) throw new Error('В последних боях не нашлась колода соперника 1x1.');
+        const opponentDeckEntries = await fetchOpponentDeckEntries(tag);
+        if (opponentDeckEntries.length < 8) throw new Error('В последних боях не нашлась колода соперника 1x1.');
 
         const missing = [];
-        const importedDeck = opponentDeckNames.map(name => {
-            const found = getCardByName(name);
-            if (!found) missing.push(name);
-            return found;
+        const importedDeck = opponentDeckEntries.map(entry => {
+            const found = getCardByName(entry?.name);
+            if (!found) {
+                missing.push(entry?.name || 'unknown');
+                return null;
+            }
+            const isEvo = Boolean(entry?.isEvo && found.evolution);
+            const isHeroism = Boolean(entry?.isHeroism && found.heroism && !isEvo);
+            return { ...found, isEvo, isHeroism };
         }).filter(Boolean);
 
         if (importedDeck.length < 8) {
             throw new Error(`В базе не найдены карты: ${missing.slice(0, 3).join(', ')}${missing.length > 3 ? '...' : ''}`);
         }
 
-        currentDeck = importedDeck.slice(0, 8).map(card => ({ ...card, isEvo: false, isHeroism: false }));
+        currentDeck = importedDeck.slice(0, 8);
         document.getElementById('playerTagInput').value = `#${tag}`;
         resetReplacementHistory(false);
         applyCurrentDeckToUi();
