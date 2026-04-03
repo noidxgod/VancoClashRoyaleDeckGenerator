@@ -238,7 +238,7 @@
     </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v3.1</div>
+<div id="appVersionBadge" class="app-version">v3.2</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -276,7 +276,7 @@ let cards = rawCards.map(c => ({
     included: true
 }));
 
-const APP_VERSION = '3.1';
+const APP_VERSION = '3.2';
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
@@ -325,11 +325,18 @@ function getCardByName(name) {
     return cardLookup.get(name) || cardLookupNormalized.get(normalizeCardKey(name)) || null;
 }
 function getCardBySlug(slug) {
-    const key = String(slug || '')
+    let key = String(slug || '')
         .toLowerCase()
         .replace(/\./g, '')
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
+    let prev;
+    do {
+        prev = key;
+        key = key.replace(/-(?:ev|evo)\d+$/g, '');
+        key = key.replace(/-hero$/g, '');
+        key = key.replace(/-evolution$/g, '');
+    } while (key !== prev);
     return cardLookupBySlug.get(key) || null;
 }
 
@@ -1321,66 +1328,89 @@ async function fetchTextViaCorsProxy(targetUrl) {
             url: `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(targetUrl)}`
         },
         {
+            label: 'CodeTabs (legacy url)',
+            url: `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(targetUrl)}`
+        },
+        {
             label: 'AllOrigins',
             url: `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`
         }
     ];
 
-    let lastReason = 'Не удалось получить данные через CORS-прокси.';
-    for (const proxy of proxies) {
-        try {
-            const res = await fetch(proxy.url, { cache: 'no-store' });
-            if (!res.ok) {
-                lastReason = `${proxy.label}: HTTP ${res.status}`;
-                continue;
+    const reasons = [];
+    const attempts = 2;
+    for (let attempt = 1; attempt <= attempts; attempt++) {
+        for (const proxy of proxies) {
+            try {
+                const controller = new AbortController();
+                const timer = setTimeout(() => controller.abort(), 15000);
+                const res = await fetch(proxy.url, { cache: 'no-store', signal: controller.signal });
+                clearTimeout(timer);
+                if (!res.ok) {
+                    reasons.push(`${proxy.label}: HTTP ${res.status}`);
+                    continue;
+                }
+                const text = await res.text();
+                if (!text || text.length < 40) {
+                    reasons.push(`${proxy.label}: пустой ответ`);
+                    continue;
+                }
+                if (/500 Internal Server Error|Error while processing the request/i.test(text)) {
+                    reasons.push(`${proxy.label}: временная ошибка источника`);
+                    continue;
+                }
+                return text;
+            } catch (e) {
+                reasons.push(`${proxy.label}: ${e.message || 'ошибка сети'}`);
             }
-            const text = await res.text();
-            if (!text || text.length < 40) {
-                lastReason = `${proxy.label}: пустой ответ`;
-                continue;
-            }
-            if (/500 Internal Server Error/i.test(text)) {
-                lastReason = `${proxy.label}: временная ошибка источника`;
-                continue;
-            }
-            return text;
-        } catch (e) {
-            lastReason = `${proxy.label}: ${e.message || 'ошибка сети'}`;
         }
     }
-    throw new Error(lastReason);
+    throw new Error(reasons.slice(-6).join('\n') || 'Не удалось получить данные через CORS-прокси.');
 }
 
 function extractDeckSlugsFromRoyaleApiText(text) {
-    const rows = [];
-    const re = /https?:\/\/royaleapi\.com\/decks\/stats\/([a-z0-9,-]+)/gi;
+    const rawRows = [];
+    const re = /(?:https?:\/\/royaleapi\.com)?\/decks\/stats\/([a-z0-9,-]+)/gi;
     let m;
     while ((m = re.exec(text))) {
         const row = String(m[1] || '').toLowerCase();
         const slugs = row.split(',').map(x => x.trim()).filter(Boolean);
-        if (slugs.length !== 8) continue;
-        if (!rows.length || rows[rows.length - 1] !== row) rows.push(row);
+        if (slugs.length === 8) rawRows.push(row);
     }
-    return rows.map(row => row.split(','));
+    if (!rawRows.length) return [];
+
+    const rows = [];
+    for (let i = 0; i < rawRows.length;) {
+        const row = rawRows[i];
+        let run = 1;
+        while (i + run < rawRows.length && rawRows[i + run] === row) run++;
+        const copies = Math.max(1, Math.floor(run / 8));
+        for (let k = 0; k < copies; k++) rows.push(row.split(','));
+        i += run;
+    }
+    return rows;
 }
 
 async function fetchOpponentDeckFromRoyaleApiPages(tag) {
-    const battlesSource = `https://r.jina.ai/http://royaleapi.com/player/${tag}/battles`;
+    const battlesSource = `https://royaleapi.com/player/${tag}/battles`;
     const battlesText = await fetchTextViaCorsProxy(battlesSource);
     if (/not found|player not found|404/i.test(battlesText)) {
         throw new Error('Игрок не найден. Проверь тег.');
     }
 
-    const beforeMatch = battlesText.match(/battles\/history\?before=(\d+)/i);
-    if (!beforeMatch) throw new Error('Не удалось получить ссылку на историю боёв.');
-
-    const before = beforeMatch[1];
-    const historySource = `https://r.jina.ai/http://royaleapi.com/player/${tag}/battles/history?before=${before}&&`;
-    const historyText = await fetchTextViaCorsProxy(historySource);
-    const decks = extractDeckSlugsFromRoyaleApiText(historyText);
+    let decks = extractDeckSlugsFromRoyaleApiText(battlesText);
+    if (decks.length < 2) {
+        const beforeMatch = battlesText.match(/battles\/history\?before=(\d+)/i);
+        if (beforeMatch) {
+            const before = beforeMatch[1];
+            const historySource = `https://royaleapi.com/player/${tag}/battles/history?before=${before}&&`;
+            const historyText = await fetchTextViaCorsProxy(historySource);
+            decks = extractDeckSlugsFromRoyaleApiText(historyText);
+        }
+    }
     if (decks.length < 2) throw new Error('В истории боёв не нашлось пары колод.');
 
-    const opponentDeckSlugs = decks[1];
+    const opponentDeckSlugs = decks[1] || [];
     const unresolved = [];
     const names = opponentDeckSlugs.map(slug => {
         const card = getCardBySlug(slug);
