@@ -238,7 +238,7 @@
     </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v3.0</div>
+<div id="appVersionBadge" class="app-version">v3.1</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -276,7 +276,7 @@ let cards = rawCards.map(c => ({
     included: true
 }));
 
-const APP_VERSION = '3.0';
+const APP_VERSION = '3.1';
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
@@ -312,8 +312,25 @@ function normalizeCardKey(v) {
 
 const cardLookup = new Map(cards.map(c => [c.name, c]));
 const cardLookupNormalized = new Map(cards.map(c => [normalizeCardKey(c.name), c]));
+const cardLookupBySlug = new Map();
+for (const card of cards) {
+    const slug = String(card.name || '')
+        .toLowerCase()
+        .replace(/\./g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    if (slug && !cardLookupBySlug.has(slug)) cardLookupBySlug.set(slug, card);
+}
 function getCardByName(name) {
     return cardLookup.get(name) || cardLookupNormalized.get(normalizeCardKey(name)) || null;
+}
+function getCardBySlug(slug) {
+    const key = String(slug || '')
+        .toLowerCase()
+        .replace(/\./g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    return cardLookupBySlug.get(key) || null;
 }
 
 const femaleSet = new Set([
@@ -1297,6 +1314,86 @@ function extractOpponentDeckNames(battle) {
     return [];
 }
 
+async function fetchTextViaCorsProxy(targetUrl) {
+    const proxies = [
+        {
+            label: 'CodeTabs',
+            url: `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(targetUrl)}`
+        },
+        {
+            label: 'AllOrigins',
+            url: `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`
+        }
+    ];
+
+    let lastReason = 'Не удалось получить данные через CORS-прокси.';
+    for (const proxy of proxies) {
+        try {
+            const res = await fetch(proxy.url, { cache: 'no-store' });
+            if (!res.ok) {
+                lastReason = `${proxy.label}: HTTP ${res.status}`;
+                continue;
+            }
+            const text = await res.text();
+            if (!text || text.length < 40) {
+                lastReason = `${proxy.label}: пустой ответ`;
+                continue;
+            }
+            if (/500 Internal Server Error/i.test(text)) {
+                lastReason = `${proxy.label}: временная ошибка источника`;
+                continue;
+            }
+            return text;
+        } catch (e) {
+            lastReason = `${proxy.label}: ${e.message || 'ошибка сети'}`;
+        }
+    }
+    throw new Error(lastReason);
+}
+
+function extractDeckSlugsFromRoyaleApiText(text) {
+    const rows = [];
+    const re = /https?:\/\/royaleapi\.com\/decks\/stats\/([a-z0-9,-]+)/gi;
+    let m;
+    while ((m = re.exec(text))) {
+        const row = String(m[1] || '').toLowerCase();
+        const slugs = row.split(',').map(x => x.trim()).filter(Boolean);
+        if (slugs.length !== 8) continue;
+        if (!rows.length || rows[rows.length - 1] !== row) rows.push(row);
+    }
+    return rows.map(row => row.split(','));
+}
+
+async function fetchOpponentDeckFromRoyaleApiPages(tag) {
+    const battlesSource = `https://r.jina.ai/http://royaleapi.com/player/${tag}/battles`;
+    const battlesText = await fetchTextViaCorsProxy(battlesSource);
+    if (/not found|player not found|404/i.test(battlesText)) {
+        throw new Error('Игрок не найден. Проверь тег.');
+    }
+
+    const beforeMatch = battlesText.match(/battles\/history\?before=(\d+)/i);
+    if (!beforeMatch) throw new Error('Не удалось получить ссылку на историю боёв.');
+
+    const before = beforeMatch[1];
+    const historySource = `https://r.jina.ai/http://royaleapi.com/player/${tag}/battles/history?before=${before}&&`;
+    const historyText = await fetchTextViaCorsProxy(historySource);
+    const decks = extractDeckSlugsFromRoyaleApiText(historyText);
+    if (decks.length < 2) throw new Error('В истории боёв не нашлось пары колод.');
+
+    const opponentDeckSlugs = decks[1];
+    const unresolved = [];
+    const names = opponentDeckSlugs.map(slug => {
+        const card = getCardBySlug(slug);
+        if (!card) unresolved.push(slug);
+        return card?.name || null;
+    }).filter(Boolean);
+
+    if (names.length < 8) {
+        throw new Error(`Не удалось распознать карты: ${unresolved.slice(0, 3).join(', ')}${unresolved.length > 3 ? '...' : ''}`);
+    }
+    return names.slice(0, 8);
+}
+
 async function fetchBattleLogWithFallback(tag) {
     const endpoints = [
         {
@@ -1326,23 +1423,60 @@ async function fetchBattleLogWithFallback(tag) {
     throw new Error(lastReason);
 }
 
+function findOpponentDeckNamesFromBattles(battles) {
+    for (const battle of battles) {
+        const names = extractOpponentDeckNames(battle);
+        if (names.length >= 8) return names.slice(0, 8);
+    }
+    return [];
+}
+
+async function fetchOpponentDeckNames(tag) {
+    const reasons = [];
+    const sources = [
+        {
+            label: 'Публичная история RoyaleAPI',
+            run: () => fetchOpponentDeckFromRoyaleApiPages(tag)
+        },
+        {
+            label: 'RoyaleAPI proxy',
+            run: async () => {
+                const battles = await fetchBattleLogWithFallback(tag);
+                if (!battles.length) throw new Error('Лог боёв пуст.');
+                const names = findOpponentDeckNamesFromBattles(battles);
+                if (names.length < 8) throw new Error('В последних боях не нашлась колода соперника 1x1.');
+                return names;
+            }
+        }
+    ];
+
+    for (const source of sources) {
+        try {
+            const names = await source.run();
+            if (Array.isArray(names) && names.length >= 8) return names.slice(0, 8);
+            reasons.push(`${source.label}: пустая колода`);
+        } catch (e) {
+            reasons.push(`${source.label}: ${e.message || 'ошибка'}`);
+        }
+    }
+
+    throw new Error(reasons.join('\n') || 'Не удалось получить лог боёв.');
+}
+
 function buildBattlelogErrorMessage(tag, rawMessage) {
     const msg = String(rawMessage || '');
-    const isNetwork = /Failed to fetch|NetworkError|Load failed|TypeError/i.test(msg);
-    if (!isNetwork) return msg || 'Не удалось получить лог боёв.';
-
-    const quickTestUrl = `https://proxy.royaleapi.dev/v1/players/%23${tag}/battlelog`;
-    const onGithubPages = /(^|\\.)github\\.io$/i.test(window.location.hostname);
-    const lines = ['Не удалось подключиться к API (сетевая/CORS ошибка).'];
-    if (onGithubPages) {
-        lines.push('Ты запущен на GitHub Pages: для этого API часто блокируется CORS.');
-        lines.push('Решение: нужен свой прокси/бекенд (например Cloudflare Worker) и запрос через него.');
-    } else {
-        lines.push('Попробуй открыть генератор через локальный сервер, а не как file://.');
-        lines.push('Команда: python3 -m http.server 8000');
-        lines.push('Затем открой: http://localhost:8000/ClashRoyaleGenerator3.0.html');
+    const lines = [];
+    if (/Missing authorization|accessDenied|HTTP 403/i.test(msg)) {
+        lines.push('Старый proxy RoyaleAPI закрыт без авторизации.');
     }
-    lines.push(`Проверка API в браузере: ${quickTestUrl}`);
+    if (/Failed to fetch|NetworkError|Load failed|TypeError|CORS/i.test(msg)) {
+        lines.push('Не удалось подключиться к удалённому источнику (сетевая/CORS ошибка).');
+    }
+    if (!lines.length) lines.push('Не удалось получить лог боёв.');
+
+    const details = msg.split('\n').slice(0, 2).join('\n').trim();
+    if (details) lines.push(`Детали: ${details}`);
+    lines.push(`Проверка профиля: https://royaleapi.com/player/${tag}/battles`);
     return lines.join('\n');
 }
 
@@ -1354,17 +1488,7 @@ async function loadLastOpponentDeck() {
 
     setDeckName('Загружаю колоду соперника...');
     try {
-        const battles = await fetchBattleLogWithFallback(tag);
-        if (!battles.length) throw new Error('Лог боёв пуст.');
-
-        let opponentDeckNames = [];
-        for (const battle of battles) {
-            const names = extractOpponentDeckNames(battle);
-            if (names.length >= 8) {
-                opponentDeckNames = names.slice(0, 8);
-                break;
-            }
-        }
+        const opponentDeckNames = await fetchOpponentDeckNames(tag);
         if (opponentDeckNames.length < 8) throw new Error('В последних боях не нашлась колода соперника 1x1.');
 
         const missing = [];
