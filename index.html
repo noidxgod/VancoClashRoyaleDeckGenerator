@@ -238,7 +238,7 @@
     </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v3.3</div>
+<div id="appVersionBadge" class="app-version">v3.4</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -276,10 +276,11 @@ let cards = rawCards.map(c => ({
     included: true
 }));
 
-const APP_VERSION = '3.3';
+const APP_VERSION = '3.4';
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
+let importedTowerName = null;
 
 const retroRoyalePool = new Set([
     'Minions','Archers','Knight','Spear Goblins','Goblins','Bomber','Skeletons','Barbarians','Fire Spirit','Bats','Royal Giant','Ice Spirit',
@@ -305,6 +306,43 @@ const cardPools = {
     retro: retroRoyalePool,
     chaos: chaosPool
 };
+
+function normalizeTowerKey(v) {
+    return String(v || '').toLowerCase().replace(/[^a-z0-9а-яё]/g, '');
+}
+
+const towerNameByKey = new Map(rawTowers.map(t => [normalizeTowerKey(t.name), t.name]));
+towerNameByKey.set('towerprincess', 'Tower Princess');
+towerNameByKey.set('princesstower', 'Tower Princess');
+towerNameByKey.set('daggerduchess', 'Dagger Duchess');
+towerNameByKey.set('royalchef', 'Royal Chef');
+towerNameByKey.set('cannoneer', 'Cannoneer');
+
+function resolveTowerName(raw) {
+    if (!raw) return null;
+    const key = normalizeTowerKey(raw);
+    return towerNameByKey.get(key) || null;
+}
+
+function extractTowerNameFromAny(raw) {
+    if (!raw) return null;
+    if (typeof raw === 'string') return resolveTowerName(raw);
+    if (typeof raw !== 'object') return null;
+
+    const directCandidates = [
+        raw.name, raw.cardName, raw.key, raw.id,
+        raw.tower, raw.towerName, raw.towerCard, raw.towerType, raw.kingTower
+    ];
+    for (const candidate of directCandidates) {
+        const found = resolveTowerName(candidate);
+        if (found) return found;
+    }
+    if (raw.card) {
+        const nested = extractTowerNameFromAny(raw.card);
+        if (nested) return nested;
+    }
+    return null;
+}
 
 function normalizeCardKey(v) {
     return String(v || '').toLowerCase().replace(/[^a-z0-9а-яё]/g, '');
@@ -926,6 +964,7 @@ function generateDeck(oneByOne) {
         if (!finalDeck) return alert("Невозможно собрать колоду по заданным критериям! Ослабьте ограничения.");
         
         finalDeck.sort((a,b) => (a.isEvo ? -1 : b.isEvo ? 1 : a.isHeroism ? -1 : b.isHeroism ? 1 : 0));
+        importedTowerName = null;
         currentDeck = [...finalDeck];
         resetReplacementHistory(false);
         renderManualCardSelect();
@@ -1103,11 +1142,23 @@ function renderSecrets() {
 
 function renderTower() {
     const slot = document.getElementById('towerSlot');
-    if (document.getElementById('setRandomTower').checked) {
-        let t = rawTowers[Math.floor(Math.random()*rawTowers.length)], ru = translations[t.name] || t.name;
-        slot.innerHTML = `<img src="https://royaleapi.github.io/cr-api-assets/towers/${t.name.toLowerCase().replace(/\s+/g,'-')}.png" onerror="this.src='https://royaleapi.github.io/cr-api-assets/cards/${t.name.toLowerCase().replace(/\s+/g,'-')}.png'"><div class="badge badge-heroism" style="bottom:4px;top:auto;left:0;width:100%;text-align:center;color:#111;">${ru}</div>`;
+    const renderTowerByName = (towerName) => {
+        const resolved = resolveTowerName(towerName);
+        if (!resolved) return false;
+        const ru = translations[resolved] || resolved;
+        slot.innerHTML = `<img src="https://royaleapi.github.io/cr-api-assets/towers/${resolved.toLowerCase().replace(/\s+/g,'-')}.png" onerror="this.src='https://royaleapi.github.io/cr-api-assets/cards/${resolved.toLowerCase().replace(/\s+/g,'-')}.png'"><div class="badge badge-heroism" style="bottom:4px;top:auto;left:0;width:100%;text-align:center;color:#111;">${ru}</div>`;
         slot.style.display = 'flex';
         slot.className = 'card-slot filled';
+        return true;
+    };
+
+    if (importedTowerName && renderTowerByName(importedTowerName)) {
+        renderSecrets();
+        return;
+    }
+    if (document.getElementById('setRandomTower').checked) {
+        const randomTowerName = rawTowers[Math.floor(Math.random() * rawTowers.length)]?.name;
+        renderTowerByName(randomTowerName);
     } else {
         slot.style.display = 'none';
         slot.innerHTML = '';
@@ -1125,6 +1176,7 @@ function clearDeck(r=true) {
     if(r) {
         targetDeckQueue = [];
         currentDeck = [];
+        importedTowerName = null;
         setDeckName('Собери колоду, чтобы получить название');
         resetReplacementHistory(false);
     }
@@ -1442,6 +1494,17 @@ function extractDeckSlugsFromRoyaleApiText(text) {
     return rows;
 }
 
+function extractTowerNamesFromRoyaleApiText(text) {
+    const towers = [];
+    const re = /(?:https?:\/\/royaleapi\.com)?\/card\/(tower-princess|cannoneer|dagger-duchess|royal-chef)/gi;
+    let m;
+    while ((m = re.exec(text))) {
+        const tower = resolveTowerName(m[1]);
+        if (tower) towers.push(tower);
+    }
+    return towers;
+}
+
 async function fetchOpponentDeckFromRoyaleApiPages(tag) {
     const battlesSource = `https://royaleapi.com/player/${tag}/battles`;
     const battlesText = await fetchTextViaCorsProxy(battlesSource);
@@ -1450,6 +1513,7 @@ async function fetchOpponentDeckFromRoyaleApiPages(tag) {
     }
 
     let decks = extractDeckSlugsFromRoyaleApiText(battlesText);
+    let towers = extractTowerNamesFromRoyaleApiText(battlesText);
     if (decks.length < 2) {
         const beforeMatch = battlesText.match(/battles\/history\?before=(\d+)/i);
         if (beforeMatch) {
@@ -1457,6 +1521,7 @@ async function fetchOpponentDeckFromRoyaleApiPages(tag) {
             const historySource = `https://royaleapi.com/player/${tag}/battles/history?before=${before}&&`;
             const historyText = await fetchTextViaCorsProxy(historySource);
             decks = extractDeckSlugsFromRoyaleApiText(historyText);
+            towers = extractTowerNamesFromRoyaleApiText(historyText);
         }
     }
     if (decks.length < 2) throw new Error('В истории боёв не нашлось пары колод.');
@@ -1474,7 +1539,8 @@ async function fetchOpponentDeckFromRoyaleApiPages(tag) {
     if (entries.length < 8) {
         throw new Error(`Не удалось распознать карты: ${unresolved.slice(0, 3).join(', ')}${unresolved.length > 3 ? '...' : ''}`);
     }
-    return entries.slice(0, 8);
+    const towerName = towers[1] || null;
+    return { entries: entries.slice(0, 8), towerName };
 }
 
 async function fetchBattleLogWithFallback(tag) {
@@ -1509,9 +1575,23 @@ async function fetchBattleLogWithFallback(tag) {
 function findOpponentDeckEntriesFromBattles(battles) {
     for (const battle of battles) {
         const entries = extractOpponentDeckEntries(battle);
-        if (entries.length >= 8) return entries.slice(0, 8);
+        if (entries.length >= 8) {
+            const opponents = Array.isArray(battle?.opponent) ? battle.opponent : [];
+            let towerName = null;
+            for (const opp of opponents) {
+                towerName = extractTowerNameFromAny(opp);
+                if (towerName) break;
+            }
+            if (!towerName && Array.isArray(battle?.opponentCards)) {
+                for (const card of battle.opponentCards) {
+                    towerName = extractTowerNameFromAny(card);
+                    if (towerName) break;
+                }
+            }
+            return { entries: entries.slice(0, 8), towerName };
+        }
     }
-    return [];
+    return { entries: [], towerName: null };
 }
 
 async function fetchOpponentDeckEntries(tag) {
@@ -1526,17 +1606,22 @@ async function fetchOpponentDeckEntries(tag) {
             run: async () => {
                 const battles = await fetchBattleLogWithFallback(tag);
                 if (!battles.length) throw new Error('Лог боёв пуст.');
-                const entries = findOpponentDeckEntriesFromBattles(battles);
-                if (entries.length < 8) throw new Error('В последних боях не нашлась колода соперника 1x1.');
-                return entries;
+                const result = findOpponentDeckEntriesFromBattles(battles);
+                if (result.entries.length < 8) throw new Error('В последних боях не нашлась колода соперника 1x1.');
+                return result;
             }
         }
     ];
 
     for (const source of sources) {
         try {
-            const entries = await source.run();
-            if (Array.isArray(entries) && entries.length >= 8) return entries.slice(0, 8);
+            const result = await source.run();
+            if (Array.isArray(result?.entries) && result.entries.length >= 8) {
+                return {
+                    entries: result.entries.slice(0, 8),
+                    towerName: resolveTowerName(result?.towerName) || null
+                };
+            }
             reasons.push(`${source.label}: пустая колода`);
         } catch (e) {
             reasons.push(`${source.label}: ${e.message || 'ошибка'}`);
@@ -1571,7 +1656,8 @@ async function loadLastOpponentDeck() {
 
     setDeckName('Загружаю колоду соперника...');
     try {
-        const opponentDeckEntries = await fetchOpponentDeckEntries(tag);
+        const importData = await fetchOpponentDeckEntries(tag);
+        const opponentDeckEntries = importData.entries;
         if (opponentDeckEntries.length < 8) throw new Error('В последних боях не нашлась колода соперника 1x1.');
 
         const missing = [];
@@ -1591,6 +1677,7 @@ async function loadLastOpponentDeck() {
         }
 
         currentDeck = importedDeck.slice(0, 8);
+        importedTowerName = resolveTowerName(importData.towerName) || null;
         document.getElementById('playerTagInput').value = `#${tag}`;
         resetReplacementHistory(false);
         applyCurrentDeckToUi();
