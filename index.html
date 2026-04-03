@@ -21,10 +21,12 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background-color: var(--bg-main); color: var(--text-main); margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
 
-        .container { display: flex; gap: 20px; background-color: #22232e; padding: 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 1100px; width: 100%; }
+        .container { display: flex; gap: 20px; background-color: #22232e; padding: 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 1450px; width: 100%; }
 
         .sidebar { background-color: var(--bg-panel); padding: 20px; border-radius: 10px; width: 300px; display: flex; flex-direction: column; gap: 15px; }
         .sidebar h2 { margin: 0 0 10px 0; font-size: 18px; text-align: center; }
+        .right-tools { background-color: var(--bg-panel); padding: 20px; border-radius: 10px; width: 300px; display: flex; flex-direction: column; gap: 15px; }
+        .right-tools h2 { margin: 0 0 10px 0; font-size: 18px; text-align: center; }
 
         .form-group { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
         select { background-color: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 6px; width: 100px; cursor: pointer; }
@@ -42,6 +44,14 @@
         .btn-filter { background-color: #3f4152; margin-bottom: 10px; }
         .btn-blue { background-color: var(--btn-blue); }
         .btn-red { background-color: var(--btn-red); margin-top: 5px; }
+        .btn-mini { padding: 7px 8px; font-size: 12px; }
+        .tool-panel { background: #242635; border: 1px solid #3f4152; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .tool-title { font-size: 12px; font-weight: 700; color: #cfd2e0; text-transform: uppercase; letter-spacing: 0.3px; }
+        .text-input { width: 100%; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color); padding: 6px 8px; border-radius: 6px; outline: none; font-size: 13px; }
+        .text-input:focus { border-color: var(--btn-blue); }
+        .tiny-note { font-size: 11px; color: #aeb3c7; line-height: 1.3; }
+        .inline-row { display: flex; gap: 6px; }
+        .inline-row > * { flex: 1; }
 
         .main-area { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         
@@ -50,6 +60,7 @@
         .avg-elixir-icon { width: 14px; height: 14px; background: radial-gradient(circle at 30% 30%, #ff8df0, #c413b5 70%); border: 1.5px solid #222; border-radius: 0 50% 50% 50%; transform: rotate(45deg); display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.6); }
 
         .deck-grid { display: grid; grid-template-columns: repeat(4, 80px); grid-template-rows: repeat(2, 100px); gap: 15px 10px; }
+        .deck-grid .card-slot { cursor: pointer; }
 
         .tower-area { display: flex; justify-content: center; align-items: center; min-height: 100px; width: 100%; gap: 10px; margin-top: 5px; }
 
@@ -58,6 +69,7 @@
         .card-slot.filled { border-style: solid; }
         .card-slot.evo { border-color: var(--evo-color); box-shadow: 0 0 10px rgba(185, 104, 199, 0.5); }
         .card-slot.heroism { border-color: var(--hero-color); box-shadow: 0 0 10px rgba(226, 184, 83, 0.5); }
+        .card-slot.selected-replace { border-color: #46d9ff !important; box-shadow: 0 0 12px rgba(70, 217, 255, 0.75) !important; }
 
         .elixir-drop { position: absolute; bottom: -6px; left: 50%; margin-left: -13px; width: 26px; height: 26px; background: radial-gradient(circle at 30% 30%, #ff8df0, #c413b5 70%); border: 1.5px solid #222; border-radius: 0 50% 50% 50%; transform: rotate(45deg); z-index: 15; box-shadow: 0 2px 4px rgba(0,0,0,0.6); }
         .elixir-text { position: absolute; top: 0; left: 0; right: 0; bottom: 0; display: flex; justify-content: center; align-items: center; transform: rotate(-45deg); color: white; font-family: 'Arial Black', sans-serif; font-size: 15px; font-weight: 900; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 2px 3px rgba(0,0,0,0.8); }
@@ -71,20 +83,8 @@
         .badge-heroism { background-color: var(--hero-color); right: 4px; color: #111; }
 
 
-        .deck-name-panel { width: 100%; max-width: 420px; background:#2b2d3a; border:1px solid #3f4152; border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:10px; }
-        .deck-name-header { display:flex; justify-content:space-between; align-items:center; gap:10px; }
-        .deck-name-title { font-size:13px; color:#c9c9d4; }
-        .deck-name-value { font-size:22px; font-weight:800; line-height:1.2; text-align:center; min-height: 54px; display:flex; align-items:center; justify-content:center; padding:4px 8px; background:#1a1a20; border-radius:8px; }
-        .deck-name-actions { display:flex; gap:8px; flex-wrap:wrap; }
-        .deck-name-actions button { flex:1; min-width:120px; padding:8px 10px; }
-        .btn-gray { background:#555; }
-        .btn-gray:hover { background:#666; }
-        .api-row { display:flex; gap:8px; align-items:center; }
-        .api-input { flex:1; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color); padding: 7px 10px; border-radius: 6px; outline: none; }
-        .api-note { font-size:12px; color:#bdbdcc; line-height:1.4; }
-
-
         .deck-title-display { width: 100%; max-width: 420px; background:#2b2d3a; border:1px solid #3f4152; border-radius:10px; padding:14px 16px; text-align:center; font-size:24px; font-weight:800; line-height:1.2; min-height:64px; display:flex; align-items:center; justify-content:center; }
+        .deck-title-display.is-loading { opacity: 0.7; }
         .deck-stats-panel { width: 100%; max-width: 420px; display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
         .stat-card { background:#2b2d3a; border:1px solid #3f4152; border-radius:10px; padding:10px 8px; text-align:center; }
         .stat-label { font-size:11px; color:#c9c9d4; line-height:1.2; min-height:28px; display:flex; align-items:center; justify-content:center; }
@@ -113,6 +113,7 @@
 <div class="container">
     <div class="sidebar">
         <h2>Настройки колоды</h2>
+        <div id="selectedCardPoolInfo" class="tiny-note" style="margin-top:-6px; margin-bottom:6px;">Кард-пул: Все карты</div>
         <button class="btn-filter" onclick="toggleModal(true)">Фильтр карт (убрать ненужные)</button>
         <div class="form-group"> <label>Заклинания:</label> <select id="setSpells"> <option value="any">Любое</option> <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option> </select> </div>
         <div class="form-group"> <label>Винконы:</label> <select id="setWincons"> <option value="any">Любое</option> <option value="0">0</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option> </select> </div>
@@ -193,6 +194,47 @@
             <div class="roulette-track" id="rouletteTrack"></div>
         </div>
     </div>
+
+    <div class="right-tools">
+        <h2>Инструменты</h2>
+        <div class="tool-panel">
+            <div class="tool-title">Колода последнего соперника</div>
+            <input type="text" id="playerTagInput" class="text-input" placeholder="Твой ID/тег (например #2JGYG2YY)">
+            <button class="btn-blue btn-mini" onclick="loadLastOpponentDeck()">Загрузить последнего соперника</button>
+            <div class="tiny-note">Берётся колода соперника из последнего доступного боя.</div>
+        </div>
+
+        <div class="tool-panel">
+            <div class="tool-title">Замены в текущей колоде</div>
+            <div class="form-group"> <label>Режим:</label> <select id="replaceMode"> <option value="unique">Без повторов</option> <option value="repeat">С повторами</option> </select> </div>
+            <button class="btn-blue btn-mini" onclick="replaceRandomCardInDeck()">Заменить случайную карту</button>
+            <button class="btn-blue btn-mini" onclick="replaceSelectedCardInDeck()">Заменить выбранную (клик по карте)</button>
+            <button class="btn-filter btn-mini" onclick="resetReplacementHistory(true)">Сбросить историю замен</button>
+            <div class="tiny-note" id="replaceSelectedInfo">Выбран слот: —</div>
+            <div class="tiny-note" id="replaceInfo">Без повторов заменено: 0/8</div>
+        </div>
+
+        <div class="tool-panel">
+            <div class="tool-title">Тематические колоды</div>
+            <div class="form-group"> <label>Тема:</label> <select id="setThemeMode" style="width:160px;"> <option value="any">Классика</option> <option value="letter">На букву</option> <option value="girls">С девушками</option> <option value="beards">С бородатыми</option> <option value="goblins">Гоблин-пачка</option> <option value="skeletons">Скелет-армия</option> <option value="dragons">Драконья тема</option> <option value="air">Воздушная</option> <option value="buildings">Через здания</option> <option value="cycle">Лёгкий цикл</option> <option value="spells">Много спеллов</option> <option value="melee">Ближний бой</option> </select> </div>
+            <input type="text" id="themeLetterInput" class="text-input" maxlength="1" placeholder="Буква для режима «На букву»">
+            <div class="tiny-note" id="themeHint">В каждой карте есть подробные теги; тема добавляет доп. условие к генерации.</div>
+        </div>
+
+        <div class="tool-panel">
+            <div class="tool-title">Ручная сборка</div>
+            <select id="manualCardSelect" style="width:100%;"></select>
+            <div class="inline-row">
+                <button class="btn-blue btn-mini" onclick="addManualCardToDeck()">Добавить карту</button>
+                <button class="btn-red btn-mini" onclick="removeLastManualCard()">Убрать последнюю</button>
+            </div>
+            <div class="inline-row">
+                <button class="btn-filter btn-mini" onclick="fillDeckRandomly()">Добить рандомом</button>
+                <button class="btn-filter btn-mini" onclick="clearDeck(true)">Сбросить ручную</button>
+            </div>
+            <div class="tiny-note" id="manualInfo">Сейчас в колоде: 0/8</div>
+        </div>
+    </div>
 </div>
 
 <div class="modal-overlay" id="filterModal">
@@ -200,10 +242,16 @@
         <div class="modal-header">
             <h3>Фильтр карт</h3>
             <div>
+                <select id="cardPoolMode" style="width:160px; margin-right:8px;">
+                    <option value="all">Все карты</option>
+                    <option value="retro">Ретро рояль</option>
+                    <option value="chaos">ХАОС</option>
+                </select>
                 <button onclick="selectAll(true)" style="background:#4a90e2; padding:5px 10px; font-size: 11px;">Выбрать всё</button>
                 <button onclick="selectAll(false)" style="background:#555; padding:5px 10px; font-size: 11px;">Снять всё</button>
             </div>
         </div>
+        <div id="cardPoolInfo" class="tiny-note" style="margin-bottom:8px;">Активный кард-пул: Все карты</div>
         <div class="cards-list" id="cardsFilterList"></div>
         <button class="btn-red" onclick="toggleModal(false)" style="margin-top:10px">Закрыть</button>
     </div>
@@ -222,11 +270,135 @@ let cards = rawCards.map(c => ({
     ruName: translations[c.name] || c.name, 
     img: `https://royaleapi.github.io/cr-api-assets/cards/${c.name.toLowerCase().replace(/\s+/g, '-').replace(/\./g, '')}.png`, 
     elixir: elixirCosts[c.name] || '?',
-    included: true 
+    included: true
 }));
 
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
-let currentTower = null;
+let selectedDeckSlotIndex = null;
+const replacedSlotHistory = new Set();
+
+const retroRoyalePool = new Set([
+    'Minions','Archers','Knight','Spear Goblins','Goblins','Bomber','Skeletons','Barbarians','Fire Spirit','Bats','Royal Giant','Ice Spirit',
+    'Skeleton Barrel','Goblin Gang','Elite Barbarians','Minion Horde','Mini P.E.K.K.A.','Musketeer','Giant','Valkyrie','Mega Minion','Battle Ram',
+    'Wizard','Flying Machine','Hog Rider','Three Musketeers','Ice Golem','Dart Goblin','Zappies','Guards','Baby Dragon','Skeleton Army','Witch',
+    'P.E.K.K.A.','Dark Prince','Prince','Balloon','Giant Skeleton','Hunter','Golem','Bowler','Executioner','Cannon Cart','Mega Knight',
+    'Electro Wizard','Inferno Dragon','Sparky','Miner','Princess','Royal Ghost','Ice Wizard','Bandit','Lava Hound','Night Witch','Lumberjack',
+    'Arrows','Zap','Fireball','Rocket','Goblin Barrel','Lightning','Freeze','Poison','Rage','Clone','Tornado','Mirror','The Log','Graveyard',
+    'Cannon','Mortar','Tesla','Goblin Hut','Tombstone','Bomb Tower','Inferno Tower','Barbarian Hut','Furnace','Elixir Collector','X-Bow'
+]);
+
+const chaosPool = new Set([
+    'Freeze','Rage','Mirror','Clone','Tornado','Rocket','Goblin Barrel','Princess','Goblin Drill','Wall Breakers','Hog Rider','Earthquake',
+    'Firecracker','Mega Knight','Elite Barbarians','Royal Recruits','Royal Hogs','X-Bow','Mortar','Elixir Golem','Battle Healer','Golem',
+    'Lava Hound','Balloon','Graveyard','Skeleton Barrel','Goblin Gang','Rascals','Royal Giant','Goblin Giant','Electro Giant','Sparky',
+    'P.E.K.K.A.','Witch','Wizard','Furnace','Tesla','Inferno Tower','Bomb Tower','Fireball','Arrows','Zap','The Log','Poison','Lightning',
+    'Void','Vines','Ram Rider','Miner','Little Prince','Goblin Curse','Suspicious Bush','Goblinstein','Goblin Machine','Berserker',
+    'Boss Bandit','Rune Giant','Spirit Empress','Three Musketeers'
+]);
+
+const cardPools = {
+    all: new Set(cards.map(c => c.name)),
+    retro: retroRoyalePool,
+    chaos: chaosPool
+};
+
+function normalizeCardKey(v) {
+    return String(v || '').toLowerCase().replace(/[^a-z0-9а-яё]/g, '');
+}
+
+const cardLookup = new Map(cards.map(c => [c.name, c]));
+const cardLookupNormalized = new Map(cards.map(c => [normalizeCardKey(c.name), c]));
+function getCardByName(name) {
+    return cardLookup.get(name) || cardLookupNormalized.get(normalizeCardKey(name)) || null;
+}
+
+const femaleSet = new Set([
+    'Archers','Archer Queen','Bandit','Battle Healer','Dagger Duchess','Firecracker','Mother Witch','Night Witch','Princess','Ram Rider','Valkyrie','Witch','Musketeer','Spirit Empress'
+]);
+const beardedSet = new Set([
+    'Fisherman','Lumberjack','Monk','Wizard','Royal Ghost','Little Prince','Hunter','Executioner','Bowler','Mighty Miner'
+]);
+const goblinSet = new Set([
+    'Goblin Barrel','Goblin Cage','Goblin Curse','Goblin Demolisher','Goblin Drill','Goblin Gang','Goblin Giant','Goblin Hut','Goblin Machine','Goblins','Goblinstein','Dart Goblin','Spear Goblins'
+]);
+const skeletonSet = new Set([
+    'Skeleton Army','Skeleton Barrel','Skeleton Dragons','Skeleton King','Skeletons','Giant Skeleton','Guards','Tombstone','Witch','Graveyard'
+]);
+const dragonSet = new Set([
+    'Baby Dragon','Electro Dragon','Inferno Dragon','Skeleton Dragons','Lava Hound'
+]);
+const buildingSetDetailed = new Set([
+    'Barbarian Hut','Bomb Tower','Cannon','Elixir Collector','Furnace','Goblin Cage','Goblin Hut','Inferno Tower','Mortar','Tesla','Tombstone','X-Bow'
+]);
+const airSetDetailed = new Set([
+    'Baby Dragon','Bats','Balloon','Electro Dragon','Flying Machine','Inferno Dragon','Lava Hound','Mega Minion','Minion Horde','Minions','Phoenix','Skeleton Dragons'
+]);
+const meleeSet = new Set([
+    'Bandit','Battle Healer','Dark Prince','Elite Barbarians','Golden Knight','Golem','Giant','Hog Rider','Knight','Lumberjack','Mega Knight','Mini P.E.K.K.A.','Monk','P.E.K.K.A.','Prince','Ram Rider','Royal Ghost','Rune Giant','Skeleton King','Valkyrie'
+]);
+const championSet = new Set(['Archer Queen','Golden Knight','Little Prince','Mighty Miner','Monk','Skeleton King']);
+const cycleSet = new Set(cards.filter(c => typeof c.elixir === 'number' && c.elixir <= 3).map(c => c.name));
+
+function buildCardMeta(card) {
+    const tags = new Set();
+    const name = card.name;
+
+    if (card.spell) tags.add('spell');
+    else if (buildingSetDetailed.has(name)) tags.add('building');
+    else tags.add('troop');
+
+    if (card.winCondition === true || card.winCondition === 'sometimes') tags.add('wincon');
+    if (card.evolution) tags.add('evo-capable');
+    if (card.heroism) tags.add('heroism-capable');
+    if (championSet.has(name)) tags.add('champion');
+    if (femaleSet.has(name)) tags.add('female');
+    if (beardedSet.has(name)) tags.add('bearded');
+    if (goblinSet.has(name)) tags.add('goblin');
+    if (skeletonSet.has(name)) tags.add('skeleton');
+    if (dragonSet.has(name)) tags.add('dragon');
+    if (airSetDetailed.has(name)) tags.add('air');
+    if (buildingSetDetailed.has(name)) tags.add('structure');
+    if (meleeSet.has(name)) tags.add('melee');
+    if (!card.spell && !meleeSet.has(name)) tags.add('ranged-or-support');
+    if (cycleSet.has(name)) tags.add('cheap-cycle');
+    if (typeof card.elixir === 'number' && card.elixir >= 6) tags.add('heavy');
+
+    const race = [];
+    if (goblinSet.has(name)) race.push('goblin');
+    if (skeletonSet.has(name)) race.push('skeleton');
+    if (dragonSet.has(name)) race.push('dragon');
+    if (race.length === 0) race.push(card.spell ? 'magic' : 'human-or-other');
+
+    return {
+        role: card.spell ? 'spell' : (buildingSetDetailed.has(name) ? 'building' : 'troop'),
+        gender: femaleSet.has(name) ? 'female' : 'unknown-or-male',
+        beard: beardedSet.has(name),
+        race,
+        tags: [...tags]
+    };
+}
+
+const cardMetaByName = {};
+cards.forEach(card => {
+    const meta = buildCardMeta(card);
+    cardMetaByName[card.name] = meta;
+    card.meta = meta;
+});
+
+const themeModeHints = {
+    any: 'Обычная генерация без доп. темы.',
+    letter: 'Все 8 карт начинаются с указанной буквы.',
+    girls: 'Минимум 4 карты с тегом female.',
+    beards: 'Минимум 3 карты с тегом bearded.',
+    goblins: 'Минимум 4 карты с тегом goblin.',
+    skeletons: 'Минимум 4 карты с тегом skeleton.',
+    dragons: 'Минимум 3 карты с тегом dragon.',
+    air: 'Минимум 4 воздушные карты.',
+    buildings: 'Минимум 3 здания.',
+    cycle: 'Минимум 5 дешёвых карт (1-3 эликсира).',
+    spells: 'Минимум 3 заклинания.',
+    melee: 'Минимум 4 карты ближнего боя.'
+};
 
 
 const OPENROUTER_API_KEY = ""; // При желании вставь сюда свой ключ OpenRouter
@@ -272,18 +444,18 @@ function localDeckTitle(deck) {
     const pickCard = () => pick(shortNames);
     const mainWin = wincons.length ? cleanName(wincons[0].ruName || wincons[0].name) : pickCard();
     const secondWin = wincons.length > 1 ? cleanName(wincons[1].ruName || wincons[1].name) : pickCard();
-    const has = (s) => rawNames.includes(s) || shortNames.includes(s);
+    const englishNames = new Set(deck.map(c => c.name));
 
     let archetype = "колода";
-    if (has('Хог Райдер')) archetype = 'хог';
-    else if (has('Шахтёр')) archetype = 'майнер';
-    else if (has('Голем')) archetype = 'голем';
-    else if (has('Арбалет')) archetype = 'арбалет';
-    else if (has('Мортира')) archetype = 'мортира';
-    else if (has('Королевский гигант')) archetype = 'рг';
-    else if (has('Лавовый hound') || has('Лава Хаунд') || has('Лавовый пес')) archetype = 'лава';
-    else if (has('Кладбище')) archetype = 'кладбище';
-    else if (has('Элитные варвары')) archetype = 'элитки';
+    if (englishNames.has('Hog Rider')) archetype = 'хог';
+    else if (englishNames.has('Miner')) archetype = 'майнер';
+    else if (englishNames.has('Golem')) archetype = 'голем';
+    else if (englishNames.has('X-Bow')) archetype = 'арбалет';
+    else if (englishNames.has('Mortar')) archetype = 'мортира';
+    else if (englishNames.has('Royal Giant')) archetype = 'рг';
+    else if (englishNames.has('Lava Hound')) archetype = 'лава';
+    else if (englishNames.has('Graveyard')) archetype = 'кладбище';
+    else if (englishNames.has('Elite Barbarians')) archetype = 'элитки';
     else if (mainWin) archetype = mainWin.toLowerCase();
 
     const tonePool = unique([
@@ -400,14 +572,6 @@ async function generateDeckName() {
     } finally {
         label.classList.remove('is-loading');
     }
-}
-
-async function copyDeckName() {
-    const text = document.getElementById('deckNameValue').textContent.trim();
-    if (!text || text === 'Собери колоду, чтобы получить название' || text === 'Сначала собери колоду') return;
-    try {
-        await navigator.clipboard.writeText(text);
-    } catch (e) {}
 }
 
 
@@ -550,14 +714,6 @@ function analyzeDeckMetrics(deck) {
 }
 
 
-function readMetricRange(minId, maxId) {
-    const rawMin = document.getElementById(minId).value;
-    const rawMax = document.getElementById(maxId).value;
-    let min = rawMin === '' ? 0 : Math.max(0, Math.min(100, parseInt(rawMin, 10)));
-    let max = rawMax === '' ? 100 : Math.max(0, Math.min(100, parseInt(rawMax, 10)));
-    return { min, max };
-}
-
 function metricsMatchFilters(metrics, c) {
     return metrics.toxicity >= c.minToxicity && metrics.toxicity <= c.maxToxicity &&
            metrics.shame >= c.minShame && metrics.shame <= c.maxShame &&
@@ -583,36 +739,115 @@ function shuffle(arr) {
     return a;
 }
 
-// Взаимная блокировка фильтров ЭВО и ГЕРОИЗМ (Сумма макс 3)
-function updateSpecialSlotsConstraints() {
-    let evos = document.getElementById('setEvos').value;
-    let hero = document.getElementById('setHeroism').value;
-    let evosOpt2 = document.querySelector('#setEvos option[value="2"]');
-    let heroOpt2 = document.querySelector('#setHeroism option[value="2"]');
+function updateSpecialSlotsConstraints() {}
+document.getElementById('setRandomTower').addEventListener('change', () => {
+    if (currentDeck.length === 8) renderTower();
+});
+document.getElementById('setThemeMode').addEventListener('change', updateThemeHint);
+document.getElementById('cardPoolMode').addEventListener('change', () => {
+    renderFilters();
+    updateCardPoolInfo();
+    renderManualCardSelect();
+});
+updateSpecialSlotsConstraints();
 
-    if (evos === "2") { heroOpt2.disabled = true; } 
-    else { heroOpt2.disabled = false; }
-
-    if (hero === "2") { evosOpt2.disabled = true; } 
-    else { evosOpt2.disabled = false; }
+function getCurrentCardPoolMode() {
+    const val = document.getElementById('cardPoolMode').value;
+    return cardPools[val] ? val : 'all';
 }
 
-document.getElementById('setEvos').addEventListener('change', updateSpecialSlotsConstraints);
-document.getElementById('setHeroism').addEventListener('change', updateSpecialSlotsConstraints);
-updateSpecialSlotsConstraints(); // Инициализация при загрузке
+function getCurrentCardPoolSet() {
+    return cardPools[getCurrentCardPoolMode()];
+}
+
+function isCardInCurrentPool(card) {
+    return getCurrentCardPoolSet().has(card.name);
+}
+
+function updateCardPoolInfo() {
+    const mode = getCurrentCardPoolMode();
+    const total = cards.length;
+    const poolSize = getCurrentCardPoolSet().size;
+    const labelByMode = { all: 'Все карты', retro: 'Ретро рояль', chaos: 'ХАОС' };
+    const label = labelByMode[mode] || 'Все карты';
+    document.getElementById('cardPoolInfo').textContent = `Активный кард-пул: ${label} (${poolSize}/${total})`;
+    const sideInfo = document.getElementById('selectedCardPoolInfo');
+    if (sideInfo) sideInfo.textContent = `Кард-пул: ${label}`;
+}
 
 function renderFilters() {
     const list = document.getElementById('cardsFilterList');
-    list.innerHTML = '';
-    [...cards].sort((a,b)=>a.ruName.localeCompare(b.ruName)).forEach(card => {
-        list.innerHTML += `<label class="card-checkbox"><input type="checkbox" ${card.included ? 'checked' : ''} onchange="toggleCard('${card.name}', this.checked)"><img src="${card.img}">${card.ruName}</label>`;
-    });
+    const pool = [...cards].filter(isCardInCurrentPool);
+    const markup = pool
+        .sort((a,b)=>a.ruName.localeCompare(b.ruName))
+        .map(card => `<label class="card-checkbox"><input type="checkbox" ${card.included ? 'checked' : ''} onchange="toggleCard('${card.name}', this.checked)"><img src="${card.img}" alt="${card.ruName}">${card.ruName}</label>`)
+        .join('');
+    list.innerHTML = markup;
 }
-renderFilters();
 
-function toggleCard(n, s) { let c = cards.find(x => x.name === n); if(c) c.included = s; }
-function selectAll(state) { cards.forEach(c => c.included = state); renderFilters(); }
+function toggleCard(n, s) {
+    let c = cards.find(x => x.name === n);
+    if(c) c.included = s;
+    renderManualCardSelect();
+}
+
+function selectAll(state) {
+    const allowedSet = getCurrentCardPoolSet();
+    cards.forEach(c => {
+        if (allowedSet.has(c.name)) c.included = state;
+    });
+    renderFilters();
+    renderManualCardSelect();
+}
+
 function toggleModal(s) { document.getElementById('filterModal').classList.toggle('active', s); }
+
+function getActiveCardPool() {
+    return cards.filter(c => c.included && isCardInCurrentPool(c));
+}
+
+function getThemeLetterValue() {
+    return String(document.getElementById('themeLetterInput').value || '').trim().toLowerCase();
+}
+
+function getRuFirstLetter(card) {
+    const letter = String(card.ruName || card.name || '').trim().toLowerCase();
+    return letter ? letter[0] : '';
+}
+
+function countByTag(deck, tag) {
+    return deck.filter(c => (c.meta?.tags || []).includes(tag)).length;
+}
+
+function deckMatchesTheme(deck, c) {
+    const mode = c.themeMode || 'any';
+    if (mode === 'any') return true;
+
+    if (mode === 'letter') {
+        if (!c.themeLetter) return false;
+        return deck.every(card => getRuFirstLetter(card) === c.themeLetter);
+    }
+    if (mode === 'girls') return countByTag(deck, 'female') >= 4;
+    if (mode === 'beards') return countByTag(deck, 'bearded') >= 3;
+    if (mode === 'goblins') return countByTag(deck, 'goblin') >= 4;
+    if (mode === 'skeletons') return countByTag(deck, 'skeleton') >= 4;
+    if (mode === 'dragons') return countByTag(deck, 'dragon') >= 3;
+    if (mode === 'air') return countByTag(deck, 'air') >= 4;
+    if (mode === 'buildings') return countByTag(deck, 'structure') >= 3;
+    if (mode === 'cycle') return countByTag(deck, 'cheap-cycle') >= 5;
+    if (mode === 'spells') return deck.filter(card => card.spell).length >= 3;
+    if (mode === 'melee') return countByTag(deck, 'melee') >= 4;
+    return true;
+}
+
+function updateThemeHint() {
+    const mode = document.getElementById('setThemeMode').value;
+    const hint = themeModeHints[mode] || themeModeHints.any;
+    document.getElementById('themeHint').textContent = hint;
+    const letterInput = document.getElementById('themeLetterInput');
+    letterInput.disabled = mode !== 'letter';
+    if (mode !== 'letter') letterInput.value = '';
+}
 
 function generateDeck(oneByOne) {
     if (isRouletteRunning) return;
@@ -622,6 +857,8 @@ function generateDeck(oneByOne) {
             wincons: document.getElementById('setWincons').value, 
             evos: document.getElementById('setEvos').value, 
             heroism: document.getElementById('setHeroism').value,
+            themeMode: document.getElementById('setThemeMode').value,
+            themeLetter: getThemeLetterValue(),
             minE: document.getElementById('minElixir').value ? parseFloat(document.getElementById('minElixir').value) : 0,
             maxE: document.getElementById('maxElixir').value ? parseFloat(document.getElementById('maxElixir').value) : 10,
             minToxicity: document.getElementById('minToxicity').value ? parseInt(document.getElementById('minToxicity').value) : 0,
@@ -631,6 +868,10 @@ function generateDeck(oneByOne) {
             minMadness: document.getElementById('minMadness').value ? parseInt(document.getElementById('minMadness').value) : 0,
             maxMadness: document.getElementById('maxMadness').value ? parseInt(document.getElementById('maxMadness').value) : 100
         };
+
+        if (constraints.themeMode === 'letter' && !constraints.themeLetter) {
+            return alert('Для режима «На букву» укажи букву.');
+        }
         
         if (constraints.minE > constraints.maxE ||
             constraints.minToxicity > constraints.maxToxicity ||
@@ -639,11 +880,18 @@ function generateDeck(oneByOne) {
             return alert('Проверь диапазоны: значение «От» не должно быть больше значения «До».');
         }
 
+        if (getActiveCardPool().length < 8) {
+            return alert('Недостаточно карт в активном пуле (фильтр/кард-пул). Нужно минимум 8.');
+        }
+
         let finalDeck = attemptGenerate(constraints);
         if (!finalDeck) return alert("Невозможно собрать колоду по заданным критериям! Ослабьте ограничения.");
         
         finalDeck.sort((a,b) => (a.isEvo ? -1 : b.isEvo ? 1 : a.isHeroism ? -1 : b.isHeroism ? 1 : 0));
         currentDeck = [...finalDeck];
+        resetReplacementHistory(false);
+        renderManualCardSelect();
+        updateManualInfo();
         
         document.getElementById('averageElixirDisplay').style.display = 'flex';
         document.getElementById('avgElixirValue').textContent = calcAvgElixir(finalDeck);
@@ -667,7 +915,7 @@ function generateDeck(oneByOne) {
 }
 
 function attemptGenerate(c) {
-    let pool = cards.filter(x => x.included);
+    let pool = getActiveCardPool();
     if (pool.length < 8) return null;
 
     for (let i = 0; i < 5000; i++) {
@@ -705,20 +953,20 @@ function attemptGenerate(c) {
             heroTarget = specificHero;
         } else if (specificEvos !== null) {
             evoTarget = specificEvos;
-            let maxH = Math.min(2, 3 - evoTarget);
+            let maxH = Math.min(2, 4 - evoTarget);
             heroTarget = Math.floor(Math.random() * (Math.min(maxH, heroCandidates.length) + 1));
         } else if (specificHero !== null) {
             heroTarget = specificHero;
-            let maxE = Math.min(2, 3 - heroTarget);
+            let maxE = Math.min(2, 4 - heroTarget);
             evoTarget = Math.floor(Math.random() * (Math.min(maxE, evoCandidates.length) + 1));
         } else {
-            // Оба Any - генерируем валидную пару (сумма <= 3, каждый <= 2)
+            // Оба Any - генерируем валидную пару (сумма <= 4, каждый <= 2)
             let validCombos = [];
             let maxE = Math.min(2, evoCandidates.length);
             let maxH = Math.min(2, heroCandidates.length);
             for(let e=0; e<=maxE; e++) {
                 for(let h=0; h<=maxH; h++) {
-                    if (e+h <= 3) validCombos.push({e,h});
+                    if (e+h <= 4) validCombos.push({e,h});
                 }
             }
             if(validCombos.length === 0) continue;
@@ -727,7 +975,7 @@ function attemptGenerate(c) {
             heroTarget = pick.h;
         }
 
-        if (evoTarget + heroTarget > 3) continue; // Защита
+        if (evoTarget + heroTarget > 4) continue; // Защита
         if (evoCandidates.length < evoTarget) continue;
         if (heroCandidates.length < heroTarget) continue;
 
@@ -758,31 +1006,61 @@ function attemptGenerate(c) {
 
         const metrics = analyzeDeckMetrics(baseDeck);
         if (!metricsMatchFilters(metrics, c)) continue;
+        if (!deckMatchesTheme(baseDeck, c)) continue;
 
         return baseDeck;
     }
     return null;
 }
 
-function renderDeck(d) { document.getElementById('deckGrid').innerHTML = ''; d.forEach(c => addCardToDOM(c, document.getElementById('deckGrid'))); }
+function getCardClasses(c) {
+    let cls = ['card-slot', 'filled'];
+    if (c.isEvo) cls.push('evo');
+    if (c.isHeroism) cls.push('heroism');
+    return cls.join(' ');
+}
+
+function getCardInnerMarkup(c) {
+    let badges = '';
+    if (c.isEvo) badges += `<div class="badge badge-evo">ЭВО</div>`;
+    if (c.isHeroism) badges += `<div class="badge badge-heroism">ГЕРОИЗМ</div>`;
+    badges += `<div class="elixir-drop"><div class="elixir-text">${c.elixir}</div></div>`;
+    return `${badges}<img src="${c.img}" alt="${c.ruName || c.name}">`;
+}
+
+function getCardSlotMarkup(c, idx) {
+    return `<div class="${getCardClasses(c)}" data-slot-index="${idx}">${getCardInnerMarkup(c)}</div>`;
+}
+
+function renderDeck(d) {
+    const slots = [];
+    for (let i = 0; i < 8; i++) {
+        if (d[i]) slots.push(getCardSlotMarkup(d[i], i));
+        else slots.push(`<div class="card-slot" data-slot-index="${i}"></div>`);
+    }
+    document.getElementById('deckGrid').innerHTML = slots.join('');
+    updateSlotSelector();
+    updateManualInfo();
+}
 
 function renderSecrets() {
     const area = document.getElementById('secretsArea');
-    area.innerHTML = '';
     const names = currentDeck.map(c => c.name);
+    const blocks = [];
 
     if (names.includes("Elite Barbarians")) {
-        area.innerHTML += `<div class="card-slot filled secret-unit" style="border-color:#ff4747;"><img src="https://tlgrm.ru/_/stickers/1b5/0ab/1b50abf8-8451-40ca-be37-ffd7aa74ec4d/6.webp"><div class="secret-text">Элитка?<br>Ярость взял?</div></div>`;
+        blocks.push(`<div class="card-slot filled secret-unit" style="border-color:#ff4747;"><img src="https://tlgrm.ru/_/stickers/1b5/0ab/1b50abf8-8451-40ca-be37-ffd7aa74ec4d/6.webp" alt="Элитка? Ярость взял?"><div class="secret-text">Элитка?<br>Ярость взял?</div></div>`);
     }
     if (names.includes("Mega Knight")) {
-        area.innerHTML += `<div class="card-slot filled meme secret-unit" style="border-color:#47a0ff;"><img src="https://media.tenor.com/2U5DK60pqsoAAAAM/the-boys-homelander.gif"><div class="secret-text">Два отца?</div></div>`;
+        blocks.push(`<div class="card-slot filled meme secret-unit" style="border-color:#47a0ff;"><img src="https://media.tenor.com/2U5DK60pqsoAAAAM/the-boys-homelander.gif" alt="Два отца?"><div class="secret-text">Два отца?</div></div>`);
     }
     if (names.includes("Mega Knight") && names.includes("Battle Ram") && names.includes("Wall Breakers")) {
-        area.innerHTML += `<div class="card-slot filled meme secret-unit" style="border-color:#50ff47;"><img src="https://media.tenor.com/c-fmfYiYatEAAAAM/ronaldo.gif"><div class="secret-text">Моя тема</div></div>`;
+        blocks.push(`<div class="card-slot filled meme secret-unit" style="border-color:#50ff47;"><img src="https://media.tenor.com/c-fmfYiYatEAAAAM/ronaldo.gif" alt="Моя тема"><div class="secret-text">Моя тема</div></div>`);
     }
     if (names.includes("Golem")) {
-        area.innerHTML += `<div class="card-slot filled meme secret-unit" style="border-color:#7f78ff;"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIUZZAuoYne8cXb1dJIXTEtdXBAN2fSROaTw&s"><div class="secret-text">Тёмная ночь..</div></div>`;
+        blocks.push(`<div class="card-slot filled meme secret-unit" style="border-color:#7f78ff;"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIUZZAuoYne8cXb1dJIXTEtdXBAN2fSROaTw&s" alt="Тёмная ночь"><div class="secret-text">Тёмная ночь..</div></div>`);
     }
+    area.innerHTML = blocks.join('');
 }
 
 function renderTower() {
@@ -800,23 +1078,306 @@ function renderTower() {
 }
 
 function clearDeck(r=true) { 
-    document.getElementById('deckGrid').innerHTML = ''; 
-    for(let i=0; i<8; i++) document.getElementById('deckGrid').innerHTML += `<div class="card-slot"></div>`;
+    renderDeck([]);
     document.getElementById('towerSlot').style.display='none'; 
     document.getElementById('secretsArea').innerHTML=''; 
     document.getElementById('rouletteContainer').style.display='none'; 
     document.getElementById('averageElixirDisplay').style.display='none';
     document.getElementById('deckStatsPanel').style.display='none';
-    currentTower = null;
-    if(r) { targetDeckQueue=[]; currentDeck=[]; setDeckName('Собери колоду, чтобы получить название'); } 
+    if(r) {
+        targetDeckQueue = [];
+        currentDeck = [];
+        setDeckName('Собери колоду, чтобы получить название');
+        resetReplacementHistory(false);
+    }
+    updateSlotSelector();
+    renderManualCardSelect();
+    updateManualInfo();
 }
 
-function addCardToDOM(c, g) {
-    let cls = ['card-slot','filled'], b = '';
-    if(c.isEvo) { cls.push('evo'); b += `<div class="badge badge-evo">ЭВО</div>`; }
-    if(c.isHeroism) { cls.push('heroism'); b += `<div class="badge badge-heroism">ГЕРОИЗМ</div>`; }
-    b += `<div class="elixir-drop"><div class="elixir-text">${c.elixir}</div></div>`;
-    g.innerHTML += `<div class="${cls.join(' ')}">${b}<img src="${c.img}"></div>`;
+function updateSlotSelector() {
+    if (currentDeck.length !== 8) selectedDeckSlotIndex = null;
+    if (selectedDeckSlotIndex !== null && (selectedDeckSlotIndex < 0 || selectedDeckSlotIndex > 7)) selectedDeckSlotIndex = null;
+    applySelectedDeckSlotUi();
+}
+
+function applySelectedDeckSlotUi() {
+    const slots = document.querySelectorAll('#deckGrid .card-slot');
+    slots.forEach(slot => {
+        const idx = parseInt(slot.getAttribute('data-slot-index'), 10);
+        slot.classList.toggle('selected-replace', selectedDeckSlotIndex !== null && idx === selectedDeckSlotIndex);
+    });
+    const info = document.getElementById('replaceSelectedInfo');
+    if (!info) return;
+    if (selectedDeckSlotIndex === null || currentDeck.length !== 8) {
+        info.textContent = 'Выбран слот: —';
+        return;
+    }
+    const card = currentDeck[selectedDeckSlotIndex];
+    info.textContent = `Выбран слот: ${selectedDeckSlotIndex + 1} (${card?.ruName || 'пусто'})`;
+}
+
+function handleDeckSlotPick(event) {
+    if (currentDeck.length !== 8) return;
+    const slot = event.target.closest('.card-slot');
+    if (!slot) return;
+    const idx = parseInt(slot.getAttribute('data-slot-index'), 10);
+    if (!Number.isInteger(idx) || idx < 0 || idx > 7) return;
+    selectedDeckSlotIndex = idx;
+    applySelectedDeckSlotUi();
+}
+
+function updateManualInfo() {
+    const info = document.getElementById('manualInfo');
+    if (!info) return;
+    info.textContent = `Сейчас в колоде: ${currentDeck.length}/8`;
+}
+
+function updateReplacementInfo() {
+    const info = document.getElementById('replaceInfo');
+    if (!info) return;
+    const mode = document.getElementById('replaceMode').value;
+    if (mode === 'unique') {
+        info.textContent = `Без повторов (только случайная замена): ${replacedSlotHistory.size}/8`;
+    } else {
+        info.textContent = 'Режим с повторами: можно менять один и тот же слот снова.';
+    }
+}
+
+function resetReplacementHistory(showAlert = false) {
+    replacedSlotHistory.clear();
+    selectedDeckSlotIndex = null;
+    updateReplacementInfo();
+    applySelectedDeckSlotUi();
+    if (showAlert) alert('История замен сброшена.');
+}
+
+function renderManualCardSelect() {
+    const select = document.getElementById('manualCardSelect');
+    if (!select) return;
+    const pool = getActiveCardPool().sort((a, b) => a.ruName.localeCompare(b.ruName));
+    if (pool.length === 0) {
+        select.innerHTML = '<option value="">Нет доступных карт</option>';
+        select.disabled = true;
+        return;
+    }
+    select.disabled = false;
+    select.innerHTML = pool.map(card => `<option value="${card.name}">${card.ruName} (${card.elixir})</option>`).join('');
+}
+
+function applyCurrentDeckToUi({ customName = '' } = {}) {
+    targetDeckQueue = [];
+    document.getElementById('rouletteContainer').style.display = 'none';
+    renderDeck(currentDeck);
+    updateSlotSelector();
+    updateManualInfo();
+    renderManualCardSelect();
+
+    if (currentDeck.length === 8) {
+        document.getElementById('averageElixirDisplay').style.display = 'flex';
+        document.getElementById('avgElixirValue').textContent = calcAvgElixir(currentDeck);
+        renderTower();
+        updateDeckStats(currentDeck);
+        if (customName) setDeckName(customName);
+        else generateDeckName();
+    } else {
+        document.getElementById('averageElixirDisplay').style.display = 'none';
+        document.getElementById('deckStatsPanel').style.display = 'none';
+        document.getElementById('towerSlot').style.display = 'none';
+        document.getElementById('secretsArea').innerHTML = '';
+        setDeckName(customName || `Ручная сборка: ${currentDeck.length}/8`);
+    }
+}
+
+function addManualCardToDeck() {
+    if (isRouletteRunning) return alert('Дождись окончания анимации рулетки.');
+    const select = document.getElementById('manualCardSelect');
+    const name = select.value;
+    if (!name) return alert('Выбери карту для добавления.');
+    if (currentDeck.length >= 8) return alert('В колоде уже 8 карт.');
+    if (currentDeck.some(c => c.name === name)) return alert('Эта карта уже есть в колоде.');
+    const card = getCardByName(name);
+    if (!card) return alert('Карта не найдена.');
+
+    currentDeck.push({ ...card, isEvo: false, isHeroism: false });
+    resetReplacementHistory(false);
+    applyCurrentDeckToUi();
+}
+
+function removeLastManualCard() {
+    if (isRouletteRunning) return alert('Дождись окончания анимации рулетки.');
+    if (currentDeck.length === 0) return;
+    currentDeck.pop();
+    resetReplacementHistory(false);
+    applyCurrentDeckToUi();
+}
+
+function fillDeckRandomly() {
+    if (isRouletteRunning) return alert('Дождись окончания анимации рулетки.');
+    if (currentDeck.length >= 8) return alert('Колода уже полная.');
+    const need = 8 - currentDeck.length;
+    const used = new Set(currentDeck.map(c => c.name));
+    const pool = getActiveCardPool().filter(c => !used.has(c.name));
+    if (pool.length < need) return alert('Недостаточно доступных уникальных карт, чтобы добить колоду.');
+    const additions = shuffle(pool).slice(0, need).map(c => ({ ...c, isEvo: false, isHeroism: false }));
+    currentDeck = currentDeck.concat(additions);
+    resetReplacementHistory(false);
+    applyCurrentDeckToUi();
+}
+
+function getReplacementPoolForIndex(index) {
+    const used = new Set(currentDeck.map((card, i) => i === index ? null : card.name).filter(Boolean));
+    return getActiveCardPool().filter(c => !used.has(c.name));
+}
+
+function replaceCardAtIndex(index) {
+    if (currentDeck.length !== 8) {
+        alert('Сначала собери полную колоду.');
+        return false;
+    }
+    const pool = getReplacementPoolForIndex(index);
+    if (!pool.length) {
+        alert('Не нашлось карты для замены (проверь фильтры и пул испытаний).');
+        return false;
+    }
+    const oldCard = currentDeck[index];
+    const newBase = pool[Math.floor(Math.random() * pool.length)];
+    const nextCard = {
+        ...newBase,
+        isEvo: oldCard.isEvo && newBase.evolution,
+        isHeroism: oldCard.isHeroism && newBase.heroism
+    };
+    if (nextCard.isEvo && nextCard.isHeroism) nextCard.isHeroism = false;
+    currentDeck[index] = nextCard;
+    applyCurrentDeckToUi();
+    return true;
+}
+
+function replaceRandomCardInDeck() {
+    if (isRouletteRunning) return alert('Дождись окончания анимации рулетки.');
+    if (currentDeck.length !== 8) return alert('Сначала собери полную колоду.');
+    const mode = document.getElementById('replaceMode').value;
+    let candidates = [0,1,2,3,4,5,6,7];
+    if (mode === 'unique') candidates = candidates.filter(idx => !replacedSlotHistory.has(idx));
+    if (candidates.length === 0) return alert('Все 8 слотов уже были заменены в режиме без повторов.');
+    const idx = candidates[Math.floor(Math.random() * candidates.length)];
+    if (replaceCardAtIndex(idx) && mode === 'unique') replacedSlotHistory.add(idx);
+    updateReplacementInfo();
+}
+
+function replaceSelectedCardInDeck() {
+    if (isRouletteRunning) return alert('Дождись окончания анимации рулетки.');
+    if (currentDeck.length !== 8) return alert('Сначала собери полную колоду.');
+    const idx = selectedDeckSlotIndex;
+    if (!Number.isInteger(idx) || idx < 0 || idx > 7) return alert('Сначала кликни по карте в колоде, которую хочешь заменить.');
+    replaceCardAtIndex(idx);
+    updateReplacementInfo();
+}
+
+function normalizePlayerTag(raw) {
+    return String(raw || '')
+        .toUpperCase()
+        .replace(/^#/, '')
+        .replace(/[^0289PYLQGRJCUV]/g, '');
+}
+
+function extractOpponentDeckNames(battle) {
+    const opponents = Array.isArray(battle?.opponent) ? battle.opponent : [];
+    for (const opp of opponents) {
+        if (Array.isArray(opp.deck) && opp.deck.length) return opp.deck.map(card => card.name).filter(Boolean);
+        if (Array.isArray(opp.cards) && opp.cards.length) return opp.cards.map(card => card.name).filter(Boolean);
+    }
+    if (Array.isArray(battle?.opponentCards)) {
+        return battle.opponentCards.map(card => typeof card === 'string' ? card : card.name).filter(Boolean);
+    }
+    return [];
+}
+
+async function fetchBattleLogWithFallback(tag) {
+    const endpoints = [
+        {
+            label: 'RoyaleAPI proxy',
+            url: `https://proxy.royaleapi.dev/v1/players/%23${tag}/battlelog`,
+            headers: {}
+        }
+    ];
+
+    let lastReason = 'Не удалось получить лог боёв.';
+
+    for (const endpoint of endpoints) {
+        try {
+            const res = await fetch(endpoint.url, { headers: endpoint.headers });
+            if (!res.ok) {
+                lastReason = `${endpoint.label}: HTTP ${res.status}`;
+                continue;
+            }
+            const data = await res.json();
+            if (Array.isArray(data)) return data;
+            if (Array.isArray(data?.items)) return data.items;
+            lastReason = `${endpoint.label}: неожиданный формат ответа`;
+        } catch (e) {
+            lastReason = `${endpoint.label}: ${e.message || 'ошибка сети'}`;
+        }
+    }
+    throw new Error(lastReason);
+}
+
+function buildBattlelogErrorMessage(tag, rawMessage) {
+    const msg = String(rawMessage || '');
+    const isNetwork = /Failed to fetch|NetworkError|Load failed|TypeError/i.test(msg);
+    if (!isNetwork) return msg || 'Не удалось получить лог боёв.';
+
+    const quickTestUrl = `https://proxy.royaleapi.dev/v1/players/%23${tag}/battlelog`;
+    return [
+        'Не удалось подключиться к API (сетевая/CORS ошибка).',
+        'Попробуй открыть генератор через локальный сервер, а не как file://.',
+        'Команда: python3 -m http.server 8000',
+        'Затем открой: http://localhost:8000/ClashRoyaleGenerator3.0.html',
+        `Проверка API в браузере: ${quickTestUrl}`
+    ].join('\n');
+}
+
+async function loadLastOpponentDeck() {
+    if (isRouletteRunning) return alert('Дождись окончания анимации рулетки.');
+    const tagRaw = document.getElementById('playerTagInput').value;
+    const tag = normalizePlayerTag(tagRaw);
+    if (!tag) return alert('Укажи свой тег/ID игрока (например #2JGYG2YY).');
+
+    setDeckName('Загружаю колоду соперника...');
+    try {
+        const battles = await fetchBattleLogWithFallback(tag);
+        if (!battles.length) throw new Error('Лог боёв пуст.');
+
+        let opponentDeckNames = [];
+        for (const battle of battles) {
+            const names = extractOpponentDeckNames(battle);
+            if (names.length >= 8) {
+                opponentDeckNames = names.slice(0, 8);
+                break;
+            }
+        }
+        if (opponentDeckNames.length < 8) throw new Error('В последних боях не нашлась колода соперника 1x1.');
+
+        const missing = [];
+        const importedDeck = opponentDeckNames.map(name => {
+            const found = getCardByName(name);
+            if (!found) missing.push(name);
+            return found;
+        }).filter(Boolean);
+
+        if (importedDeck.length < 8) {
+            throw new Error(`В базе не найдены карты: ${missing.slice(0, 3).join(', ')}${missing.length > 3 ? '...' : ''}`);
+        }
+
+        currentDeck = importedDeck.slice(0, 8).map(card => ({ ...card, isEvo: false, isHeroism: false }));
+        document.getElementById('playerTagInput').value = `#${tag}`;
+        resetReplacementHistory(false);
+        applyCurrentDeckToUi();
+    } catch (e) {
+        setDeckName('Не удалось загрузить колоду соперника');
+        const friendly = buildBattlelogErrorMessage(tag, e?.message);
+        alert(`Ошибка загрузки:\n${friendly}`);
+    }
 }
 
 function playRoulette(t, idx) {
@@ -824,7 +1385,7 @@ function playRoulette(t, idx) {
     const cont = document.getElementById('rouletteContainer'), track = document.getElementById('rouletteTrack');
     cont.style.display = 'block';
     
-    let visualPool = cards.filter(x => x.included);
+    let visualPool = getActiveCardPool();
     if (visualPool.length === 0) visualPool = cards;
     
     let pool = []; 
@@ -833,7 +1394,7 @@ function playRoulette(t, idx) {
     for(let i=0;i<10;i++) pool.push(visualPool[Math.floor(Math.random()*visualPool.length)]);
     
     track.style.transition = 'none'; track.style.transform = 'translateX(0px)';
-    track.innerHTML = pool.map(x=>`<img src="${x.img}">`).join('');
+    track.innerHTML = pool.map(x=>`<img src="${x.img}" alt="${x.ruName || x.name}">`).join('');
     
     setTimeout(() => {
         track.style.transition = 'transform 3s cubic-bezier(0.1, 0.8, 0.2, 1)';
@@ -841,15 +1402,16 @@ function playRoulette(t, idx) {
         setTimeout(() => {
             let slots = document.getElementById('deckGrid').querySelectorAll('.card-slot');
             if(slots[idx]) {
-                slots[idx].classList.add('filled');
-                if(t.isEvo) { slots[idx].classList.add('evo'); slots[idx].innerHTML += `<div class="badge badge-evo">ЭВО</div>`; }
-                if(t.isHeroism) { slots[idx].classList.add('heroism'); slots[idx].innerHTML += `<div class="badge badge-heroism">ГЕРОИЗМ</div>`; }
-                slots[idx].innerHTML += `<div class="elixir-drop"><div class="elixir-text">${t.elixir}</div></div>`;
-                slots[idx].innerHTML += `<img src="${t.img}">`;
+                slots[idx].className = getCardClasses(t);
+                slots[idx].innerHTML = getCardInnerMarkup(t);
             }
             isRouletteRunning = false;
+            updateSlotSelector();
+            updateManualInfo();
             
             if(targetDeckQueue.length === 0) {
+                document.getElementById('averageElixirDisplay').style.display = 'flex';
+                document.getElementById('avgElixirValue').textContent = calcAvgElixir(currentDeck);
                 renderTower(); 
                 updateDeckStats(currentDeck);
                 generateDeckName(); 
@@ -858,6 +1420,16 @@ function playRoulette(t, idx) {
         }, 3000);
     }, 50);
 }
+
+document.getElementById('replaceMode').addEventListener('change', updateReplacementInfo);
+document.getElementById('deckGrid').addEventListener('click', handleDeckSlotPick);
+
+renderFilters();
+updateCardPoolInfo();
+updateThemeHint();
+updateReplacementInfo();
+renderManualCardSelect();
+clearDeck();
 </script>
 </body>
 </html>
