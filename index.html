@@ -1328,13 +1328,18 @@ function buildBattlelogErrorMessage(tag, rawMessage) {
     if (!isNetwork) return msg || 'Не удалось получить лог боёв.';
 
     const quickTestUrl = `https://proxy.royaleapi.dev/v1/players/%23${tag}/battlelog`;
-    return [
-        'Не удалось подключиться к API (сетевая/CORS ошибка).',
-        'Попробуй открыть генератор через локальный сервер, а не как file://.',
-        'Команда: python3 -m http.server 8000',
-        'Затем открой: http://localhost:8000/ClashRoyaleGenerator3.0.html',
-        `Проверка API в браузере: ${quickTestUrl}`
-    ].join('\n');
+    const onGithubPages = /(^|\\.)github\\.io$/i.test(window.location.hostname);
+    const lines = ['Не удалось подключиться к API (сетевая/CORS ошибка).'];
+    if (onGithubPages) {
+        lines.push('Ты запущен на GitHub Pages: для этого API часто блокируется CORS.');
+        lines.push('Решение: нужен свой прокси/бекенд (например Cloudflare Worker) и запрос через него.');
+    } else {
+        lines.push('Попробуй открыть генератор через локальный сервер, а не как file://.');
+        lines.push('Команда: python3 -m http.server 8000');
+        lines.push('Затем открой: http://localhost:8000/ClashRoyaleGenerator3.0.html');
+    }
+    lines.push(`Проверка API в браузере: ${quickTestUrl}`);
+    return lines.join('\n');
 }
 
 async function loadLastOpponentDeck() {
