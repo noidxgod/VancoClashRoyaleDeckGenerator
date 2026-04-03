@@ -103,6 +103,7 @@
         .cards-list { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .card-checkbox { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
         .card-checkbox img { width: 30px; height: 35px; }
+        .app-version { position: fixed; right: 12px; bottom: 10px; font-size: 11px; color: #b8bccf; background: rgba(20, 21, 30, 0.8); border: 1px solid #3f4152; border-radius: 999px; padding: 4px 10px; z-index: 30; }
 
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-thumb { background: #555; border-radius: 4px; }
@@ -237,6 +238,8 @@
     </div>
 </div>
 
+<div id="appVersionBadge" class="app-version">v3.0</div>
+
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -273,6 +276,7 @@ let cards = rawCards.map(c => ({
     included: true
 }));
 
+const APP_VERSION = '3.0';
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
@@ -1434,6 +1438,7 @@ updateCardPoolInfo();
 updateThemeHint();
 updateReplacementInfo();
 renderManualCardSelect();
+document.getElementById('appVersionBadge').textContent = `v${APP_VERSION}`;
 clearDeck();
 </script>
 </body>
