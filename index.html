@@ -131,12 +131,40 @@
         </div>
 
         <label class="checkbox-group" style="margin-top: 5px;"> <input type="checkbox" id="setRandomTower" checked> Рандомизировать башню? </label>
-        
-        <div style="display: flex; gap: 10px; margin-top: 10px;">
-            <button class="btn-blue" style="flex:1" onclick="generateDeck(false)">Собрать сразу</button>
-            <button class="btn-blue" style="flex:1" onclick="generateDeck(true)">По одной карте</button>
+
+        <div class="tool-panel">
+            <div class="tool-title">Тематические колоды</div>
+            <div class="form-group">
+                <label>Тематика:</label>
+                <select id="setThemeMode" style="width:160px;">
+                    <option value="any">Без тематики</option>
+                    <option value="girls">С девушками</option>
+                    <option value="beards">С бородатыми</option>
+                    <option value="goblins">Гоблин-пачка</option>
+                    <option value="skeletons">Скелет-армия</option>
+                    <option value="dragons">Драконья тема</option>
+                    <option value="air">Воздушная</option>
+                    <option value="buildings">Через здания</option>
+                    <option value="cycle">Лёгкий цикл</option>
+                    <option value="spells">Много спеллов</option>
+                    <option value="melee">Ближний бой</option>
+                    <option value="ranged">Дальники/саппорт</option>
+                    <option value="champions">С чемпионами</option>
+                    <option value="heavy">Тяжёлая колода</option>
+                    <option value="double-wincon">Двойной винкон</option>
+                    <option value="evo-capable">Эво-потенциал</option>
+                    <option value="heroism-capable">Героизм-потенциал</option>
+                    <option value="no-spells">Без заклинаний</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>С буквы:</label>
+                <select id="themeLetterSelect" style="width:160px;">
+                    <option value="">Без буквы</option>
+                </select>
+            </div>
+            <div class="tiny-note" id="themeHint">Тематика и буква работают как дополнительные фильтры к генерации.</div>
         </div>
-        <div style="display:flex; gap:10px;"><button class="btn-red" style="flex:1; margin-top:0;" onclick="clearDeck()">Очистить колоду</button></div>
 
         <div class="form-group" style="margin-top: 5px; align-items:flex-start;">
             <label>Токсичность:</label>
@@ -159,6 +187,12 @@
                 <input type="number" id="maxMadness" class="elixir-input" min="0" max="100" placeholder="До">
             </div>
         </div>
+        
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button class="btn-blue" style="flex:1" onclick="generateDeck(false)">Собрать сразу</button>
+            <button class="btn-blue" style="flex:1" onclick="generateDeck(true)">По одной карте</button>
+        </div>
+        <div style="display:flex; gap:10px;"><button class="btn-red" style="flex:1; margin-top:0;" onclick="clearDeck()">Очистить колоду</button></div>
     </div>
 
     <div class="main-area">
@@ -216,13 +250,6 @@
         </div>
 
         <div class="tool-panel">
-            <div class="tool-title">Тематические колоды</div>
-            <div class="form-group"> <label>Тема:</label> <select id="setThemeMode" style="width:160px;"> <option value="any">Классика</option> <option value="letter">На букву</option> <option value="girls">С девушками</option> <option value="beards">С бородатыми</option> <option value="goblins">Гоблин-пачка</option> <option value="skeletons">Скелет-армия</option> <option value="dragons">Драконья тема</option> <option value="air">Воздушная</option> <option value="buildings">Через здания</option> <option value="cycle">Лёгкий цикл</option> <option value="spells">Много спеллов</option> <option value="melee">Ближний бой</option> </select> </div>
-            <input type="text" id="themeLetterInput" class="text-input" maxlength="1" placeholder="Буква для режима «На букву»">
-            <div class="tiny-note" id="themeHint">В каждой карте есть подробные теги; тема добавляет доп. условие к генерации.</div>
-        </div>
-
-        <div class="tool-panel">
             <div class="tool-title">Ручная сборка</div>
             <select id="manualCardSelect" style="width:100%;"></select>
             <div class="inline-row">
@@ -238,7 +265,7 @@
     </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v3.4</div>
+<div id="appVersionBadge" class="app-version">v3.5</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -276,7 +303,7 @@ let cards = rawCards.map(c => ({
     included: true
 }));
 
-const APP_VERSION = '3.4';
+const APP_VERSION = '3.5';
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
@@ -462,8 +489,7 @@ cards.forEach(card => {
 });
 
 const themeModeHints = {
-    any: 'Обычная генерация без доп. темы.',
-    letter: 'Все 8 карт начинаются с указанной буквы.',
+    any: 'Обычная генерация без доп. тематики.',
     girls: 'Минимум 4 карты с тегом female.',
     beards: 'Минимум 3 карты с тегом bearded.',
     goblins: 'Минимум 4 карты с тегом goblin.',
@@ -473,7 +499,14 @@ const themeModeHints = {
     buildings: 'Минимум 3 здания.',
     cycle: 'Минимум 5 дешёвых карт (1-3 эликсира).',
     spells: 'Минимум 3 заклинания.',
-    melee: 'Минимум 4 карты ближнего боя.'
+    melee: 'Минимум 4 карты ближнего боя.',
+    ranged: 'Минимум 4 карты дальнего боя/саппорта.',
+    champions: 'Минимум 2 чемпиона.',
+    heavy: 'Минимум 4 тяжёлых карты (6+ эликсира).',
+    'double-wincon': 'Минимум 2 винкона.',
+    'evo-capable': 'Минимум 4 карты с возможной эволюцией.',
+    'heroism-capable': 'Минимум 3 карты с возможным героизмом.',
+    'no-spells': 'Ровно 0 заклинаний в колоде.'
 };
 
 
@@ -820,10 +853,13 @@ document.getElementById('setRandomTower').addEventListener('change', () => {
     if (currentDeck.length === 8) renderTower();
 });
 document.getElementById('setThemeMode').addEventListener('change', updateThemeHint);
+document.getElementById('themeLetterSelect').addEventListener('change', updateThemeHint);
 document.getElementById('cardPoolMode').addEventListener('change', () => {
     renderFilters();
     updateCardPoolInfo();
     renderManualCardSelect();
+    updateThemeLetterOptions();
+    updateThemeHint();
 });
 updateSpecialSlotsConstraints();
 
@@ -865,6 +901,8 @@ function toggleCard(n, s) {
     let c = cards.find(x => x.name === n);
     if(c) c.included = s;
     renderManualCardSelect();
+    updateThemeLetterOptions();
+    updateThemeHint();
 }
 
 function selectAll(state) {
@@ -874,6 +912,8 @@ function selectAll(state) {
     });
     renderFilters();
     renderManualCardSelect();
+    updateThemeLetterOptions();
+    updateThemeHint();
 }
 
 function toggleModal(s) { document.getElementById('filterModal').classList.toggle('active', s); }
@@ -883,12 +923,42 @@ function getActiveCardPool() {
 }
 
 function getThemeLetterValue() {
-    return String(document.getElementById('themeLetterInput').value || '').trim().toLowerCase();
+    const el = document.getElementById('themeLetterSelect');
+    return String(el?.value || '').trim().toLowerCase();
 }
 
 function getRuFirstLetter(card) {
     const letter = String(card.ruName || card.name || '').trim().toLowerCase();
     return letter ? letter[0] : '';
+}
+
+function getAvailableThemeLetters() {
+    const counts = new Map();
+    for (const card of getActiveCardPool()) {
+        const letter = getRuFirstLetter(card);
+        if (!letter) continue;
+        counts.set(letter, (counts.get(letter) || 0) + 1);
+    }
+    return [...counts.entries()]
+        .filter(([, count]) => count >= 8)
+        .map(([letter]) => letter)
+        .sort((a, b) => a.localeCompare(b, 'ru'));
+}
+
+function updateThemeLetterOptions() {
+    const select = document.getElementById('themeLetterSelect');
+    if (!select) return;
+    const prev = String(select.value || '');
+    const letters = getAvailableThemeLetters();
+
+    const options = ['<option value="">Без буквы</option>'];
+    for (const letter of letters) {
+        options.push(`<option value="${letter}">${letter.toUpperCase()}</option>`);
+    }
+    select.innerHTML = options.join('');
+
+    if (prev && letters.includes(prev)) select.value = prev;
+    else select.value = '';
 }
 
 function countByTag(deck, tag) {
@@ -897,12 +967,10 @@ function countByTag(deck, tag) {
 
 function deckMatchesTheme(deck, c) {
     const mode = c.themeMode || 'any';
-    if (mode === 'any') return true;
 
-    if (mode === 'letter') {
-        if (!c.themeLetter) return false;
-        return deck.every(card => getRuFirstLetter(card) === c.themeLetter);
-    }
+    if (c.themeLetter && !deck.every(card => getRuFirstLetter(card) === c.themeLetter)) return false;
+
+    if (mode === 'any') return true;
     if (mode === 'girls') return countByTag(deck, 'female') >= 4;
     if (mode === 'beards') return countByTag(deck, 'bearded') >= 3;
     if (mode === 'goblins') return countByTag(deck, 'goblin') >= 4;
@@ -913,16 +981,24 @@ function deckMatchesTheme(deck, c) {
     if (mode === 'cycle') return countByTag(deck, 'cheap-cycle') >= 5;
     if (mode === 'spells') return deck.filter(card => card.spell).length >= 3;
     if (mode === 'melee') return countByTag(deck, 'melee') >= 4;
-    return true;
+    if (mode === 'ranged') return countByTag(deck, 'ranged-or-support') >= 4;
+    if (mode === 'champions') return countByTag(deck, 'champion') >= 2;
+    if (mode === 'heavy') return countByTag(deck, 'heavy') >= 4;
+    if (mode === 'double-wincon') return deck.filter(card => card.winCondition === true || card.winCondition === 'sometimes').length >= 2;
+    if (mode === 'evo-capable') return countByTag(deck, 'evo-capable') >= 4;
+    if (mode === 'heroism-capable') return countByTag(deck, 'heroism-capable') >= 3;
+    if (mode === 'no-spells') return deck.filter(card => card.spell).length === 0;
+    return false;
 }
 
 function updateThemeHint() {
     const mode = document.getElementById('setThemeMode').value;
     const hint = themeModeHints[mode] || themeModeHints.any;
-    document.getElementById('themeHint').textContent = hint;
-    const letterInput = document.getElementById('themeLetterInput');
-    letterInput.disabled = mode !== 'letter';
-    if (mode !== 'letter') letterInput.value = '';
+    const letters = getAvailableThemeLetters();
+    const letter = getThemeLetterValue();
+    const letterPart = letter ? ` + все 8 карт на букву «${letter.toUpperCase()}».` : '';
+    const extra = letters.length ? '' : ' Сейчас нет доступных букв для 8-карточной колоды.';
+    document.getElementById('themeHint').textContent = `${hint}${letterPart}${extra}`;
 }
 
 function generateDeck(oneByOne) {
@@ -945,10 +1021,6 @@ function generateDeck(oneByOne) {
             maxMadness: document.getElementById('maxMadness').value ? parseInt(document.getElementById('maxMadness').value) : 100
         };
 
-        if (constraints.themeMode === 'letter' && !constraints.themeLetter) {
-            return alert('Для режима «На букву» укажи букву.');
-        }
-        
         if (constraints.minE > constraints.maxE ||
             constraints.minToxicity > constraints.maxToxicity ||
             constraints.minShame > constraints.maxShame ||
@@ -1734,6 +1806,7 @@ document.getElementById('deckGrid').addEventListener('click', handleDeckSlotPick
 
 renderFilters();
 updateCardPoolInfo();
+updateThemeLetterOptions();
 updateThemeHint();
 updateReplacementInfo();
 renderManualCardSelect();
