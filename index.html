@@ -23,13 +23,14 @@
 
         .container { display: flex; gap: 20px; background-color: #22232e; padding: 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 1450px; width: 100%; }
 
-        .sidebar { background-color: var(--bg-panel); padding: 20px; border-radius: 10px; width: 300px; display: flex; flex-direction: column; gap: 15px; }
+        .sidebar { background-color: var(--bg-panel); padding: 20px; border-radius: 10px; width: 300px; display: flex; flex-direction: column; gap: 10px; }
         .sidebar h2 { margin: 0 0 10px 0; font-size: 18px; text-align: center; }
         .right-tools { background-color: var(--bg-panel); padding: 20px; border-radius: 10px; width: 300px; display: flex; flex-direction: column; gap: 15px; }
         .right-tools h2 { margin: 0 0 10px 0; font-size: 18px; text-align: center; }
 
         .form-group { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
-        select { background-color: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color); padding: 5px 10px; border-radius: 6px; width: 100px; cursor: pointer; }
+        .sidebar .form-group { margin: 0; }
+        select { background-color: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color); padding: 4px 8px; border-radius: 6px; width: 100px; cursor: pointer; }
         select option:disabled { color: #555; font-style: italic; }
 
         input[type=number]::-webkit-inner-spin-button, 
@@ -45,11 +46,11 @@
         .btn-blue { background-color: var(--btn-blue); }
         .btn-red { background-color: var(--btn-red); margin-top: 5px; }
         .btn-mini { padding: 7px 8px; font-size: 12px; }
-        .tool-panel { background: #242635; border: 1px solid #3f4152; border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .tool-panel { background: #242635; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
         .tool-title { font-size: 12px; font-weight: 700; color: #cfd2e0; text-transform: uppercase; letter-spacing: 0.3px; }
         .text-input { width: 100%; background: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color); padding: 6px 8px; border-radius: 6px; outline: none; font-size: 13px; }
         .text-input:focus { border-color: var(--btn-blue); }
-        .tiny-note { font-size: 11px; color: #aeb3c7; line-height: 1.3; }
+        .tiny-note { font-size: 11px; color: #aeb3c7; line-height: 1.2; }
         .inline-row { display: flex; gap: 6px; }
         .inline-row > * { flex: 1; }
 
@@ -265,7 +266,7 @@
     </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v3.5</div>
+<div id="appVersionBadge" class="app-version">v3.6</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -303,7 +304,7 @@ let cards = rawCards.map(c => ({
     included: true
 }));
 
-const APP_VERSION = '3.5';
+const APP_VERSION = '3.6';
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
@@ -1065,6 +1066,9 @@ function generateDeck(oneByOne) {
 
 function attemptGenerate(c) {
     let pool = getActiveCardPool();
+    if (c.themeLetter) {
+        pool = pool.filter(card => getRuFirstLetter(card) === c.themeLetter);
+    }
     if (pool.length < 8) return null;
 
     for (let i = 0; i < 5000; i++) {
