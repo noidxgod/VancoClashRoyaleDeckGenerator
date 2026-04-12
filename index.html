@@ -86,8 +86,14 @@
         .top-mini-badge.evo { left: 2px; background: var(--evo-color); }
         .top-mini-badge.hero { right: 2px; background: var(--hero-color); color: #111; }
         .top-deck-actions { display: grid; gap: 6px; align-content: start; }
-        .top-side-stats { background: #1f2230; border: 1px solid #3f4152; border-radius: 6px; padding: 6px; display: grid; gap: 2px; font-size: 10px; line-height: 1.2; color: #b7bdd3; }
-        .top-side-stats strong { color: #e0e5ff; font-size: 10px; }
+        .top-side-stats { background: #1f2230; border: 1px solid #3f4152; border-radius: 6px; padding: 6px; display: grid; gap: 5px; color: #b7bdd3; }
+        .top-side-stats-title { font-size: 11px; font-weight: 700; color: #e0e5ff; }
+        .top-side-grid { display: grid; grid-template-columns: auto repeat(3, minmax(28px, 1fr)); gap: 4px 5px; align-items: center; }
+        .top-side-grid-head { font-size: 9px; color: #9fa8c7; text-align: center; font-weight: 700; }
+        .top-side-grid-label { font-size: 10px; color: #d2d8ef; white-space: nowrap; }
+        .top-side-grid-val { font-size: 10px; text-align: center; border: 1px solid #4a4f68; border-radius: 999px; padding: 1px 4px; background: #202437; color: #e7edff; font-weight: 700; }
+        .top-side-grid-val.zero { color: #aab2d3; opacity: 0.75; }
+        .top-side-grid-val.nonzero { border-color: #6696ff; background: #25345b; color: #eef4ff; }
         .top-deck-actions button { width: 100%; margin: 0; }
         .top-similar-panel { display: none; background: #1f2230; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; margin-top: 8px; }
         .top-similar-panel.active { display: grid; gap: 6px; }
@@ -366,7 +372,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.7</div>
+<div id="appVersionBadge" class="app-version">v4.8</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -418,7 +424,7 @@ let cards = rawCards.map(c => {
     };
 });
 
-const APP_VERSION = '4.7';
+const APP_VERSION = '4.8';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 1000;
@@ -1410,6 +1416,12 @@ function incrementTopBucketCounters(bucketCounter, rank) {
     if (rank <= 1000) bucketCounter[1000] += 1;
 }
 
+function renderTopSideBucketValue(value) {
+    const n = Math.max(0, Number(value) || 0);
+    const cls = n > 0 ? 'top-side-grid-val nonzero' : 'top-side-grid-val zero';
+    return `<div class="${cls}">${n}</div>`;
+}
+
 function computeTopDeckSimilarCounters(decks) {
     if (!Array.isArray(decks)) return;
     for (const deck of decks) {
@@ -1614,11 +1626,33 @@ function renderTopDecksList() {
                 </div>
                 <div class="top-deck-actions">
                     <div class="top-side-stats">
-                        <strong>Т10 / Т100 / Т1000</strong>
-                        <div>Точно: ${sb.exact[10]} / ${sb.exact[100]} / ${sb.exact[1000]}</div>
-                        <div>1 карта: ${sb.d1[10]} / ${sb.d1[100]} / ${sb.d1[1000]}</div>
-                        <div>2 карты: ${sb.d2[10]} / ${sb.d2[100]} / ${sb.d2[1000]}</div>
-                        <div>3 карты: ${sb.d3[10]} / ${sb.d3[100]} / ${sb.d3[1000]}</div>
+                        <div class="top-side-stats-title">Похожие колоды</div>
+                        <div class="top-side-grid">
+                            <div></div>
+                            <div class="top-side-grid-head">Т10</div>
+                            <div class="top-side-grid-head">Т100</div>
+                            <div class="top-side-grid-head">Т1000</div>
+
+                            <div class="top-side-grid-label">Точно</div>
+                            ${renderTopSideBucketValue(sb.exact[10])}
+                            ${renderTopSideBucketValue(sb.exact[100])}
+                            ${renderTopSideBucketValue(sb.exact[1000])}
+
+                            <div class="top-side-grid-label">1 карта</div>
+                            ${renderTopSideBucketValue(sb.d1[10])}
+                            ${renderTopSideBucketValue(sb.d1[100])}
+                            ${renderTopSideBucketValue(sb.d1[1000])}
+
+                            <div class="top-side-grid-label">2 карты</div>
+                            ${renderTopSideBucketValue(sb.d2[10])}
+                            ${renderTopSideBucketValue(sb.d2[100])}
+                            ${renderTopSideBucketValue(sb.d2[1000])}
+
+                            <div class="top-side-grid-label">3 карты</div>
+                            ${renderTopSideBucketValue(sb.d3[10])}
+                            ${renderTopSideBucketValue(sb.d3[100])}
+                            ${renderTopSideBucketValue(sb.d3[1000])}
+                        </div>
                     </div>
                     <button class="btn-blue btn-mini" onclick="applyTopDeckByFilteredIndex(${i}, false)">Показать в центре</button>
                     <button class="btn-filter btn-mini" onclick="applyTopDeckByFilteredIndex(${i}, true)">В создание колод</button>
