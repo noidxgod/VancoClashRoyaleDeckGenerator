@@ -343,7 +343,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.3</div>
+<div id="appVersionBadge" class="app-version">v4.4</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -373,15 +373,29 @@ const elixirCosts = {"Archers":3,"Archer Queen":5,"Arrows":3,"Baby Dragon":4,"Ba
 
 const translations = {"Archers":"Лучницы","Archer Queen":"Королева лучниц","Arrows":"Стрелы","Baby Dragon":"Дракончик","Bandit":"Бандитка","Barbarian Barrel":"Варварская бочка","Barbarians":"Варвары","Barbarian Hut":"Хижина варваров","Bats":"Летучие мыши","Battle Healer":"Целительница-воин","Battle Ram":"Боевой таран","Berserker":"Берсерк","Balloon":"Шар","Bomber":"Подрывник","Bomb Tower":"Башня-бомбешка","Boss Bandit":"Босс Бандитка","Bowler":"Вышибала","Cannon":"Пушка","Cannon Cart":"Повозка с пушкой","Clone":"Клон","Dark Prince":"Темный принц","Dart Goblin":"Гоблин с дротиками","Earthquake":"Землетрясение","Electro Dragon":"Электродракон","Electro Giant":"Электрический гигант","Electro Spirit":"Электродух","Electro Wizard":"Громовержец","Elite Barbarians":"Элитные варвары","Elixir Collector":"Сборщик эликсира","Elixir Golem":"Эликсирный голем","Executioner":"Палач","Fireball":"Огненный шар","Firecracker":"Фейерверк","Fire Spirit":"Огненный дух","Fisherman":"Рыбак","Flying Machine":"Летучая машина","Freeze":"Заморозка","Furnace":"Печь","Giant":"Гигант","Giant Skeleton":"Гигантский скелет","Giant Snowball":"Гигантский снежок","Goblin Barrel":"Гоблинская бочка","Goblin Cage":"Клетка с гоблином","Goblin Curse":"Проклятие гоблина","Goblin Demolisher":"Гоблин-подрывник","Goblin Drill":"Гоблинский бур","Goblin Gang":"Банда гоблинов","Goblin Giant":"Гоблин-гигант","Goblin Hut":"Хижина гоблинов","Goblin Machine":"Гоблин-машина","Goblins":"Гоблины","Goblinstein":"Гоблинштейн","Golden Knight":"Золотой рыцарь","Golem":"Голем","Graveyard":"Кладбище","Guards":"Стражи","Heal Spirit":"Дух исцеления","Hog Rider":"Всадник на кабане","Hunter":"Охотник","Ice Golem":"Ледяной голем","Ice Spirit":"Ледяной дух","Ice Wizard":"Ледяной колдун","Inferno Dragon":"Пламенный дракон","Inferno Tower":"Адская башня","Knight":"Рыцарь","Lava Hound":"Адская гончая","Lightning":"Молния","Little Prince":"Маленький принц","Lumberjack":"Дровосек","Magic Archer":"Магический лучник","Mega Knight":"Мегарыцарь","Mega Minion":"Мегаминьон","Mighty Miner":"Могучий шахтер","Mini P.E.K.K.A.":"Мини П.Е.К.К.А.","Miner":"Шахтер","Minion Horde":"Орда миньонов","Minions":"Миньоны","Mirror":"Зеркало","Monk":"Монах","Mortar":"Мортира","Mother Witch":"Ведьма-мать","Musketeer":"Мушкетер","Night Witch":"Ночная ведьма","P.E.K.K.A.":"П.Е.К.К.А.","Phoenix":"Феникс","Poison":"Яд","Prince":"Принц","Princess":"Принцесса","Rage":"Ярость","Ram Rider":"Всадница на баране","Rascals":"Разбойники","Rocket":"Ракета","Royal Delivery":"Королевская почта","Royal Giant":"Королевский гигант","Royal Ghost":"Королевский призрак","Royal Hogs":"Королевские кабаны","Royal Recruits":"Королевские рекруты","Rune Giant":"Рунный гигант","Skeleton Army":"Армия скелетов","Skeleton Barrel":"Скелетная бочка","Skeleton Dragons":"Драконы-скелеты","Skeleton King":"Король скелетов","Skeletons":"Скелеты","Sparky":"Спарки","Spear Goblins":"Гоблины-копейщики","Spirit Empress":"Императрица духов","Suspicious Bush":"Подозрительный куст","Tesla":"Тесла","The Log":"Бревно","Three Musketeers":"Три мушкетера","Tombstone":"Надгробие","Tornado":"Торнадо","Valkyrie":"Валькирия","Vines":"Лозы","Void":"Пустота","Wall Breakers":"Стенобои","Witch":"Ведьма","Wizard":"Колдун","X-Bow":"Арбалет","Zap":"Разряд","Zappies":"Громовержцы","Cannoneer":"Канонир","Dagger Duchess":"Герцогиня с кинжалами","Tower Princess":"Принцесса башни","Royal Chef":"Королевский шеф"};
 
-let cards = rawCards.map(c => ({ 
-    ...c, 
-    ruName: translations[c.name] || c.name, 
-    img: `https://royaleapi.github.io/cr-api-assets/cards/${c.name.toLowerCase().replace(/\s+/g, '-').replace(/\./g, '')}.png`, 
-    elixir: elixirCosts[c.name] || '?',
-    included: true
-}));
+const CR_ASSETS_BASE = 'https://royaleapi.github.io/cr-api-assets';
+const CR_CARD_ASSETS_BASE = `${CR_ASSETS_BASE}/cards`;
 
-const APP_VERSION = '4.3';
+function toCardAssetSlug(name) {
+    return String(name || '').toLowerCase().replace(/\s+/g, '-').replace(/\./g, '');
+}
+
+let cards = rawCards.map(c => {
+    const slug = toCardAssetSlug(c.name);
+    return {
+        ...c,
+        assetSlug: slug,
+        ruName: translations[c.name] || c.name,
+        img: `${CR_CARD_ASSETS_BASE}/${slug}.png`,
+        imgEvo: `${CR_CARD_ASSETS_BASE}/${slug}-ev1.png`,
+        imgHeroism: `${CR_CARD_ASSETS_BASE}/${slug}-hero.png`,
+        imgHeroismEvo: `${CR_CARD_ASSETS_BASE}/${slug}-hero-ev1.png`,
+        elixir: elixirCosts[c.name] || '?',
+        included: true
+    };
+});
+
+const APP_VERSION = '4.4';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
@@ -1693,12 +1707,59 @@ function getCardClasses(c) {
     return cls.join(' ');
 }
 
+function getCardImageCandidates(c) {
+    const list = [];
+    const push = (url) => {
+        if (!url || list.includes(url)) return;
+        list.push(url);
+    };
+
+    if (c?.isEvo) {
+        if (c?.heroism) push(c.imgHeroismEvo);
+        push(c.imgEvo);
+        if (c?.heroism) push(c.imgHeroism);
+    }
+    if (c?.isHeroism) push(c.imgHeroism);
+    push(c?.img);
+
+    return list;
+}
+
+function advanceCardImageFallback(imgEl) {
+    if (!imgEl) return;
+    const raw = imgEl.getAttribute('data-fallback') || '';
+    if (!raw) {
+        imgEl.onerror = null;
+        return;
+    }
+
+    let list = [];
+    try {
+        list = JSON.parse(decodeURIComponent(raw));
+    } catch (e) {
+        list = [];
+    }
+
+    if (!Array.isArray(list) || list.length === 0) {
+        imgEl.onerror = null;
+        return;
+    }
+
+    const next = list.shift();
+    imgEl.setAttribute('data-fallback', encodeURIComponent(JSON.stringify(list)));
+    imgEl.src = next;
+}
+
 function getCardInnerMarkup(c) {
     let badges = '';
     if (c.isEvo) badges += `<div class="badge badge-evo">ЭВО</div>`;
     if (c.isHeroism) badges += `<div class="badge badge-heroism">ГЕРОИЗМ</div>`;
     badges += `<div class="elixir-drop"><div class="elixir-text">${c.elixir}</div></div>`;
-    return `${badges}<img src="${c.img}" alt="${c.ruName || c.name}">`;
+    const candidates = getCardImageCandidates(c);
+    const src = candidates[0] || c.img;
+    const fallback = encodeURIComponent(JSON.stringify(candidates.slice(1)));
+    const alt = escapeHtml(c.ruName || c.name);
+    return `${badges}<img src="${src}" data-fallback="${fallback}" onerror="advanceCardImageFallback(this)" alt="${alt}">`;
 }
 
 function getCardSlotMarkup(c, idx) {
