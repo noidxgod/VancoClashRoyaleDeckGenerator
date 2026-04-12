@@ -366,7 +366,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.6</div>
+<div id="appVersionBadge" class="app-version">v4.7</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -418,7 +418,7 @@ let cards = rawCards.map(c => {
     };
 });
 
-const APP_VERSION = '4.6';
+const APP_VERSION = '4.7';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 1000;
@@ -1384,10 +1384,36 @@ function countDeckNameDiff(baseDeck, candidateDeck) {
     return Math.max(0, 8 - same);
 }
 
+function createTopBucketCounter() {
+    return { 10: 0, 100: 0, 1000: 0 };
+}
+
+function createTopSimilarStats() {
+    return {
+        exact: 0,
+        d1: 0,
+        d2: 0,
+        d3: 0,
+        buckets: {
+            exact: createTopBucketCounter(),
+            d1: createTopBucketCounter(),
+            d2: createTopBucketCounter(),
+            d3: createTopBucketCounter()
+        }
+    };
+}
+
+function incrementTopBucketCounters(bucketCounter, rank) {
+    if (!bucketCounter) return;
+    if (rank <= 10) bucketCounter[10] += 1;
+    if (rank <= 100) bucketCounter[100] += 1;
+    if (rank <= 1000) bucketCounter[1000] += 1;
+}
+
 function computeTopDeckSimilarCounters(decks) {
     if (!Array.isArray(decks)) return;
     for (const deck of decks) {
-        deck.similarStats = { exact: 0, d1: 0, d2: 0, d3: 0 };
+        deck.similarStats = createTopSimilarStats();
     }
 
     for (let i = 0; i < decks.length; i++) {
@@ -1398,18 +1424,26 @@ function computeTopDeckSimilarCounters(decks) {
             if (a.key === b.key) {
                 a.similarStats.exact += 1;
                 b.similarStats.exact += 1;
+                incrementTopBucketCounters(a.similarStats.buckets.exact, b.metaRank);
+                incrementTopBucketCounters(b.similarStats.buckets.exact, a.metaRank);
             }
 
             const diff = countDeckNameDiff(a, b);
             if (diff === 1) {
                 a.similarStats.d1 += 1;
                 b.similarStats.d1 += 1;
+                incrementTopBucketCounters(a.similarStats.buckets.d1, b.metaRank);
+                incrementTopBucketCounters(b.similarStats.buckets.d1, a.metaRank);
             } else if (diff === 2) {
                 a.similarStats.d2 += 1;
                 b.similarStats.d2 += 1;
+                incrementTopBucketCounters(a.similarStats.buckets.d2, b.metaRank);
+                incrementTopBucketCounters(b.similarStats.buckets.d2, a.metaRank);
             } else if (diff === 3) {
                 a.similarStats.d3 += 1;
                 b.similarStats.d3 += 1;
+                incrementTopBucketCounters(a.similarStats.buckets.d3, b.metaRank);
+                incrementTopBucketCounters(b.similarStats.buckets.d3, a.metaRank);
             }
         }
     }
@@ -1550,7 +1584,8 @@ function renderTopDecksList() {
             `Винконы ${deck.wincons}`
         ].map(text => `<span class="top-pill">${text}</span>`).join('');
         const playerText = deck.playerName ? ` · ${escapeHtml(deck.playerName)}` : '';
-        const ss = deck.similarStats || { exact: 0, d1: 0, d2: 0, d3: 0 };
+        const ss = deck.similarStats || createTopSimilarStats();
+        const sb = ss.buckets || createTopSimilarStats().buckets;
         const cardStrip = (deck.previewCards || []).map(card => {
             const classes = ['top-card-mini'];
             if (card.isEvo) classes.push('evo');
@@ -1579,11 +1614,11 @@ function renderTopDecksList() {
                 </div>
                 <div class="top-deck-actions">
                     <div class="top-side-stats">
-                        <strong>Похожих в топе</strong>
-                        <div>Точно таких же: ${ss.exact}</div>
-                        <div>Отличается 1: ${ss.d1}</div>
-                        <div>Отличается 2: ${ss.d2}</div>
-                        <div>Отличается 3: ${ss.d3}</div>
+                        <strong>Т10 / Т100 / Т1000</strong>
+                        <div>Точно: ${sb.exact[10]} / ${sb.exact[100]} / ${sb.exact[1000]}</div>
+                        <div>1 карта: ${sb.d1[10]} / ${sb.d1[100]} / ${sb.d1[1000]}</div>
+                        <div>2 карты: ${sb.d2[10]} / ${sb.d2[100]} / ${sb.d2[1000]}</div>
+                        <div>3 карты: ${sb.d3[10]} / ${sb.d3[100]} / ${sb.d3[1000]}</div>
                     </div>
                     <button class="btn-blue btn-mini" onclick="applyTopDeckByFilteredIndex(${i}, false)">Показать в центре</button>
                     <button class="btn-filter btn-mini" onclick="applyTopDeckByFilteredIndex(${i}, true)">В создание колод</button>
