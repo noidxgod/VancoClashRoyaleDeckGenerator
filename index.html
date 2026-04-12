@@ -71,7 +71,7 @@
         .top-setting-line label { font-size: 12px; color: #cfd3e8; }
         .top-setting-line .date-input { width: 100%; }
         .top-decks-list { display: grid; gap: 8px; max-height: 70vh; overflow-y: auto; padding-right: 2px; margin-top: 8px; }
-        .top-deck-item { background: #2b2d3a; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; display: grid; grid-template-columns: 1fr 340px; gap: 10px; align-items: start; }
+        .top-deck-item { background: #2b2d3a; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; display: grid; grid-template-columns: 1fr 340px 190px; gap: 10px; align-items: start; }
         .top-deck-main { display: grid; gap: 7px; }
         .top-deck-head { display: flex; justify-content: flex-start; gap: 8px; align-items: center; font-size: 12px; flex-wrap: wrap; }
         .top-deck-tags { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -90,6 +90,14 @@
         .top-side-stats-title { font-size: 11px; font-weight: 700; color: #e0e5ff; }
         .top-side-places { font-size: 10px; color: #c7d0ee; line-height: 1.25; }
         .top-side-places strong { color: #eef4ff; }
+        .top-count-stats { background: #1f2230; border: 1px solid #3f4152; border-radius: 6px; padding: 6px; display: grid; gap: 5px; color: #b7bdd3; }
+        .top-count-title { font-size: 11px; font-weight: 700; color: #e0e5ff; }
+        .top-count-grid { display: grid; grid-template-columns: auto repeat(3, minmax(26px, 1fr)); gap: 4px 4px; align-items: center; }
+        .top-count-head { font-size: 9px; color: #9fa8c7; text-align: center; font-weight: 700; }
+        .top-count-label { font-size: 10px; color: #d2d8ef; white-space: nowrap; }
+        .top-count-val { font-size: 10px; text-align: center; border: 1px solid #4a4f68; border-radius: 999px; padding: 1px 4px; background: #202437; color: #e7edff; font-weight: 700; }
+        .top-count-val.zero { color: #aab2d3; opacity: 0.75; }
+        .top-count-val.nonzero { border-color: #6696ff; background: #25345b; color: #eef4ff; }
         .top-variants-list { display: grid; gap: 4px; }
         .top-variants-empty { font-size: 10px; color: #9ea9ce; }
         .top-variant-row { background: #1b1f2f; border: 1px solid #39405a; border-radius: 6px; padding: 4px; display: grid; gap: 3px; }
@@ -375,7 +383,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.12</div>
+<div id="appVersionBadge" class="app-version">v4.13</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -427,7 +435,7 @@ let cards = rawCards.map(c => {
     };
 });
 
-const APP_VERSION = '4.12';
+const APP_VERSION = '4.13';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 1000;
@@ -1417,6 +1425,12 @@ function incrementTopBucketCounters(bucketCounter, rank) {
     if (rank <= 1000) bucketCounter[1000] += 1;
 }
 
+function renderTopCountValue(value) {
+    const n = Math.max(0, Number(value) || 0);
+    const cls = n > 0 ? 'top-count-val nonzero' : 'top-count-val zero';
+    return `<div class="${cls}">${n}</div>`;
+}
+
 function isTopDeckVariantsExpanded(metaRank) {
     return Boolean(topDeckState.variantsExpandedByRank && topDeckState.variantsExpandedByRank[metaRank]);
 }
@@ -1744,6 +1758,25 @@ function renderTopDecksList() {
                             `).join('') : '<div class="top-variants-empty">Вариаций с 1 картой не найдено.</div>'}
                         </div>
                         ${hiddenCount > 0 ? `<button class="btn-filter btn-mini top-variants-toggle" onclick="toggleTopDeckVariants(${deck.metaRank})">${expanded ? 'Свернуть' : `Показать больше (+${hiddenCount})`}</button>` : ''}
+                    </div>
+                </div>
+                <div class="top-count-stats">
+                    <div class="top-count-title">Статистика</div>
+                    <div class="top-count-grid">
+                        <div></div>
+                        <div class="top-count-head">Т10</div>
+                        <div class="top-count-head">Т100</div>
+                        <div class="top-count-head">Т1000</div>
+
+                        <div class="top-count-label">Точно</div>
+                        ${renderTopCountValue(detail.exact.filter(item => item.rank <= 10).length)}
+                        ${renderTopCountValue(detail.exact.filter(item => item.rank <= 100).length)}
+                        ${renderTopCountValue(detail.exact.length)}
+
+                        <div class="top-count-label">1 карта</div>
+                        ${renderTopCountValue(detail.d1.filter(item => item.rank <= 10).length)}
+                        ${renderTopCountValue(detail.d1.filter(item => item.rank <= 100).length)}
+                        ${renderTopCountValue(detail.d1.length)}
                     </div>
                 </div>
             </div>
