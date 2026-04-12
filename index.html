@@ -71,19 +71,22 @@
         .top-setting-line label { font-size: 12px; color: #cfd3e8; }
         .top-setting-line .date-input { width: 100%; }
         .top-decks-list { display: grid; gap: 8px; max-height: 70vh; overflow-y: auto; padding-right: 2px; margin-top: 8px; }
-        .top-deck-item { background: #2b2d3a; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; display: grid; gap: 7px; }
-        .top-deck-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; }
+        .top-deck-item { background: #2b2d3a; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; display: grid; grid-template-columns: 1fr 220px; gap: 10px; align-items: start; }
+        .top-deck-main { display: grid; gap: 7px; }
+        .top-deck-head { display: flex; justify-content: flex-start; gap: 8px; align-items: center; font-size: 12px; flex-wrap: wrap; }
         .top-deck-tags { display: flex; gap: 6px; flex-wrap: wrap; }
         .top-pill { font-size: 11px; border: 1px solid #4c5069; border-radius: 999px; padding: 2px 7px; color: #cfd3e8; background: #1f2230; }
         .top-deck-cards { font-size: 12px; color: #d5d8ea; line-height: 1.25; }
-        .top-card-row { display: grid; grid-template-columns: repeat(8, minmax(38px, 1fr)); gap: 6px; }
-        .top-card-mini { position: relative; border: 1px solid #3f4152; border-radius: 6px; background: #1e1e24; padding: 2px; height: 54px; overflow: hidden; }
+        .top-card-row { display: grid; grid-template-columns: repeat(4, minmax(64px, 1fr)); gap: 6px; max-width: 360px; }
+        .top-card-mini { position: relative; border: 1px solid #3f4152; border-radius: 6px; background: #1e1e24; padding: 2px; height: 66px; overflow: hidden; }
         .top-card-mini img { width: 100%; height: 100%; object-fit: contain; border-radius: 4px; }
         .top-card-mini.evo { border-color: var(--evo-color); }
         .top-card-mini.heroism { border-color: var(--hero-color); }
         .top-mini-badge { position: absolute; top: 2px; font-size: 8px; line-height: 1; border-radius: 999px; padding: 2px 3px; font-weight: 800; color: #fff; }
         .top-mini-badge.evo { left: 2px; background: var(--evo-color); }
         .top-mini-badge.hero { right: 2px; background: var(--hero-color); color: #111; }
+        .top-deck-actions { display: grid; gap: 6px; align-content: start; }
+        .top-deck-actions button { width: 100%; margin: 0; }
         
         .avg-elixir-panel { display: none; align-items: center; gap: 8px; font-size: 16px; font-weight: bold; background: #2b2d3a; padding: 8px 16px; border-radius: 8px; border: 1px solid #3f4152; }
         .avg-elixir-val { color: #ff8df0; font-size: 20px; }
@@ -139,6 +142,7 @@
             .container { flex-direction: column; }
             .sidebar, .right-tools { width: 100%; }
             .top-decks-layout { grid-template-columns: 1fr; }
+            .top-deck-item { grid-template-columns: 1fr; }
         }
 
         ::-webkit-scrollbar { width: 8px; }
@@ -355,7 +359,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.0</div>
+<div id="appVersionBadge" class="app-version">v4.1</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -393,7 +397,7 @@ let cards = rawCards.map(c => ({
     included: true
 }));
 
-const APP_VERSION = '4.0';
+const APP_VERSION = '4.1';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
@@ -1296,13 +1300,15 @@ function renderTopDecksList() {
         }).join('');
         return `
             <div class="top-deck-item">
-                <div class="top-deck-head">
-                    <strong>#${i + 1}</strong>
-                    <div class="top-deck-tags">${pills}</div>
+                <div class="top-deck-main">
+                    <div class="top-deck-head">
+                        <strong>#${i + 1}</strong>
+                        <div class="top-deck-tags">${pills}</div>
+                    </div>
+                    <div class="tiny-note">Топ-колода RoyaleAPI</div>
+                    <div class="top-card-row">${cardStrip}</div>
                 </div>
-                <div class="top-card-row">${cardStrip}</div>
-                <div class="top-deck-cards">${deck.labelsRu.join(' • ')}</div>
-                <div class="inline-row">
+                <div class="top-deck-actions">
                     <button class="btn-blue btn-mini" onclick="applyTopDeckByFilteredIndex(${i}, false)">Показать в центре</button>
                     <button class="btn-filter btn-mini" onclick="applyTopDeckByFilteredIndex(${i}, true)">В создание колод</button>
                     <button class="btn-filter btn-mini" onclick="openTopDeckSource(${i})">Источник</button>
