@@ -87,6 +87,14 @@
         .top-mini-badge.hero { right: 2px; background: var(--hero-color); color: #111; }
         .top-deck-actions { display: grid; gap: 6px; align-content: start; }
         .top-deck-actions button { width: 100%; margin: 0; }
+        .top-similar-panel { display: none; background: #1f2230; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; margin-top: 8px; }
+        .top-similar-panel.active { display: grid; gap: 6px; }
+        .top-similar-title { font-size: 12px; font-weight: 700; color: #d7dcf2; }
+        .top-similar-controls { display: flex; gap: 6px; align-items: center; }
+        .top-similar-controls label { font-size: 12px; color: #cfd3e8; white-space: nowrap; }
+        .top-similar-controls select { width: 82px; }
+        .top-similar-stats { display: grid; gap: 4px; font-size: 11px; color: #b7bdd3; line-height: 1.2; }
+        .top-similar-stats strong { color: #e0e5ff; font-size: 11px; }
         
         .avg-elixir-panel { display: none; align-items: center; gap: 8px; font-size: 16px; font-weight: bold; background: #2b2d3a; padding: 8px 16px; border-radius: 8px; border: 1px solid #3f4152; }
         .avg-elixir-val { color: #ff8df0; font-size: 20px; }
@@ -280,7 +288,20 @@
                 </div>
                 <div class="top-results-col">
                     <div class="tool-title" id="topResultsTitle">Колоды (с картинками)</div>
-                    <div class="tiny-note" id="topDecksStatus">Открой вкладку «Топ колоды» и нажми «Обновить топ».</div>
+                    <div class="tiny-note" id="topDecksStatus">Открой вкладку «Топ колоды» и нажми «Обновить».</div>
+                    <div id="topSimilarPanel" class="top-similar-panel">
+                        <div id="topSimilarTitle" class="top-similar-title"></div>
+                        <div class="top-similar-controls">
+                            <label for="topSimilarDiffCount">Отличается карт:</label>
+                            <select id="topSimilarDiffCount">
+                                <option value="1" selected>1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                            </select>
+                            <button class="btn-filter btn-mini" onclick="clearTopSimilarSearch()">Сбросить</button>
+                        </div>
+                        <div id="topSimilarStats" class="top-similar-stats"></div>
+                    </div>
                     <div id="topDecksList" class="top-decks-list"></div>
                 </div>
             </div>
@@ -343,7 +364,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.4</div>
+<div id="appVersionBadge" class="app-version">v4.5</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -395,9 +416,11 @@ let cards = rawCards.map(c => {
     };
 });
 
-const APP_VERSION = '4.4';
+const APP_VERSION = '4.5';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
+const TOP_DECK_SCAN_LIMIT = 1000;
+const TOP_DECK_RENDER_LIMIT = 20;
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
@@ -410,7 +433,10 @@ const topDeckState = {
     lastRequest: null,
     sourceMode: 'royaleapi',
     seasonsLoaded: false,
-    seasonOptions: []
+    seasonOptions: [],
+    renderLimit: TOP_DECK_RENDER_LIMIT,
+    similarBaseRank: null,
+    similarDiffCount: 1
 };
 
 const retroRoyalePool = new Set([
@@ -1160,6 +1186,8 @@ function setAppMode(mode) {
             topDeckState.all = [];
             topDeckState.filtered = [];
             topDeckState.lastRequest = null;
+            topDeckState.similarBaseRank = null;
+            topDeckState.similarDiffCount = 1;
             const list = document.getElementById('topDecksList');
             if (list) list.innerHTML = '';
         }
@@ -1275,6 +1303,7 @@ function updateTopSourceUi() {
     if (royalGroup) royalGroup.style.display = isLeaderboard ? 'none' : 'block';
     if (lbGroup) lbGroup.style.display = isLeaderboard ? 'block' : 'none';
 
+    hideTopSimilarPanel();
     setTopDecksStatus(sourceNote);
     if (isLeaderboard) ensureLeaderboardSeasonsLoaded();
 }
@@ -1315,6 +1344,10 @@ function buildTopDeckFromSlugs(slugs, extras = {}) {
             name: card.name,
             ruName: card.ruName,
             img: card.img,
+            imgEvo: card.imgEvo,
+            imgHeroism: card.imgHeroism,
+            imgHeroismEvo: card.imgHeroismEvo,
+            heroism: Boolean(card.heroism),
             isEvo: Boolean(card.isEvo),
             isHeroism: Boolean(card.isHeroism),
             elixir: card.elixir
@@ -1323,23 +1356,129 @@ function buildTopDeckFromSlugs(slugs, extras = {}) {
 }
 
 function applyTopDeckFilters() {
+    if (topDeckState.similarBaseRank !== null) {
+        applyTopSimilarSearch();
+        return;
+    }
     topDeckState.filtered = [...topDeckState.all];
     renderTopDecksList();
     const label = topDeckState.lastRequest ? ` (${topDeckState.lastRequest.label})` : '';
-    setTopDecksStatus(`Показано: ${topDeckState.filtered.length}/${topDeckState.all.length} колод${label}.`);
+    const shown = Math.min(topDeckState.renderLimit, topDeckState.filtered.length);
+    setTopDecksStatus(`Показано: ${shown}/${topDeckState.filtered.length} колод${label}. Загружено: ${topDeckState.all.length}.`);
+}
+
+function formatTopBucketStat(label, stat) {
+    if (!stat || !stat.count) return `${label}: 0`;
+    return `${label}: ${stat.count} (последняя #${stat.lastRank})`;
+}
+
+function countDeckNameDiff(baseDeck, candidateDeck) {
+    if (!baseDeck || !candidateDeck) return 8;
+    const baseSet = new Set((baseDeck.entries || []).map(entry => entry.name));
+    let same = 0;
+    for (const entry of (candidateDeck.entries || [])) {
+        if (baseSet.has(entry.name)) same += 1;
+    }
+    return Math.max(0, 8 - same);
+}
+
+function collectTopBucketStats(baseDeck, matcher) {
+    const limits = [10, 100, 1000];
+    const out = {};
+    for (const limit of limits) {
+        const bucket = topDeckState.all
+            .filter(deck => deck.metaRank <= limit)
+            .filter(matcher);
+        out[limit] = {
+            count: bucket.length,
+            lastRank: bucket.length ? bucket[bucket.length - 1].metaRank : null
+        };
+    }
+    return out;
+}
+
+function renderTopSimilarPanel(baseDeck) {
+    const panel = document.getElementById('topSimilarPanel');
+    const title = document.getElementById('topSimilarTitle');
+    const stats = document.getElementById('topSimilarStats');
+    const diffSelect = document.getElementById('topSimilarDiffCount');
+    if (!panel || !title || !stats || !diffSelect || !baseDeck) return;
+
+    const exactStats = collectTopBucketStats(baseDeck, deck => deck.key === baseDeck.key);
+    const diff1Stats = collectTopBucketStats(baseDeck, deck => countDeckNameDiff(baseDeck, deck) === 1);
+    const playerText = baseDeck.playerName ? ` · ${escapeHtml(baseDeck.playerName)}` : '';
+
+    title.innerHTML = `Похожие к колоде #${baseDeck.metaRank}${playerText}`;
+    diffSelect.value = String(topDeckState.similarDiffCount || 1);
+    stats.innerHTML = [
+        `<strong>Точно такая же:</strong> ${formatTopBucketStat('Топ 10', exactStats[10])} • ${formatTopBucketStat('Топ 100', exactStats[100])} • ${formatTopBucketStat('Топ 1000', exactStats[1000])}`,
+        `<strong>С 1 отличающейся картой:</strong> ${formatTopBucketStat('Топ 10', diff1Stats[10])} • ${formatTopBucketStat('Топ 100', diff1Stats[100])} • ${formatTopBucketStat('Топ 1000', diff1Stats[1000])}`
+    ].join('');
+    panel.classList.add('active');
+}
+
+function hideTopSimilarPanel() {
+    const panel = document.getElementById('topSimilarPanel');
+    if (panel) panel.classList.remove('active');
+}
+
+function findTopDeckByMetaRank(rank) {
+    return topDeckState.all.find(deck => deck.metaRank === rank) || null;
+}
+
+function applyTopSimilarSearch() {
+    const baseDeck = findTopDeckByMetaRank(topDeckState.similarBaseRank);
+    if (!baseDeck) {
+        clearTopSimilarSearch();
+        return;
+    }
+
+    renderTopSimilarPanel(baseDeck);
+    const diffCount = Math.min(3, Math.max(1, Number(topDeckState.similarDiffCount) || 1));
+    topDeckState.similarDiffCount = diffCount;
+    topDeckState.filtered = topDeckState.all
+        .filter(deck => deck.metaRank !== baseDeck.metaRank)
+        .filter(deck => countDeckNameDiff(baseDeck, deck) === diffCount);
+
+    renderTopDecksList();
+    const label = topDeckState.lastRequest ? ` (${topDeckState.lastRequest.label})` : '';
+    setTopDecksStatus(`Похожие (отличается ${diffCount}): ${topDeckState.filtered.length} колод${label}.`);
+}
+
+function findSimilarTopDecks(filteredIndex) {
+    const deck = topDeckState.filtered[filteredIndex];
+    if (!deck) return;
+    topDeckState.similarBaseRank = deck.metaRank;
+    const diffSelect = document.getElementById('topSimilarDiffCount');
+    topDeckState.similarDiffCount = Math.min(3, Math.max(1, Number(diffSelect?.value) || 1));
+    applyTopSimilarSearch();
+}
+
+function clearTopSimilarSearch() {
+    topDeckState.similarBaseRank = null;
+    topDeckState.similarDiffCount = 1;
+    const diffSelect = document.getElementById('topSimilarDiffCount');
+    if (diffSelect) diffSelect.value = '1';
+    hideTopSimilarPanel();
+    applyTopDeckFilters();
+}
+
+function onTopSimilarDiffChange() {
+    const diffSelect = document.getElementById('topSimilarDiffCount');
+    topDeckState.similarDiffCount = Math.min(3, Math.max(1, Number(diffSelect?.value) || 1));
+    if (topDeckState.similarBaseRank !== null) {
+        applyTopSimilarSearch();
+    }
 }
 
 function parsePopularDeckRows(text) {
     const out = [];
-    const seen = new Set();
     const re = /<a href="\/decks\/stats\/([a-z0-9,-]+)"[^>]*>[\s\S]{0,20000}?class="deck_search_results__highest_trophy_link"[\s\S]{0,2500}?<div class="player item">\s*([^<]+?)\s*<\/div>/gi;
     let m;
     while ((m = re.exec(text))) {
         const row = String(m[1] || '').toLowerCase();
         const slugs = row.split(',').map(x => x.trim()).filter(Boolean);
         if (slugs.length !== 8) continue;
-        if (seen.has(row)) continue;
-        seen.add(row);
         out.push({ slugs, playerName: decodeHtmlEntities(m[2] || '') });
     }
     return out;
@@ -1347,15 +1486,12 @@ function parsePopularDeckRows(text) {
 
 function parseLeaderboardDeckRows(text) {
     const out = [];
-    const seen = new Set();
     const re = /<a href="\/decks\/stats\/([a-z0-9,-]+)" class="deck_lb__deck_row">[\s\S]{0,9000}?<a class="ui tiny header player_name"[^>]*>\s*([^<]+?)\s*<\/a>/gi;
     let m;
     while ((m = re.exec(text))) {
         const row = String(m[1] || '').toLowerCase();
         const slugs = row.split(',').map(x => x.trim()).filter(Boolean);
         if (slugs.length !== 8) continue;
-        if (seen.has(row)) continue;
-        seen.add(row);
         out.push({ slugs, playerName: decodeHtmlEntities(m[2] || '') });
     }
     return out;
@@ -1369,7 +1505,12 @@ function renderTopDecksList() {
         return;
     }
 
-    list.innerHTML = topDeckState.filtered.map((deck, i) => {
+    const isSimilarMode = topDeckState.similarBaseRank !== null;
+    const decksToRender = isSimilarMode
+        ? topDeckState.filtered
+        : topDeckState.filtered.slice(0, topDeckState.renderLimit);
+
+    list.innerHTML = decksToRender.map((deck, i) => {
         const pills = [
             `AVG ${deck.avgElixir.toFixed(1)}`,
             `Спеллы ${deck.spells}`,
@@ -1380,11 +1521,16 @@ function renderTopDecksList() {
             const classes = ['top-card-mini'];
             if (card.isEvo) classes.push('evo');
             if (card.isHeroism) classes.push('heroism');
+            const imageCandidates = getCardImageCandidates(card);
+            const imageSrc = imageCandidates[0] || card.img;
+            const imageFallback = encodeURIComponent(JSON.stringify(imageCandidates.slice(1)));
+            const alt = escapeHtml(card.ruName || card.name);
+            const title = escapeHtml(`${card.ruName} (${card.elixir})`);
             return `
-                <div class="${classes.join(' ')}" title="${card.ruName} (${card.elixir})">
+                <div class="${classes.join(' ')}" title="${title}">
                     ${card.isEvo ? '<span class="top-mini-badge evo">Э</span>' : ''}
                     ${card.isHeroism ? '<span class="top-mini-badge hero">Г</span>' : ''}
-                    <img src="${card.img}" alt="${card.ruName}">
+                    <img src="${imageSrc}" data-fallback="${imageFallback}" onerror="advanceCardImageFallback(this)" alt="${alt}">
                 </div>
             `;
         }).join('');
@@ -1392,7 +1538,7 @@ function renderTopDecksList() {
             <div class="top-deck-item">
                 <div class="top-deck-main">
                     <div class="top-deck-head">
-                        <strong>#${i + 1}${playerText}</strong>
+                        <strong>#${deck.metaRank}${playerText}</strong>
                         <div class="top-deck-tags">${pills}</div>
                     </div>
                     <div class="top-card-row">${cardStrip}</div>
@@ -1400,6 +1546,7 @@ function renderTopDecksList() {
                 <div class="top-deck-actions">
                     <button class="btn-blue btn-mini" onclick="applyTopDeckByFilteredIndex(${i}, false)">Показать в центре</button>
                     <button class="btn-filter btn-mini" onclick="applyTopDeckByFilteredIndex(${i}, true)">В создание колод</button>
+                    <button class="btn-filter btn-mini" onclick="findSimilarTopDecks(${i})">Найти похожие</button>
                     <button class="btn-filter btn-mini" onclick="openTopDeckSource(${i})">Источник</button>
                 </div>
             </div>
@@ -1410,6 +1557,11 @@ function renderTopDecksList() {
 async function loadTopDecks() {
     if (topDeckState.isLoading) return;
     topDeckState.isLoading = true;
+    topDeckState.similarBaseRank = null;
+    topDeckState.similarDiffCount = 1;
+    hideTopSimilarPanel();
+    const diffSelect = document.getElementById('topSimilarDiffCount');
+    if (diffSelect) diffSelect.value = '1';
     setTopDecksStatus('Загружаю топ-колоды...');
     const list = document.getElementById('topDecksList');
     if (list) list.innerHTML = '';
@@ -1417,7 +1569,7 @@ async function loadTopDecks() {
     try {
         const sourceMode = topDeckState.sourceMode || 'royaleapi';
         const isLeaderboard = sourceMode === 'leaderboard';
-        const limit = 20;
+        const limit = TOP_DECK_SCAN_LIMIT;
         let sourceUrl = '';
         let label = '';
         let text = '';
@@ -1451,15 +1603,14 @@ async function loadTopDecks() {
         }
         if (!rows.length) throw new Error('Не удалось найти колоды на странице топа.');
 
-        const unique = new Set();
         const parsed = [];
+        let rankCounter = 0;
         for (const row of rows) {
+            rankCounter += 1;
             const slugs = Array.isArray(row?.slugs) ? row.slugs : [];
             const deck = buildTopDeckFromSlugs(slugs, { playerName: row?.playerName || '' });
             if (!deck) continue;
-            if (unique.has(deck.key)) continue;
-            unique.add(deck.key);
-            deck.metaRank = parsed.length + 1;
+            deck.metaRank = rankCounter;
             deck.sourceUrl = `https://royaleapi.com/decks/stats/${deck.slugs.join(',')}`;
             parsed.push(deck);
             if (parsed.length >= limit) break;
@@ -1521,7 +1672,7 @@ function applyTopDeckByFilteredIndex(filteredIndex, switchToBuild = false) {
     const deck = topDeckState.filtered[filteredIndex];
     if (!deck) return;
     try {
-        applyDeckEntriesToCurrent(deck.entries, { customName: `Топ колода #${filteredIndex + 1}` });
+        applyDeckEntriesToCurrent(deck.entries, { customName: `Топ колода #${deck.metaRank}` });
         if (switchToBuild) setAppMode('build');
     } catch (e) {
         alert(`Не удалось применить топ-колоду:\n${e.message || 'ошибка'}`);
@@ -2376,6 +2527,7 @@ document.getElementById('setHeroism').addEventListener('change', () => enforceSp
 document.getElementById('topApiDate').addEventListener('change', loadTopDecks);
 document.getElementById('topApiSort').addEventListener('change', loadTopDecks);
 document.getElementById('topLeaderboardSeason').addEventListener('change', loadTopDecks);
+document.getElementById('topSimilarDiffCount').addEventListener('change', onTopSimilarDiffChange);
 
 renderFilters();
 updateCardPoolInfo();
