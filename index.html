@@ -154,7 +154,8 @@
 <div class="app-shell">
     <div class="view-switch">
         <button id="tabBuildBtn" class="active" onclick="setAppMode('build')">Создание колод</button>
-        <button id="tabTopBtn" onclick="setAppMode('top')">Топ колоды</button>
+        <button id="tabTopBtn" onclick="setAppMode('top')">Топ колоды(Royal API)</button>
+        <button id="tabTopLbBtn" onclick="setAppMode('leaderboard')">Топ колоды(LeaderBoard Decks)</button>
     </div>
 
 <div class="container" id="appContainer">
@@ -246,7 +247,7 @@
         <div id="topDecksPanel" class="top-decks-panel">
             <div class="top-decks-layout">
                 <div class="top-settings-col">
-                    <div class="tool-title">Настройки топа</div>
+                    <div class="tool-title" id="topSourceTitle">Топ колоды (Royale API)</div>
                     <div class="top-setting-line">
                         <label>Период</label>
                         <select id="topPeriodMode" style="width:100%;">
@@ -295,7 +296,7 @@
                     </div>
                 </div>
                 <div class="top-results-col">
-                    <div class="tool-title">Колоды (с картинками)</div>
+                    <div class="tool-title" id="topResultsTitle">Колоды (с картинками)</div>
                     <div class="tiny-note" id="topDecksStatus">Открой вкладку «Топ колоды» и нажми «Обновить топ».</div>
                     <div id="topDecksList" class="top-decks-list"></div>
                 </div>
@@ -359,7 +360,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.1</div>
+<div id="appVersionBadge" class="app-version">v4.2</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -397,7 +398,7 @@ let cards = rawCards.map(c => ({
     included: true
 }));
 
-const APP_VERSION = '4.1';
+const APP_VERSION = '4.2';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
@@ -409,7 +410,8 @@ const topDeckState = {
     all: [],
     filtered: [],
     isLoading: false,
-    lastRequest: null
+    lastRequest: null,
+    sourceMode: 'royaleapi'
 };
 
 const retroRoyalePool = new Set([
@@ -1138,24 +1140,71 @@ function enforceSpecialSlotsFilter(changedField, showMessage = true) {
 }
 
 function setAppMode(mode) {
-    appMode = mode === 'top' ? 'top' : 'build';
+    appMode = mode === 'top' || mode === 'leaderboard' ? mode : 'build';
     const container = document.getElementById('appContainer');
-    if (container) container.classList.toggle('is-top-mode', appMode === 'top');
+    if (container) container.classList.toggle('is-top-mode', appMode === 'top' || appMode === 'leaderboard');
 
     const buildBtn = document.getElementById('tabBuildBtn');
     const topBtn = document.getElementById('tabTopBtn');
+    const topLbBtn = document.getElementById('tabTopLbBtn');
     if (buildBtn) buildBtn.classList.toggle('active', appMode === 'build');
     if (topBtn) topBtn.classList.toggle('active', appMode === 'top');
+    if (topLbBtn) topLbBtn.classList.toggle('active', appMode === 'leaderboard');
 
     const panel = document.getElementById('topDecksPanel');
-    if (panel) panel.style.display = appMode === 'top' ? 'flex' : 'none';
+    if (panel) panel.style.display = (appMode === 'top' || appMode === 'leaderboard') ? 'flex' : 'none';
 
-    if (appMode === 'top' && !topDeckState.isLoading && topDeckState.all.length === 0) {
+    if (appMode === 'top' || appMode === 'leaderboard') {
+        const nextSource = appMode === 'leaderboard' ? 'leaderboard' : 'royaleapi';
+        if (topDeckState.sourceMode !== nextSource) {
+            topDeckState.sourceMode = nextSource;
+            topDeckState.all = [];
+            topDeckState.filtered = [];
+            topDeckState.lastRequest = null;
+            const list = document.getElementById('topDecksList');
+            if (list) list.innerHTML = '';
+        }
+        updateTopSourceUi();
+    }
+
+    if ((appMode === 'top' || appMode === 'leaderboard') && !topDeckState.isLoading && topDeckState.all.length === 0) {
         loadTopDecks();
     }
 }
 
+function updateTopSourceUi() {
+    const source = topDeckState.sourceMode || 'royaleapi';
+    const isLeaderboard = source === 'leaderboard';
+    const sourceTitle = isLeaderboard ? 'Топ колоды (LeaderBoard Decks)' : 'Топ колоды (Royale API)';
+    const sourceNote = isLeaderboard ? 'Источник: срез лидерборда. Период недоступен.' : 'Источник: популярные колоды Royale API.';
+
+    const titleEl = document.getElementById('topSourceTitle');
+    const resultTitleEl = document.getElementById('topResultsTitle');
+    if (titleEl) titleEl.textContent = sourceTitle;
+    if (resultTitleEl) resultTitleEl.textContent = `${sourceTitle} — колоды`;
+
+    const periodEl = document.getElementById('topPeriodMode');
+    if (periodEl) periodEl.disabled = isLeaderboard;
+    if (isLeaderboard) {
+        const fromEl = document.getElementById('topDateFrom');
+        const toEl = document.getElementById('topDateTo');
+        if (fromEl) fromEl.disabled = true;
+        if (toEl) toEl.disabled = true;
+    } else {
+        updateTopRangeInputs();
+    }
+
+    setTopDecksStatus(sourceNote);
+}
+
 function updateTopRangeInputs() {
+    if ((topDeckState.sourceMode || 'royaleapi') === 'leaderboard') {
+        const fromEl = document.getElementById('topDateFrom');
+        const toEl = document.getElementById('topDateTo');
+        if (fromEl) fromEl.disabled = true;
+        if (toEl) toEl.disabled = true;
+        return;
+    }
     const mode = document.getElementById('topPeriodMode')?.value || 'now';
     const fromEl = document.getElementById('topDateFrom');
     const toEl = document.getElementById('topDateTo');
@@ -1326,10 +1375,14 @@ async function loadTopDecks() {
     if (list) list.innerHTML = '';
 
     try {
-        const period = resolveTopDeckPeriodQuery();
+        const sourceMode = topDeckState.sourceMode || 'royaleapi';
+        const isLeaderboard = sourceMode === 'leaderboard';
+        const period = isLeaderboard ? { query: '', label: 'срез лидерборда' } : resolveTopDeckPeriodQuery();
         const limit = Math.max(5, Math.min(30, parseInt(document.getElementById('topResultLimit')?.value || '20', 10)));
-        const sourceUrl = `https://royaleapi.com/decks/popular?time=${encodeURIComponent(period.query)}`;
-        const text = await fetchTextViaCorsProxy(sourceUrl);
+        const sourceUrl = isLeaderboard
+            ? 'https://royaleapi.com/decks/leaderboard'
+            : `https://royaleapi.com/decks/popular?time=${encodeURIComponent(period.query)}`;
+        let text = await fetchTextViaCorsProxy(sourceUrl);
         const rows = extractDeckSlugsFromRoyaleApiText(text);
         if (!rows.length) throw new Error('Не удалось найти колоды на странице топа.');
 
@@ -1348,7 +1401,7 @@ async function loadTopDecks() {
 
         if (!parsed.length) throw new Error('Все найденные колоды содержат неизвестные карты.');
         topDeckState.all = parsed;
-        topDeckState.lastRequest = { ...period, sourceUrl, loadedAt: new Date().toISOString() };
+        topDeckState.lastRequest = { ...period, sourceUrl, sourceMode, loadedAt: new Date().toISOString() };
         applyTopDeckFilters();
     } catch (e) {
         topDeckState.all = [];
