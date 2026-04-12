@@ -28,7 +28,8 @@
         .container { display: flex; gap: 20px; background-color: #22232e; padding: 20px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); max-width: 1450px; width: 100%; }
         .container.is-top-mode .sidebar,
         .container.is-top-mode .right-tools { display: none; }
-        .container.is-top-mode .main-area { width: 100%; max-width: none; }
+        .container.is-top-mode .main-area { width: 100%; max-width: none; align-items: stretch; }
+        .container.is-top-mode .build-only { display: none !important; }
 
         .sidebar { background-color: var(--bg-panel); padding: 20px; border-radius: 10px; width: 300px; display: flex; flex-direction: column; gap: 10px; }
         .sidebar h2 { margin: 0 0 10px 0; font-size: 18px; text-align: center; }
@@ -62,15 +63,27 @@
         .inline-row > * { flex: 1; }
 
         .main-area { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        .top-decks-panel { width: 100%; max-width: 980px; background: #2b2d3a; border: 1px solid #3f4152; border-radius: 10px; padding: 10px; display: none; flex-direction: column; gap: 8px; }
-        .top-decks-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-        .top-decks-controls .date-input { width: 145px; }
-        .top-decks-list { display: grid; gap: 8px; max-height: 300px; overflow-y: auto; padding-right: 2px; }
-        .top-deck-item { background: #242635; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; display: grid; gap: 6px; }
+        .top-decks-panel { width: 100%; max-width: none; background: #2b2d3a; border: 1px solid #3f4152; border-radius: 10px; padding: 10px; display: none; flex-direction: column; gap: 8px; }
+        .top-decks-layout { display: grid; grid-template-columns: 320px 1fr; gap: 12px; align-items: start; }
+        .top-settings-col, .top-results-col { background: #242635; border: 1px solid #3f4152; border-radius: 8px; padding: 10px; }
+        .top-settings-col { display: grid; gap: 8px; }
+        .top-setting-line { display: grid; gap: 5px; }
+        .top-setting-line label { font-size: 12px; color: #cfd3e8; }
+        .top-setting-line .date-input { width: 100%; }
+        .top-decks-list { display: grid; gap: 8px; max-height: 70vh; overflow-y: auto; padding-right: 2px; margin-top: 8px; }
+        .top-deck-item { background: #2b2d3a; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; display: grid; gap: 7px; }
         .top-deck-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; }
         .top-deck-tags { display: flex; gap: 6px; flex-wrap: wrap; }
         .top-pill { font-size: 11px; border: 1px solid #4c5069; border-radius: 999px; padding: 2px 7px; color: #cfd3e8; background: #1f2230; }
         .top-deck-cards { font-size: 12px; color: #d5d8ea; line-height: 1.25; }
+        .top-card-row { display: grid; grid-template-columns: repeat(8, minmax(38px, 1fr)); gap: 6px; }
+        .top-card-mini { position: relative; border: 1px solid #3f4152; border-radius: 6px; background: #1e1e24; padding: 2px; height: 54px; overflow: hidden; }
+        .top-card-mini img { width: 100%; height: 100%; object-fit: contain; border-radius: 4px; }
+        .top-card-mini.evo { border-color: var(--evo-color); }
+        .top-card-mini.heroism { border-color: var(--hero-color); }
+        .top-mini-badge { position: absolute; top: 2px; font-size: 8px; line-height: 1; border-radius: 999px; padding: 2px 3px; font-weight: 800; color: #fff; }
+        .top-mini-badge.evo { left: 2px; background: var(--evo-color); }
+        .top-mini-badge.hero { right: 2px; background: var(--hero-color); color: #111; }
         
         .avg-elixir-panel { display: none; align-items: center; gap: 8px; font-size: 16px; font-weight: bold; background: #2b2d3a; padding: 8px 16px; border-radius: 8px; border: 1px solid #3f4152; }
         .avg-elixir-val { color: #ff8df0; font-size: 20px; }
@@ -125,6 +138,7 @@
         @media (max-width: 1180px) {
             .container { flex-direction: column; }
             .sidebar, .right-tools { width: 100%; }
+            .top-decks-layout { grid-template-columns: 1fr; }
         }
 
         ::-webkit-scrollbar { width: 8px; }
@@ -226,49 +240,70 @@
 
     <div class="main-area">
         <div id="topDecksPanel" class="top-decks-panel">
-            <div class="tool-title">Топ колоды (RoyaleAPI)</div>
-            <div class="top-decks-controls">
-                <label>Период:</label>
-                <select id="topPeriodMode" style="width:130px;">
-                    <option value="now">Сейчас (24ч)</option>
-                    <option value="week">Неделя</option>
-                    <option value="month">Месяц</option>
-                    <option value="custom">Диапазон</option>
-                </select>
-                <input type="date" id="topDateFrom" class="text-input date-input" disabled>
-                <input type="date" id="topDateTo" class="text-input date-input" disabled>
-                <select id="topResultLimit" style="width:100px;">
-                    <option value="10">10 колод</option>
-                    <option value="20" selected>20 колод</option>
-                    <option value="30">30 колод</option>
-                </select>
-                <button class="btn-blue btn-mini" onclick="loadTopDecks()">Обновить топ</button>
-                <button class="btn-filter btn-mini" onclick="pickRandomTopDeck()">Случайная из топа</button>
+            <div class="top-decks-layout">
+                <div class="top-settings-col">
+                    <div class="tool-title">Настройки топа</div>
+                    <div class="top-setting-line">
+                        <label>Период</label>
+                        <select id="topPeriodMode" style="width:100%;">
+                            <option value="now">Сейчас (24ч)</option>
+                            <option value="week">Неделя</option>
+                            <option value="month">Месяц</option>
+                            <option value="custom">Диапазон</option>
+                        </select>
+                    </div>
+                    <div class="top-setting-line">
+                        <label>Диапазон (для режима «Диапазон»)</label>
+                        <div class="inline-row">
+                            <input type="date" id="topDateFrom" class="text-input date-input" disabled>
+                            <input type="date" id="topDateTo" class="text-input date-input" disabled>
+                        </div>
+                    </div>
+                    <div class="top-setting-line">
+                        <label>Сколько колод показать</label>
+                        <select id="topResultLimit" style="width:100%;">
+                            <option value="10">10 колод</option>
+                            <option value="20" selected>20 колод</option>
+                            <option value="30">30 колод</option>
+                        </select>
+                    </div>
+                    <div class="top-setting-line">
+                        <label>Карта в колоде</label>
+                        <select id="topIncludeCard" style="width:100%;">
+                            <option value="any">Любая</option>
+                        </select>
+                    </div>
+                    <div class="top-setting-line">
+                        <label>Поиск по колодам</label>
+                        <input type="text" id="topDeckSearch" class="text-input" placeholder="Например: Хог, Fireball...">
+                    </div>
+                    <div class="top-setting-line">
+                        <label>Сортировка</label>
+                        <select id="topSortMode" style="width:100%;">
+                            <option value="meta">По мета-рангу</option>
+                            <option value="avg-asc">Эликсир по возр.</option>
+                            <option value="avg-desc">Эликсир по убыв.</option>
+                        </select>
+                    </div>
+                    <div class="inline-row">
+                        <button class="btn-blue btn-mini" onclick="loadTopDecks()">Обновить топ</button>
+                        <button class="btn-filter btn-mini" onclick="pickRandomTopDeck()">Случайная</button>
+                    </div>
+                </div>
+                <div class="top-results-col">
+                    <div class="tool-title">Колоды (с картинками)</div>
+                    <div class="tiny-note" id="topDecksStatus">Открой вкладку «Топ колоды» и нажми «Обновить топ».</div>
+                    <div id="topDecksList" class="top-decks-list"></div>
+                </div>
             </div>
-            <div class="top-decks-controls">
-                <label>Карта в колоде:</label>
-                <select id="topIncludeCard" style="width:190px;">
-                    <option value="any">Любая</option>
-                </select>
-                <label>Поиск:</label>
-                <input type="text" id="topDeckSearch" class="text-input" style="width:190px;" placeholder="Например: Хог, Fireball...">
-                <label>Сорт:</label>
-                <select id="topSortMode" style="width:140px;">
-                    <option value="meta">По мета-рангу</option>
-                    <option value="avg-asc">Эликсир по возр.</option>
-                    <option value="avg-desc">Эликсир по убыв.</option>
-                </select>
-            </div>
-            <div class="tiny-note" id="topDecksStatus">Открой вкладку «Топ колоды» и нажми «Обновить топ».</div>
-            <div id="topDecksList" class="top-decks-list"></div>
         </div>
 
-        <div id="averageElixirDisplay" class="avg-elixir-panel">
+        <div id="averageElixirDisplay" class="avg-elixir-panel build-only">
             Средняя цена: <span id="avgElixirValue" class="avg-elixir-val">0.0</span> <div class="avg-elixir-icon"></div>
         </div>
 
-        <div id="deckNameValue" class="deck-title-display">Собери колоду, чтобы получить название</div>
-        <div id="deckStatsPanel" class="deck-stats-panel" style="display:none;">
+        <div id="deckNameValue" class="deck-title-display build-only">Собери колоду, чтобы получить название</div>
+        <div id="deckStatsPanel" class="deck-stats-panel build-only" style="display:none;">
             <div class="stat-card">
                 <div class="stat-label">Токсичность</div>
                 <div class="stat-value" id="toxicityValue">0</div>
@@ -286,12 +321,12 @@
             </div>
         </div>
 
-        <div class="deck-grid" id="deckGrid"></div>
-        <div class="tower-area" id="towerArea">
+        <div class="deck-grid build-only" id="deckGrid"></div>
+        <div class="tower-area build-only" id="towerArea">
             <div class="card-slot" id="towerSlot" style="display: none;"></div>
             <div id="secretsArea" style="display: flex; gap: 10px;"></div>
         </div>
-        <div class="roulette-container" id="rouletteContainer">
+        <div class="roulette-container build-only" id="rouletteContainer">
             <div style="position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: red; z-index: 5;"></div>
             <div class="roulette-track" id="rouletteTrack"></div>
         </div>
@@ -320,7 +355,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v3.9</div>
+<div id="appVersionBadge" class="app-version">v4.0</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -358,7 +393,7 @@ let cards = rawCards.map(c => ({
     included: true
 }));
 
-const APP_VERSION = '3.9';
+const APP_VERSION = '4.0';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
@@ -1195,7 +1230,15 @@ function buildTopDeckFromSlugs(slugs) {
         avgElixir: avg,
         spells,
         wincons,
-        labelsRu: previewCards.map(card => card.ruName)
+        labelsRu: previewCards.map(card => card.ruName),
+        previewCards: previewCards.map(card => ({
+            name: card.name,
+            ruName: card.ruName,
+            img: card.img,
+            isEvo: Boolean(card.isEvo),
+            isHeroism: Boolean(card.isHeroism),
+            elixir: card.elixir
+        }))
     };
 }
 
@@ -1239,12 +1282,25 @@ function renderTopDecksList() {
             `Спеллы ${deck.spells}`,
             `Винконы ${deck.wincons}`
         ].map(text => `<span class="top-pill">${text}</span>`).join('');
+        const cardStrip = (deck.previewCards || []).map(card => {
+            const classes = ['top-card-mini'];
+            if (card.isEvo) classes.push('evo');
+            if (card.isHeroism) classes.push('heroism');
+            return `
+                <div class="${classes.join(' ')}" title="${card.ruName} (${card.elixir})">
+                    ${card.isEvo ? '<span class="top-mini-badge evo">Э</span>' : ''}
+                    ${card.isHeroism ? '<span class="top-mini-badge hero">Г</span>' : ''}
+                    <img src="${card.img}" alt="${card.ruName}">
+                </div>
+            `;
+        }).join('');
         return `
             <div class="top-deck-item">
                 <div class="top-deck-head">
                     <strong>#${i + 1}</strong>
                     <div class="top-deck-tags">${pills}</div>
                 </div>
+                <div class="top-card-row">${cardStrip}</div>
                 <div class="top-deck-cards">${deck.labelsRu.join(' • ')}</div>
                 <div class="inline-row">
                     <button class="btn-blue btn-mini" onclick="applyTopDeckByFilteredIndex(${i}, false)">Показать в центре</button>
