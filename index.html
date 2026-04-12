@@ -248,51 +248,34 @@
             <div class="top-decks-layout">
                 <div class="top-settings-col">
                     <div class="tool-title" id="topSourceTitle">Топ колоды (Royale API)</div>
-                    <div class="top-setting-line">
-                        <label>Период</label>
-                        <select id="topPeriodMode" style="width:100%;">
-                            <option value="now">Сейчас (24ч)</option>
-                            <option value="week">Неделя</option>
-                            <option value="month">Месяц</option>
-                            <option value="custom">Диапазон</option>
-                        </select>
-                    </div>
-                    <div class="top-setting-line">
-                        <label>Диапазон (для режима «Диапазон»)</label>
-                        <div class="inline-row">
-                            <input type="date" id="topDateFrom" class="text-input date-input" disabled>
-                            <input type="date" id="topDateTo" class="text-input date-input" disabled>
+                    <div id="topRoyalFiltersGroup">
+                        <div class="top-setting-line">
+                            <label>Дата</label>
+                            <select id="topApiDate" style="width:100%;">
+                                <option value="1d">1 день</option>
+                                <option value="3d">3 дня</option>
+                                <option value="7d" selected>7 дней</option>
+                            </select>
+                        </div>
+                        <div class="top-setting-line">
+                            <label>Сортировка</label>
+                            <select id="topApiSort" style="width:100%;">
+                                <option value="rating">Рейтинг</option>
+                                <option value="pop">Популярность</option>
+                                <option value="win">Процент побед</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="top-setting-line">
-                        <label>Сколько колод показать</label>
-                        <select id="topResultLimit" style="width:100%;">
-                            <option value="10">10 колод</option>
-                            <option value="20" selected>20 колод</option>
-                            <option value="30">30 колод</option>
-                        </select>
-                    </div>
-                    <div class="top-setting-line">
-                        <label>Карта в колоде</label>
-                        <select id="topIncludeCard" style="width:100%;">
-                            <option value="any">Любая</option>
-                        </select>
-                    </div>
-                    <div class="top-setting-line">
-                        <label>Поиск по колодам</label>
-                        <input type="text" id="topDeckSearch" class="text-input" placeholder="Например: Хог, Fireball...">
-                    </div>
-                    <div class="top-setting-line">
-                        <label>Сортировка</label>
-                        <select id="topSortMode" style="width:100%;">
-                            <option value="meta">По мета-рангу</option>
-                            <option value="avg-asc">Эликсир по возр.</option>
-                            <option value="avg-desc">Эликсир по убыв.</option>
-                        </select>
+                    <div id="topLeaderboardFiltersGroup" style="display:none;">
+                        <div class="top-setting-line">
+                            <label>Выбор сезона</label>
+                            <select id="topLeaderboardSeason" style="width:100%;">
+                                <option value="current">Текущий сезон</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="inline-row">
-                        <button class="btn-blue btn-mini" onclick="loadTopDecks()">Обновить топ</button>
-                        <button class="btn-filter btn-mini" onclick="pickRandomTopDeck()">Случайная</button>
+                        <button class="btn-blue btn-mini" onclick="loadTopDecks()">Обновить</button>
                     </div>
                 </div>
                 <div class="top-results-col">
@@ -360,7 +343,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.2</div>
+<div id="appVersionBadge" class="app-version">v4.3</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -398,7 +381,7 @@ let cards = rawCards.map(c => ({
     included: true
 }));
 
-const APP_VERSION = '4.2';
+const APP_VERSION = '4.3';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
@@ -411,7 +394,9 @@ const topDeckState = {
     filtered: [],
     isLoading: false,
     lastRequest: null,
-    sourceMode: 'royaleapi'
+    sourceMode: 'royaleapi',
+    seasonsLoaded: false,
+    seasonOptions: []
 };
 
 const retroRoyalePool = new Set([
@@ -1172,88 +1157,115 @@ function setAppMode(mode) {
     }
 }
 
-function updateTopSourceUi() {
-    const source = topDeckState.sourceMode || 'royaleapi';
-    const isLeaderboard = source === 'leaderboard';
-    const sourceTitle = isLeaderboard ? 'Топ колоды (LeaderBoard Decks)' : 'Топ колоды (Royale API)';
-    const sourceNote = isLeaderboard ? 'Источник: срез лидерборда. Период недоступен.' : 'Источник: популярные колоды Royale API.';
-
-    const titleEl = document.getElementById('topSourceTitle');
-    const resultTitleEl = document.getElementById('topResultsTitle');
-    if (titleEl) titleEl.textContent = sourceTitle;
-    if (resultTitleEl) resultTitleEl.textContent = `${sourceTitle} — колоды`;
-
-    const periodEl = document.getElementById('topPeriodMode');
-    if (periodEl) periodEl.disabled = isLeaderboard;
-    if (isLeaderboard) {
-        const fromEl = document.getElementById('topDateFrom');
-        const toEl = document.getElementById('topDateTo');
-        if (fromEl) fromEl.disabled = true;
-        if (toEl) toEl.disabled = true;
-    } else {
-        updateTopRangeInputs();
-    }
-
-    setTopDecksStatus(sourceNote);
-}
-
-function updateTopRangeInputs() {
-    if ((topDeckState.sourceMode || 'royaleapi') === 'leaderboard') {
-        const fromEl = document.getElementById('topDateFrom');
-        const toEl = document.getElementById('topDateTo');
-        if (fromEl) fromEl.disabled = true;
-        if (toEl) toEl.disabled = true;
-        return;
-    }
-    const mode = document.getElementById('topPeriodMode')?.value || 'now';
-    const fromEl = document.getElementById('topDateFrom');
-    const toEl = document.getElementById('topDateTo');
-    if (!fromEl || !toEl) return;
-    const isCustom = mode === 'custom';
-    fromEl.disabled = !isCustom;
-    toEl.disabled = !isCustom;
-}
-
-function initTopIncludeCardOptions() {
-    const select = document.getElementById('topIncludeCard');
-    if (!select) return;
-    const options = ['<option value="any">Любая</option>'];
-    const sorted = [...cards].sort((a, b) => String(a.ruName).localeCompare(String(b.ruName), 'ru'));
-    for (const card of sorted) {
-        options.push(`<option value="${card.name}">${card.ruName}</option>`);
-    }
-    select.innerHTML = options.join('');
-}
-
 function setTopDecksStatus(text) {
     const el = document.getElementById('topDecksStatus');
     if (el) el.textContent = text;
 }
 
-function resolveTopDeckPeriodQuery() {
-    const mode = document.getElementById('topPeriodMode')?.value || 'now';
-    if (mode === 'now') return { query: '1d', label: 'за 24 часа' };
-    if (mode === 'week') return { query: '7d', label: 'за неделю' };
-    if (mode === 'month') return { query: '30d', label: 'за месяц' };
-
-    const fromRaw = document.getElementById('topDateFrom')?.value;
-    const toRaw = document.getElementById('topDateTo')?.value;
-    if (!fromRaw || !toRaw) {
-        throw new Error('Для диапазона укажи обе даты: от и до.');
-    }
-    const from = new Date(`${fromRaw}T00:00:00`);
-    const to = new Date(`${toRaw}T00:00:00`);
-    if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) {
-        throw new Error('Некорректные даты диапазона.');
-    }
-    if (from > to) {
-        throw new Error('Дата «От» не может быть больше даты «До».');
-    }
-    const days = Math.max(1, Math.min(60, Math.floor((to - from) / 86400000) + 1));
-    return { query: `${days}d`, label: `за диапазон ${fromRaw}..${toRaw}` };
+function escapeHtml(text) {
+    return String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
-function buildTopDeckFromSlugs(slugs) {
+function decodeHtmlEntities(text) {
+    const ta = document.createElement('textarea');
+    ta.innerHTML = String(text || '');
+    return ta.value;
+}
+
+function getCurrentSeasonKey() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+}
+
+function seasonNumberFromKey(seasonKey) {
+    const m = /^(\d{4})-(\d{2})$/.exec(String(seasonKey || ''));
+    if (!m) return '?';
+    const year = parseInt(m[1], 10);
+    const month = parseInt(m[2], 10);
+    const diff = (year - 2019) * 12 + (month - 7);
+    return diff >= 0 ? diff + 1 : '?';
+}
+
+function formatSeasonLabel(seasonKey) {
+    const m = /^(\d{4})-(\d{2})$/.exec(String(seasonKey || ''));
+    if (!m) return String(seasonKey || '');
+    const year = parseInt(m[1], 10);
+    const month = parseInt(m[2], 10);
+    const names = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+    const mm = String(month).padStart(2, '0');
+    const ddLast = String(new Date(year, month, 0).getDate()).padStart(2, '0');
+    const seasonNo = seasonNumberFromKey(seasonKey);
+    return `Сезон ${seasonNo} • ${names[month - 1]} ${year} (01.${mm}–${ddLast}.${mm})`;
+}
+
+function buildSeasonRange(fromKey, toKey) {
+    const out = [];
+    let current = toKey;
+    let guard = 0;
+    while (current >= fromKey && guard < 240) {
+        out.push(current);
+        const parts = /^(\d{4})-(\d{2})$/.exec(current);
+        if (!parts) break;
+        let y = parseInt(parts[1], 10);
+        let m = parseInt(parts[2], 10) - 1;
+        if (m <= 0) { y -= 1; m = 12; }
+        current = `${y}-${String(m).padStart(2, '0')}`;
+        guard += 1;
+    }
+    return out;
+}
+
+async function ensureLeaderboardSeasonsLoaded() {
+    if (topDeckState.seasonsLoaded) return;
+    const select = document.getElementById('topLeaderboardSeason');
+    if (!select) return;
+    let minSeason = '2021-01';
+    try {
+        const text = await fetchTextViaCorsProxy('https://royaleapi.com/decks/leaderboard', true);
+        const found = [...text.matchAll(/\/decks\/leaderboard\/season\/(\d{4}-\d{2})/g)]
+            .map(m => m[1])
+            .filter(Boolean);
+        if (found.length) minSeason = [...new Set(found)].sort()[0];
+    } catch (e) {
+        // fallback below
+    }
+    const currentSeason = getCurrentSeasonKey();
+    const months = buildSeasonRange(minSeason, currentSeason).filter(key => key !== currentSeason);
+    topDeckState.seasonOptions = months;
+    const options = [`<option value="current">Текущий — ${formatSeasonLabel(currentSeason)}</option>`];
+    for (const key of months) {
+        options.push(`<option value="${key}">${formatSeasonLabel(key)}</option>`);
+    }
+    select.innerHTML = options.join('');
+    topDeckState.seasonsLoaded = true;
+}
+
+function updateTopSourceUi() {
+    const source = topDeckState.sourceMode || 'royaleapi';
+    const isLeaderboard = source === 'leaderboard';
+    const sourceTitle = isLeaderboard ? 'Топ колоды (LeaderBoard Decks)' : 'Топ колоды (Royale API)';
+    const sourceNote = isLeaderboard ? 'Фильтр: выбор сезона.' : 'Фильтры: дата и сортировка.';
+
+    const titleEl = document.getElementById('topSourceTitle');
+    const resultTitleEl = document.getElementById('topResultsTitle');
+    if (titleEl) titleEl.textContent = sourceTitle;
+    if (resultTitleEl) resultTitleEl.textContent = 'Колоды (с картинками)';
+
+    const royalGroup = document.getElementById('topRoyalFiltersGroup');
+    const lbGroup = document.getElementById('topLeaderboardFiltersGroup');
+    if (royalGroup) royalGroup.style.display = isLeaderboard ? 'none' : 'block';
+    if (lbGroup) lbGroup.style.display = isLeaderboard ? 'block' : 'none';
+
+    setTopDecksStatus(sourceNote);
+    if (isLeaderboard) ensureLeaderboardSeasonsLoaded();
+}
+
+function buildTopDeckFromSlugs(slugs, extras = {}) {
     if (!Array.isArray(slugs) || slugs.length !== 8) return null;
     const entries = [];
     const previewCards = [];
@@ -1283,6 +1295,7 @@ function buildTopDeckFromSlugs(slugs) {
         avgElixir: avg,
         spells,
         wincons,
+        playerName: String(extras.playerName || '').trim(),
         labelsRu: previewCards.map(card => card.ruName),
         previewCards: previewCards.map(card => ({
             name: card.name,
@@ -1296,29 +1309,42 @@ function buildTopDeckFromSlugs(slugs) {
 }
 
 function applyTopDeckFilters() {
-    const includeCard = document.getElementById('topIncludeCard')?.value || 'any';
-    const search = String(document.getElementById('topDeckSearch')?.value || '').trim().toLowerCase();
-    const sortMode = document.getElementById('topSortMode')?.value || 'meta';
-    let list = [...topDeckState.all];
-
-    if (includeCard !== 'any') {
-        list = list.filter(deck => deck.entries.some(entry => entry.name === includeCard));
-    }
-    if (search) {
-        list = list.filter(deck => {
-            return deck.labelsRu.some(label => String(label).toLowerCase().includes(search)) ||
-                deck.entries.some(entry => String(entry.name).toLowerCase().includes(search));
-        });
-    }
-    if (sortMode === 'avg-asc') {
-        list.sort((a, b) => a.avgElixir - b.avgElixir);
-    } else if (sortMode === 'avg-desc') {
-        list.sort((a, b) => b.avgElixir - a.avgElixir);
-    }
-
-    topDeckState.filtered = list;
+    topDeckState.filtered = [...topDeckState.all];
     renderTopDecksList();
-    setTopDecksStatus(`Показано: ${list.length}/${topDeckState.all.length} колод${topDeckState.lastRequest ? ` (${topDeckState.lastRequest.label})` : ''}.`);
+    const label = topDeckState.lastRequest ? ` (${topDeckState.lastRequest.label})` : '';
+    setTopDecksStatus(`Показано: ${topDeckState.filtered.length}/${topDeckState.all.length} колод${label}.`);
+}
+
+function parsePopularDeckRows(text) {
+    const out = [];
+    const seen = new Set();
+    const re = /<a href="\/decks\/stats\/([a-z0-9,-]+)"[^>]*>[\s\S]{0,20000}?class="deck_search_results__highest_trophy_link"[\s\S]{0,2500}?<div class="player item">\s*([^<]+?)\s*<\/div>/gi;
+    let m;
+    while ((m = re.exec(text))) {
+        const row = String(m[1] || '').toLowerCase();
+        const slugs = row.split(',').map(x => x.trim()).filter(Boolean);
+        if (slugs.length !== 8) continue;
+        if (seen.has(row)) continue;
+        seen.add(row);
+        out.push({ slugs, playerName: decodeHtmlEntities(m[2] || '') });
+    }
+    return out;
+}
+
+function parseLeaderboardDeckRows(text) {
+    const out = [];
+    const seen = new Set();
+    const re = /<a href="\/decks\/stats\/([a-z0-9,-]+)" class="deck_lb__deck_row">[\s\S]{0,9000}?<a class="ui tiny header player_name"[^>]*>\s*([^<]+?)\s*<\/a>/gi;
+    let m;
+    while ((m = re.exec(text))) {
+        const row = String(m[1] || '').toLowerCase();
+        const slugs = row.split(',').map(x => x.trim()).filter(Boolean);
+        if (slugs.length !== 8) continue;
+        if (seen.has(row)) continue;
+        seen.add(row);
+        out.push({ slugs, playerName: decodeHtmlEntities(m[2] || '') });
+    }
+    return out;
 }
 
 function renderTopDecksList() {
@@ -1335,6 +1361,7 @@ function renderTopDecksList() {
             `Спеллы ${deck.spells}`,
             `Винконы ${deck.wincons}`
         ].map(text => `<span class="top-pill">${text}</span>`).join('');
+        const playerText = deck.playerName ? ` · ${escapeHtml(deck.playerName)}` : '';
         const cardStrip = (deck.previewCards || []).map(card => {
             const classes = ['top-card-mini'];
             if (card.isEvo) classes.push('evo');
@@ -1351,10 +1378,9 @@ function renderTopDecksList() {
             <div class="top-deck-item">
                 <div class="top-deck-main">
                     <div class="top-deck-head">
-                        <strong>#${i + 1}</strong>
+                        <strong>#${i + 1}${playerText}</strong>
                         <div class="top-deck-tags">${pills}</div>
                     </div>
-                    <div class="tiny-note">Топ-колода RoyaleAPI</div>
                     <div class="top-card-row">${cardStrip}</div>
                 </div>
                 <div class="top-deck-actions">
@@ -1377,19 +1403,45 @@ async function loadTopDecks() {
     try {
         const sourceMode = topDeckState.sourceMode || 'royaleapi';
         const isLeaderboard = sourceMode === 'leaderboard';
-        const period = isLeaderboard ? { query: '', label: 'срез лидерборда' } : resolveTopDeckPeriodQuery();
-        const limit = Math.max(5, Math.min(30, parseInt(document.getElementById('topResultLimit')?.value || '20', 10)));
-        const sourceUrl = isLeaderboard
-            ? 'https://royaleapi.com/decks/leaderboard'
-            : `https://royaleapi.com/decks/popular?time=${encodeURIComponent(period.query)}`;
-        let text = await fetchTextViaCorsProxy(sourceUrl);
-        const rows = extractDeckSlugsFromRoyaleApiText(text);
+        const limit = 20;
+        let sourceUrl = '';
+        let label = '';
+        let text = '';
+        let rows = [];
+
+        if (isLeaderboard) {
+            await ensureLeaderboardSeasonsLoaded();
+            const seasonValue = document.getElementById('topLeaderboardSeason')?.value || 'current';
+            sourceUrl = seasonValue === 'current'
+                ? 'https://royaleapi.com/decks/leaderboard'
+                : `https://royaleapi.com/decks/leaderboard/season/${encodeURIComponent(seasonValue)}`;
+            text = await fetchTextViaCorsProxy(sourceUrl, true);
+            rows = parseLeaderboardDeckRows(text);
+            const seasonSelect = document.getElementById('topLeaderboardSeason');
+            const seasonLabel = seasonSelect?.selectedOptions?.[0]?.textContent?.trim() || 'Текущий сезон';
+            label = seasonLabel;
+        } else {
+            const dateValue = document.getElementById('topApiDate')?.value || '7d';
+            const sortValue = document.getElementById('topApiSort')?.value || 'rating';
+            sourceUrl = `https://royaleapi.com/decks/popular?time=${encodeURIComponent(dateValue)}&sort=${encodeURIComponent(sortValue)}`;
+            text = await fetchTextViaCorsProxy(sourceUrl);
+            rows = parsePopularDeckRows(text);
+            const dateLabelByValue = { '1d': '1 день', '3d': '3 дня', '7d': '7 дней' };
+            const sortLabelByValue = { rating: 'Рейтинг', pop: 'Популярность', win: 'Процент побед' };
+            label = `${dateLabelByValue[dateValue] || dateValue}, ${sortLabelByValue[sortValue] || sortValue}`;
+        }
+
+        if (!rows.length) {
+            const fallbackRows = extractDeckSlugsFromRoyaleApiText(text).map(slugs => ({ slugs, playerName: '' }));
+            rows = fallbackRows;
+        }
         if (!rows.length) throw new Error('Не удалось найти колоды на странице топа.');
 
         const unique = new Set();
         const parsed = [];
-        for (const slugs of rows) {
-            const deck = buildTopDeckFromSlugs(slugs);
+        for (const row of rows) {
+            const slugs = Array.isArray(row?.slugs) ? row.slugs : [];
+            const deck = buildTopDeckFromSlugs(slugs, { playerName: row?.playerName || '' });
             if (!deck) continue;
             if (unique.has(deck.key)) continue;
             unique.add(deck.key);
@@ -1401,7 +1453,7 @@ async function loadTopDecks() {
 
         if (!parsed.length) throw new Error('Все найденные колоды содержат неизвестные карты.');
         topDeckState.all = parsed;
-        topDeckState.lastRequest = { ...period, sourceUrl, sourceMode, loadedAt: new Date().toISOString() };
+        topDeckState.lastRequest = { label, sourceUrl, sourceMode, loadedAt: new Date().toISOString() };
         applyTopDeckFilters();
     } catch (e) {
         topDeckState.all = [];
@@ -2260,10 +2312,9 @@ document.getElementById('replaceMode').addEventListener('change', updateReplacem
 document.getElementById('deckGrid').addEventListener('click', handleDeckSlotPick);
 document.getElementById('setEvos').addEventListener('change', () => enforceSpecialSlotsFilter('evos'));
 document.getElementById('setHeroism').addEventListener('change', () => enforceSpecialSlotsFilter('heroism'));
-document.getElementById('topPeriodMode').addEventListener('change', updateTopRangeInputs);
-document.getElementById('topIncludeCard').addEventListener('change', applyTopDeckFilters);
-document.getElementById('topDeckSearch').addEventListener('input', applyTopDeckFilters);
-document.getElementById('topSortMode').addEventListener('change', applyTopDeckFilters);
+document.getElementById('topApiDate').addEventListener('change', loadTopDecks);
+document.getElementById('topApiSort').addEventListener('change', loadTopDecks);
+document.getElementById('topLeaderboardSeason').addEventListener('change', loadTopDecks);
 
 renderFilters();
 updateCardPoolInfo();
@@ -2271,8 +2322,6 @@ updateThemeLetterOptions();
 updateThemeHint();
 updateReplacementInfo();
 enforceSpecialSlotsFilter('evos', false);
-updateTopRangeInputs();
-initTopIncludeCardOptions();
 setAppMode('build');
 document.getElementById('appVersionBadge').textContent = `v${APP_VERSION}`;
 clearDeck();
