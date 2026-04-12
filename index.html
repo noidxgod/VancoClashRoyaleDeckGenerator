@@ -88,13 +88,19 @@
         .top-deck-actions { display: grid; gap: 6px; align-content: start; }
         .top-side-stats { background: #1f2230; border: 1px solid #3f4152; border-radius: 6px; padding: 6px; display: grid; gap: 5px; color: #b7bdd3; }
         .top-side-stats-title { font-size: 11px; font-weight: 700; color: #e0e5ff; }
+        .top-side-summary { font-size: 10px; color: #cbd2eb; }
+        .top-side-summary strong { color: #eef4ff; }
+        .top-side-detail-toggle { margin: 0; width: 100%; }
+        .top-side-detail { display: grid; gap: 5px; padding-top: 4px; border-top: 1px solid #353a52; }
         .top-side-grid { display: grid; grid-template-columns: auto repeat(3, minmax(28px, 1fr)); gap: 4px 5px; align-items: center; }
         .top-side-grid-head { font-size: 9px; color: #9fa8c7; text-align: center; font-weight: 700; }
         .top-side-grid-label { font-size: 10px; color: #d2d8ef; white-space: nowrap; }
         .top-side-grid-val { font-size: 10px; text-align: center; border: 1px solid #4a4f68; border-radius: 999px; padding: 1px 4px; background: #202437; color: #e7edff; font-weight: 700; }
         .top-side-grid-val.zero { color: #aab2d3; opacity: 0.75; }
         .top-side-grid-val.nonzero { border-color: #6696ff; background: #25345b; color: #eef4ff; }
-        .top-deck-actions button { width: 100%; margin: 0; }
+        .top-side-actions { display: flex; gap: 5px; align-items: center; }
+        .top-side-actions select { width: 72px; }
+        .top-side-actions button { flex: 1; margin: 0; }
         .top-similar-panel { display: none; background: #1f2230; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; margin-top: 8px; }
         .top-similar-panel.active { display: grid; gap: 6px; }
         .top-similar-title { font-size: 12px; font-weight: 700; color: #d7dcf2; }
@@ -372,7 +378,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.8</div>
+<div id="appVersionBadge" class="app-version">v4.9</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -424,7 +430,7 @@ let cards = rawCards.map(c => {
     };
 });
 
-const APP_VERSION = '4.8';
+const APP_VERSION = '4.9';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 1000;
@@ -444,7 +450,8 @@ const topDeckState = {
     seasonOptions: [],
     renderLimit: TOP_DECK_RENDER_LIMIT,
     similarBaseRank: null,
-    similarDiffCount: 1
+    similarDiffCount: 1,
+    detailsOpenByRank: {}
 };
 
 const retroRoyalePool = new Set([
@@ -1196,6 +1203,7 @@ function setAppMode(mode) {
             topDeckState.lastRequest = null;
             topDeckState.similarBaseRank = null;
             topDeckState.similarDiffCount = 1;
+            topDeckState.detailsOpenByRank = {};
             const list = document.getElementById('topDecksList');
             if (list) list.innerHTML = '';
         }
@@ -1422,6 +1430,38 @@ function renderTopSideBucketValue(value) {
     return `<div class="${cls}">${n}</div>`;
 }
 
+function isTopDeckDetailsOpen(metaRank) {
+    return Boolean(topDeckState.detailsOpenByRank && topDeckState.detailsOpenByRank[metaRank]);
+}
+
+function toggleTopDeckDetails(metaRank) {
+    const rank = Number(metaRank);
+    if (!rank) return;
+    if (!topDeckState.detailsOpenByRank) topDeckState.detailsOpenByRank = {};
+    if (topDeckState.detailsOpenByRank[rank]) delete topDeckState.detailsOpenByRank[rank];
+    else topDeckState.detailsOpenByRank[rank] = true;
+    renderTopDecksList();
+}
+
+function showSimilarForDeckRank(metaRank, diffCount = 1) {
+    const rank = Number(metaRank);
+    if (!rank) return;
+    const diff = Math.min(3, Math.max(1, Number(diffCount) || 1));
+    topDeckState.similarBaseRank = rank;
+    topDeckState.similarDiffCount = diff;
+    const globalSelect = document.getElementById('topSimilarDiffCount');
+    if (globalSelect) globalSelect.value = String(diff);
+    applyTopSimilarSearch();
+}
+
+function showSimilarForDeckRankFromSelect(metaRank) {
+    const rank = Number(metaRank);
+    if (!rank) return;
+    const localSelect = document.getElementById(`topDeckDiffSelect-${rank}`);
+    const diff = Number(localSelect?.value) || 1;
+    showSimilarForDeckRank(rank, diff);
+}
+
 function computeTopDeckSimilarCounters(decks) {
     if (!Array.isArray(decks)) return;
     for (const deck of decks) {
@@ -1527,10 +1567,9 @@ function applyTopSimilarSearch() {
 function findSimilarTopDecks(filteredIndex) {
     const deck = topDeckState.filtered[filteredIndex];
     if (!deck) return;
-    topDeckState.similarBaseRank = deck.metaRank;
     const diffSelect = document.getElementById('topSimilarDiffCount');
-    topDeckState.similarDiffCount = Math.min(3, Math.max(1, Number(diffSelect?.value) || 1));
-    applyTopSimilarSearch();
+    const diff = Math.min(3, Math.max(1, Number(diffSelect?.value) || 1));
+    showSimilarForDeckRank(deck.metaRank, diff);
 }
 
 function clearTopSimilarSearch() {
@@ -1598,6 +1637,10 @@ function renderTopDecksList() {
         const playerText = deck.playerName ? ` · ${escapeHtml(deck.playerName)}` : '';
         const ss = deck.similarStats || createTopSimilarStats();
         const sb = ss.buckets || createTopSimilarStats().buckets;
+        const detailsOpen = isTopDeckDetailsOpen(deck.metaRank);
+        const selectedDiff = topDeckState.similarBaseRank === deck.metaRank
+            ? Math.min(3, Math.max(1, Number(topDeckState.similarDiffCount) || 1))
+            : 1;
         const cardStrip = (deck.previewCards || []).map(card => {
             const classes = ['top-card-mini'];
             if (card.isEvo) classes.push('evo');
@@ -1627,37 +1670,48 @@ function renderTopDecksList() {
                 <div class="top-deck-actions">
                     <div class="top-side-stats">
                         <div class="top-side-stats-title">Похожие колоды</div>
-                        <div class="top-side-grid">
-                            <div></div>
-                            <div class="top-side-grid-head">Т10</div>
-                            <div class="top-side-grid-head">Т100</div>
-                            <div class="top-side-grid-head">Т1000</div>
+                        <div class="top-side-summary">Точно (Т1000): <strong>${sb.exact[1000]}</strong></div>
+                        <div class="top-side-summary">1 карта (Т1000): <strong>${sb.d1[1000]}</strong></div>
+                        <button class="btn-filter btn-mini top-side-detail-toggle" onclick="toggleTopDeckDetails(${deck.metaRank})">${detailsOpen ? 'Скрыть детали' : 'Подробнее'}</button>
+                        ${detailsOpen ? `
+                            <div class="top-side-detail">
+                                <div class="top-side-grid">
+                                    <div></div>
+                                    <div class="top-side-grid-head">Т10</div>
+                                    <div class="top-side-grid-head">Т100</div>
+                                    <div class="top-side-grid-head">Т1000</div>
 
-                            <div class="top-side-grid-label">Точно</div>
-                            ${renderTopSideBucketValue(sb.exact[10])}
-                            ${renderTopSideBucketValue(sb.exact[100])}
-                            ${renderTopSideBucketValue(sb.exact[1000])}
+                                    <div class="top-side-grid-label">Точно</div>
+                                    ${renderTopSideBucketValue(sb.exact[10])}
+                                    ${renderTopSideBucketValue(sb.exact[100])}
+                                    ${renderTopSideBucketValue(sb.exact[1000])}
 
-                            <div class="top-side-grid-label">1 карта</div>
-                            ${renderTopSideBucketValue(sb.d1[10])}
-                            ${renderTopSideBucketValue(sb.d1[100])}
-                            ${renderTopSideBucketValue(sb.d1[1000])}
+                                    <div class="top-side-grid-label">1 карта</div>
+                                    ${renderTopSideBucketValue(sb.d1[10])}
+                                    ${renderTopSideBucketValue(sb.d1[100])}
+                                    ${renderTopSideBucketValue(sb.d1[1000])}
 
-                            <div class="top-side-grid-label">2 карты</div>
-                            ${renderTopSideBucketValue(sb.d2[10])}
-                            ${renderTopSideBucketValue(sb.d2[100])}
-                            ${renderTopSideBucketValue(sb.d2[1000])}
+                                    <div class="top-side-grid-label">2 карты</div>
+                                    ${renderTopSideBucketValue(sb.d2[10])}
+                                    ${renderTopSideBucketValue(sb.d2[100])}
+                                    ${renderTopSideBucketValue(sb.d2[1000])}
 
-                            <div class="top-side-grid-label">3 карты</div>
-                            ${renderTopSideBucketValue(sb.d3[10])}
-                            ${renderTopSideBucketValue(sb.d3[100])}
-                            ${renderTopSideBucketValue(sb.d3[1000])}
-                        </div>
+                                    <div class="top-side-grid-label">3 карты</div>
+                                    ${renderTopSideBucketValue(sb.d3[10])}
+                                    ${renderTopSideBucketValue(sb.d3[100])}
+                                    ${renderTopSideBucketValue(sb.d3[1000])}
+                                </div>
+                                <div class="top-side-actions">
+                                    <select id="topDeckDiffSelect-${deck.metaRank}">
+                                        <option value="1" ${selectedDiff === 1 ? 'selected' : ''}>1 карта</option>
+                                        <option value="2" ${selectedDiff === 2 ? 'selected' : ''}>2 карты</option>
+                                        <option value="3" ${selectedDiff === 3 ? 'selected' : ''}>3 карты</option>
+                                    </select>
+                                    <button class="btn-blue btn-mini" onclick="showSimilarForDeckRankFromSelect(${deck.metaRank})">Показать похожие</button>
+                                </div>
+                            </div>
+                        ` : ''}
                     </div>
-                    <button class="btn-blue btn-mini" onclick="applyTopDeckByFilteredIndex(${i}, false)">Показать в центре</button>
-                    <button class="btn-filter btn-mini" onclick="applyTopDeckByFilteredIndex(${i}, true)">В создание колод</button>
-                    <button class="btn-filter btn-mini" onclick="findSimilarTopDecks(${i})">Найти похожие</button>
-                    <button class="btn-filter btn-mini" onclick="openTopDeckSource(${i})">Источник</button>
                 </div>
             </div>
         `;
@@ -1669,6 +1723,7 @@ async function loadTopDecks() {
     topDeckState.isLoading = true;
     topDeckState.similarBaseRank = null;
     topDeckState.similarDiffCount = 1;
+    topDeckState.detailsOpenByRank = {};
     hideTopSimilarPanel();
     const diffSelect = document.getElementById('topSimilarDiffCount');
     if (diffSelect) diffSelect.value = '1';
