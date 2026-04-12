@@ -91,10 +91,10 @@
         .top-side-section { font-size: 10px; color: #9fa8c7; font-weight: 700; letter-spacing: 0.2px; text-transform: uppercase; }
         .top-side-places { font-size: 10px; color: #c7d0ee; line-height: 1.25; }
         .top-side-places strong { color: #eef4ff; }
-        .top-count-grid { display: grid; grid-template-columns: auto repeat(4, minmax(24px, 1fr)); gap: 4px 4px; align-items: center; }
+        .top-count-grid { display: grid; grid-template-columns: auto repeat(4, minmax(30px, 52px)); gap: 4px 4px; align-items: center; justify-content: start; }
         .top-count-head { font-size: 9px; color: #9fa8c7; text-align: center; font-weight: 700; }
         .top-count-label { font-size: 10px; color: #d2d8ef; white-space: nowrap; }
-        .top-count-val { font-size: 10px; text-align: center; border: 1px solid #4a4f68; border-radius: 999px; padding: 1px 4px; background: #202437; color: #e7edff; font-weight: 700; }
+        .top-count-val { width: 100%; font-size: 10px; text-align: center; border: 1px solid #4a4f68; border-radius: 999px; padding: 1px 4px; background: #202437; color: #e7edff; font-weight: 700; }
         .top-count-val.zero { color: #aab2d3; opacity: 0.75; }
         .top-count-val.nonzero { border-color: #6696ff; background: #25345b; color: #eef4ff; }
         .top-variants-list { display: grid; gap: 4px; }
@@ -301,6 +301,20 @@
                             </select>
                         </div>
                     </div>
+                    <div class="top-setting-line">
+                        <label>Показывать колод</label>
+                        <select id="topRenderLimit" style="width:100%;">
+                            <option value="20" selected>20</option>
+                            <option value="30">30</option>
+                            <option value="40">40</option>
+                            <option value="50">50</option>
+                            <option value="60">60</option>
+                            <option value="70">70</option>
+                            <option value="80">80</option>
+                            <option value="90">90</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
                     <div class="inline-row">
                         <button class="btn-blue btn-mini" onclick="loadTopDecks()">Обновить</button>
                     </div>
@@ -382,7 +396,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.14</div>
+<div id="appVersionBadge" class="app-version">v4.15</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -434,7 +448,7 @@ let cards = rawCards.map(c => {
     };
 });
 
-const APP_VERSION = '4.14';
+const APP_VERSION = '4.15';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
@@ -1385,6 +1399,21 @@ function applyTopDeckFilters() {
     const label = topDeckState.lastRequest ? ` (${topDeckState.lastRequest.label})` : '';
     const shown = Math.min(topDeckState.renderLimit, topDeckState.filtered.length);
     setTopDecksStatus(`Показано: ${shown}/${topDeckState.filtered.length} колод${label}. Загружено: ${topDeckState.all.length}.`);
+}
+
+function updateTopRenderLimit() {
+    const select = document.getElementById('topRenderLimit');
+    if (!select) return;
+    const raw = Number(select.value);
+    const limit = Math.min(100, Math.max(20, Number.isFinite(raw) ? raw : TOP_DECK_RENDER_LIMIT));
+    topDeckState.renderLimit = limit;
+    if (select.value !== String(limit)) select.value = String(limit);
+
+    if (topDeckState.similarBaseRank !== null) {
+        renderTopDecksList();
+        return;
+    }
+    if (topDeckState.all.length) applyTopDeckFilters();
 }
 
 function formatTopBucketStat(label, stat) {
@@ -2763,6 +2792,7 @@ document.getElementById('topApiDate').addEventListener('change', loadTopDecks);
 document.getElementById('topApiSort').addEventListener('change', loadTopDecks);
 document.getElementById('topLeaderboardSeason').addEventListener('change', loadTopDecks);
 document.getElementById('topSimilarDiffCount').addEventListener('change', onTopSimilarDiffChange);
+document.getElementById('topRenderLimit').addEventListener('change', updateTopRenderLimit);
 
 renderFilters();
 updateCardPoolInfo();
@@ -2770,6 +2800,7 @@ updateThemeLetterOptions();
 updateThemeHint();
 updateReplacementInfo();
 enforceSpecialSlotsFilter('evos', false);
+updateTopRenderLimit();
 setAppMode('build');
 document.getElementById('appVersionBadge').textContent = `v${APP_VERSION}`;
 clearDeck();
