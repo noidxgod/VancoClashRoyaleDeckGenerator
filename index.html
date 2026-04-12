@@ -71,7 +71,7 @@
         .top-setting-line label { font-size: 12px; color: #cfd3e8; }
         .top-setting-line .date-input { width: 100%; }
         .top-decks-list { display: grid; gap: 8px; max-height: 70vh; overflow-y: auto; padding-right: 2px; margin-top: 8px; }
-        .top-deck-item { background: #2b2d3a; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; display: grid; grid-template-columns: 1fr 220px; gap: 10px; align-items: start; }
+        .top-deck-item { background: #2b2d3a; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; display: grid; grid-template-columns: 1fr 340px; gap: 10px; align-items: start; }
         .top-deck-main { display: grid; gap: 7px; }
         .top-deck-head { display: flex; justify-content: flex-start; gap: 8px; align-items: center; font-size: 12px; flex-wrap: wrap; }
         .top-deck-tags { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -86,29 +86,19 @@
         .top-mini-badge.evo { left: 2px; background: var(--evo-color); }
         .top-mini-badge.hero { right: 2px; background: var(--hero-color); color: #111; }
         .top-deck-actions { display: grid; gap: 6px; align-content: start; }
-        .top-side-stats { background: #1f2230; border: 1px solid #3f4152; border-radius: 6px; padding: 6px; display: grid; gap: 5px; color: #b7bdd3; }
+        .top-side-stats { background: #1f2230; border: 1px solid #3f4152; border-radius: 6px; padding: 6px; display: grid; gap: 6px; color: #b7bdd3; }
         .top-side-stats-title { font-size: 11px; font-weight: 700; color: #e0e5ff; }
-        .top-side-summary { font-size: 10px; color: #cbd2eb; }
-        .top-side-summary strong { color: #eef4ff; }
-        .top-side-detail-toggle { margin: 0; width: 100%; }
-        .top-side-detail { display: grid; gap: 5px; padding-top: 4px; border-top: 1px solid #353a52; }
-        .top-side-grid { display: grid; grid-template-columns: auto repeat(3, minmax(28px, 1fr)); gap: 4px 5px; align-items: center; }
-        .top-side-grid-head { font-size: 9px; color: #9fa8c7; text-align: center; font-weight: 700; }
-        .top-side-grid-label { font-size: 10px; color: #d2d8ef; white-space: nowrap; }
-        .top-side-grid-val { font-size: 10px; text-align: center; border: 1px solid #4a4f68; border-radius: 999px; padding: 1px 4px; background: #202437; color: #e7edff; font-weight: 700; }
-        .top-side-grid-val.zero { color: #aab2d3; opacity: 0.75; }
-        .top-side-grid-val.nonzero { border-color: #6696ff; background: #25345b; color: #eef4ff; }
-        .top-side-actions { display: flex; gap: 5px; align-items: center; }
-        .top-side-actions select { width: 72px; }
-        .top-side-actions button { flex: 1; margin: 0; }
-        .top-detail-card { background: #1b1f2f; border: 1px solid #39405a; border-radius: 6px; padding: 6px; display: grid; gap: 4px; }
-        .top-detail-title { font-size: 10px; font-weight: 700; color: #e8eeff; }
-        .top-detail-places { font-size: 9px; color: #c5cce6; line-height: 1.25; }
-        .top-detail-places strong { color: #eaf0ff; }
-        .top-detail-list { display: grid; gap: 3px; }
-        .top-detail-row { font-size: 9px; color: #c7cfe9; line-height: 1.25; }
-        .top-detail-row strong { color: #eaf0ff; }
-        .top-detail-more { font-size: 9px; color: #97a2c7; }
+        .top-side-places { font-size: 10px; color: #c7d0ee; line-height: 1.25; }
+        .top-side-places strong { color: #eef4ff; }
+        .top-variants-list { display: grid; gap: 4px; }
+        .top-variants-empty { font-size: 10px; color: #9ea9ce; }
+        .top-variant-row { background: #1b1f2f; border: 1px solid #39405a; border-radius: 6px; padding: 4px; display: grid; gap: 3px; }
+        .top-variant-main { display: flex; align-items: center; gap: 5px; min-width: 0; }
+        .top-variant-mini { width: 22px; height: 28px; object-fit: contain; border-radius: 4px; border: 1px solid #3f4152; background: #121522; flex: 0 0 auto; }
+        .top-variant-arrow { font-size: 12px; color: #8ea5ff; font-weight: 800; line-height: 1; }
+        .top-variant-label { font-size: 9px; color: #e5ebff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .top-variant-ranks { font-size: 9px; color: #aeb8da; line-height: 1.25; }
+        .top-variants-toggle { margin: 0; width: 100%; }
         .top-similar-panel { display: none; background: #1f2230; border: 1px solid #3f4152; border-radius: 8px; padding: 8px; margin-top: 8px; }
         .top-similar-panel.active { display: grid; gap: 6px; }
         .top-similar-title { font-size: 12px; font-weight: 700; color: #d7dcf2; }
@@ -385,7 +375,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.11</div>
+<div id="appVersionBadge" class="app-version">v4.12</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -437,7 +427,7 @@ let cards = rawCards.map(c => {
     };
 });
 
-const APP_VERSION = '4.11';
+const APP_VERSION = '4.12';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 1000;
@@ -458,7 +448,7 @@ const topDeckState = {
     renderLimit: TOP_DECK_RENDER_LIMIT,
     similarBaseRank: null,
     similarDiffCount: 1,
-    detailsOpenByRank: {}
+    variantsExpandedByRank: {}
 };
 
 const retroRoyalePool = new Set([
@@ -1210,7 +1200,7 @@ function setAppMode(mode) {
             topDeckState.lastRequest = null;
             topDeckState.similarBaseRank = null;
             topDeckState.similarDiffCount = 1;
-            topDeckState.detailsOpenByRank = {};
+            topDeckState.variantsExpandedByRank = {};
             const list = document.getElementById('topDecksList');
             if (list) list.innerHTML = '';
         }
@@ -1427,22 +1417,16 @@ function incrementTopBucketCounters(bucketCounter, rank) {
     if (rank <= 1000) bucketCounter[1000] += 1;
 }
 
-function renderTopSideBucketValue(value) {
-    const n = Math.max(0, Number(value) || 0);
-    const cls = n > 0 ? 'top-side-grid-val nonzero' : 'top-side-grid-val zero';
-    return `<div class="${cls}">${n}</div>`;
+function isTopDeckVariantsExpanded(metaRank) {
+    return Boolean(topDeckState.variantsExpandedByRank && topDeckState.variantsExpandedByRank[metaRank]);
 }
 
-function isTopDeckDetailsOpen(metaRank) {
-    return Boolean(topDeckState.detailsOpenByRank && topDeckState.detailsOpenByRank[metaRank]);
-}
-
-function toggleTopDeckDetails(metaRank) {
+function toggleTopDeckVariants(metaRank) {
     const rank = Number(metaRank);
     if (!rank) return;
-    if (!topDeckState.detailsOpenByRank) topDeckState.detailsOpenByRank = {};
-    if (topDeckState.detailsOpenByRank[rank]) delete topDeckState.detailsOpenByRank[rank];
-    else topDeckState.detailsOpenByRank[rank] = true;
+    if (!topDeckState.variantsExpandedByRank) topDeckState.variantsExpandedByRank = {};
+    if (topDeckState.variantsExpandedByRank[rank]) delete topDeckState.variantsExpandedByRank[rank];
+    else topDeckState.variantsExpandedByRank[rank] = true;
     renderTopDecksList();
 }
 
@@ -1457,25 +1441,27 @@ function showSimilarForDeckRank(metaRank, diffCount = 1) {
     applyTopSimilarSearch();
 }
 
-function showSimilarForDeckRankFromSelect(metaRank) {
-    const rank = Number(metaRank);
-    if (!rank) return;
-    const localSelect = document.getElementById(`topDeckDiffSelect-${rank}`);
-    const diff = Number(localSelect?.value) || 0;
-    showSimilarForDeckRank(rank, diff);
-}
-
 function toRuCardName(name) {
     const found = getCardByName(name);
     return found?.ruName || name;
 }
 
+function cardImageByName(name) {
+    const found = getCardByName(name);
+    return found?.img || `${CR_CARD_ASSETS_BASE}/_invalid.png`;
+}
+
 function buildDeckDifferenceInfo(baseDeck, candidateDeck) {
     const baseNames = new Set((baseDeck?.entries || []).map(entry => entry.name));
     const candidateNames = new Set((candidateDeck?.entries || []).map(entry => entry.name));
-    const removed = [...baseNames].filter(name => !candidateNames.has(name)).map(toRuCardName);
-    const added = [...candidateNames].filter(name => !baseNames.has(name)).map(toRuCardName);
-    return { removed, added };
+    const removedNames = [...baseNames].filter(name => !candidateNames.has(name));
+    const addedNames = [...candidateNames].filter(name => !baseNames.has(name));
+    return {
+        removedNames,
+        addedNames,
+        removed: removedNames.map(toRuCardName),
+        added: addedNames.map(toRuCardName)
+    };
 }
 
 function collectTopDeckDetailedInfo(baseDeck) {
@@ -1504,40 +1490,43 @@ function collectTopDeckDetailedInfo(baseDeck) {
     return out;
 }
 
-function formatTopRanksList(items, threshold, maxItems = 12) {
-    const rows = (items || []).filter(item => item.rank <= threshold);
-    if (!rows.length) return '—';
-    const labels = rows.slice(0, maxItems).map(item => {
-        const nick = item.playerName ? ` · ${item.playerName}` : '';
-        return `#${item.rank}${nick}`;
-    });
-    return rows.length > maxItems ? `${labels.join(', ')} ... +${rows.length - maxItems}` : labels.join(', ');
+function formatDeckPlaceList(items, maxItems = 14) {
+    if (!items?.length) return '—';
+    const labels = items.slice(0, maxItems).map(item => `#${item.rank}`);
+    return items.length > maxItems ? `${labels.join(', ')} ... +${items.length - maxItems}` : labels.join(', ');
 }
 
-function renderTopDeckDiffRows(items, maxRows = 8) {
-    if (!items?.length) return '<div class="top-detail-row">Нет похожих колод.</div>';
-    const rows = items.slice(0, maxRows).map(item => {
-        const nick = item.playerName ? ` · ${escapeHtml(item.playerName)}` : '';
-        const removed = escapeHtml(item.removed?.[0] || '—');
-        const added = escapeHtml(item.added?.[0] || '—');
-        return `<div class="top-detail-row"><strong>#${item.rank}${nick}</strong> • -${removed} +${added}</div>`;
-    }).join('');
-    const tail = items.length > maxRows ? `<div class="top-detail-more">Показано ${maxRows} из ${items.length}.</div>` : '';
-    return `${rows}${tail}`;
+function formatRankNumbersList(ranks, maxItems = 10) {
+    if (!ranks?.length) return '—';
+    const labels = ranks.slice(0, maxItems).map(rank => `#${rank}`);
+    return ranks.length > maxItems ? `${labels.join(', ')} ... +${ranks.length - maxItems}` : labels.join(', ');
 }
 
-function renderTopDeckDetailCard(title, items, withDiff = false) {
-    return `
-        <div class="top-detail-card">
-            <div class="top-detail-title">${title}: ${items.length}</div>
-            <div class="top-detail-places">
-                <strong>Т10:</strong> ${escapeHtml(formatTopRanksList(items, 10))}
-                <br><strong>Т100:</strong> ${escapeHtml(formatTopRanksList(items, 100))}
-                <br><strong>Т1000:</strong> ${escapeHtml(formatTopRanksList(items, 1000))}
-            </div>
-            ${withDiff ? `<div class="top-detail-list">${renderTopDeckDiffRows(items)}</div>` : ''}
-        </div>
-    `;
+function buildTopDeckVariationGroups(diffItems) {
+    const map = new Map();
+    for (const item of (diffItems || [])) {
+        const removedName = item?.removedNames?.[0];
+        const addedName = item?.addedNames?.[0];
+        if (!removedName || !addedName) continue;
+
+        const key = `${removedName}=>${addedName}`;
+        if (!map.has(key)) {
+            map.set(key, {
+                removedName,
+                addedName,
+                removedRu: toRuCardName(removedName),
+                addedRu: toRuCardName(addedName),
+                removedImg: cardImageByName(removedName),
+                addedImg: cardImageByName(addedName),
+                ranks: []
+            });
+        }
+        map.get(key).ranks.push(item.rank);
+    }
+
+    return [...map.values()]
+        .map(v => ({ ...v, ranks: [...new Set(v.ranks)].sort((a, b) => a - b) }))
+        .sort((a, b) => (a.ranks[0] || 999999) - (b.ranks[0] || 999999));
 }
 
 function computeTopDeckSimilarCounters(decks) {
@@ -1704,12 +1693,12 @@ function renderTopDecksList() {
             `Винконы ${deck.wincons}`
         ].map(text => `<span class="top-pill">${text}</span>`).join('');
         const playerText = deck.playerName ? ` · ${escapeHtml(deck.playerName)}` : '';
-        const ss = deck.similarStats || createTopSimilarStats();
-        const sb = ss.buckets || createTopSimilarStats().buckets;
-        const detailsOpen = isTopDeckDetailsOpen(deck.metaRank);
-        const selectedDiff = topDeckState.similarBaseRank === deck.metaRank
-            ? Math.min(1, Math.max(0, Number(topDeckState.similarDiffCount) || 0))
-            : 1;
+        const detail = collectTopDeckDetailedInfo(deck);
+        const variations = buildTopDeckVariationGroups(detail.d1);
+        const expanded = isTopDeckVariantsExpanded(deck.metaRank);
+        const previewLimit = 4;
+        const shownVariations = expanded ? variations : variations.slice(0, previewLimit);
+        const hiddenCount = Math.max(0, variations.length - shownVariations.length);
         const cardStrip = (deck.previewCards || []).map(card => {
             const classes = ['top-card-mini'];
             if (card.isEvo) classes.push('evo');
@@ -1738,42 +1727,23 @@ function renderTopDecksList() {
                 </div>
                 <div class="top-deck-actions">
                     <div class="top-side-stats">
-                        <div class="top-side-stats-title">Похожие колоды</div>
-                        <div class="top-side-grid">
-                            <div></div>
-                            <div class="top-side-grid-head">Т10</div>
-                            <div class="top-side-grid-head">Т100</div>
-                            <div class="top-side-grid-head">Т1000</div>
-
-                            <div class="top-side-grid-label">Точно</div>
-                            ${renderTopSideBucketValue(sb.exact[10])}
-                            ${renderTopSideBucketValue(sb.exact[100])}
-                            ${renderTopSideBucketValue(sb.exact[1000])}
-
-                            <div class="top-side-grid-label">1 карта</div>
-                            ${renderTopSideBucketValue(sb.d1[10])}
-                            ${renderTopSideBucketValue(sb.d1[100])}
-                            ${renderTopSideBucketValue(sb.d1[1000])}
-                        </div>
-                        <button class="btn-filter btn-mini top-side-detail-toggle" onclick="toggleTopDeckDetails(${deck.metaRank})">${detailsOpen ? 'Скрыть детали' : 'Подробнее'}</button>
-                        ${detailsOpen ? `
-                            <div class="top-side-detail">
-                                ${(() => {
-                                    const detail = collectTopDeckDetailedInfo(deck);
-                                    return [
-                                        renderTopDeckDetailCard('Точно такие же', detail.exact, false),
-                                        renderTopDeckDetailCard('Отличается 1 карта', detail.d1, true)
-                                    ].join('');
-                                })()}
-                                <div class="top-side-actions">
-                                    <select id="topDeckDiffSelect-${deck.metaRank}">
-                                        <option value="0" ${selectedDiff === 0 ? 'selected' : ''}>0 карт</option>
-                                        <option value="1" ${selectedDiff === 1 ? 'selected' : ''}>1 карта</option>
-                                    </select>
-                                    <button class="btn-blue btn-mini" onclick="showSimilarForDeckRankFromSelect(${deck.metaRank})">Показать похожие</button>
+                        <div class="top-side-stats-title">Вариации колоды</div>
+                        <div class="top-side-places"><strong>Те же карты:</strong> ${escapeHtml(formatDeckPlaceList(detail.exact))}</div>
+                        <div class="top-side-places"><strong>1 карта отличается:</strong> ${escapeHtml(formatDeckPlaceList(detail.d1))}</div>
+                        <div class="top-variants-list">
+                            ${shownVariations.length ? shownVariations.map(v => `
+                                <div class="top-variant-row">
+                                    <div class="top-variant-main">
+                                        <img class="top-variant-mini" src="${v.removedImg}" alt="${escapeHtml(v.removedRu)}" onerror="this.onerror=null;this.src='${CR_CARD_ASSETS_BASE}/_invalid.png'">
+                                        <span class="top-variant-arrow">→</span>
+                                        <img class="top-variant-mini" src="${v.addedImg}" alt="${escapeHtml(v.addedRu)}" onerror="this.onerror=null;this.src='${CR_CARD_ASSETS_BASE}/_invalid.png'">
+                                        <div class="top-variant-label">${escapeHtml(v.removedRu)} → ${escapeHtml(v.addedRu)}</div>
+                                    </div>
+                                    <div class="top-variant-ranks">${escapeHtml(formatRankNumbersList(v.ranks))}</div>
                                 </div>
-                            </div>
-                        ` : ''}
+                            `).join('') : '<div class="top-variants-empty">Вариаций с 1 картой не найдено.</div>'}
+                        </div>
+                        ${hiddenCount > 0 ? `<button class="btn-filter btn-mini top-variants-toggle" onclick="toggleTopDeckVariants(${deck.metaRank})">${expanded ? 'Свернуть' : `Показать больше (+${hiddenCount})`}</button>` : ''}
                     </div>
                 </div>
             </div>
@@ -1786,7 +1756,7 @@ async function loadTopDecks() {
     topDeckState.isLoading = true;
     topDeckState.similarBaseRank = null;
     topDeckState.similarDiffCount = 1;
-    topDeckState.detailsOpenByRank = {};
+    topDeckState.variantsExpandedByRank = {};
     hideTopSimilarPanel();
     const diffSelect = document.getElementById('topSimilarDiffCount');
     if (diffSelect) diffSelect.value = '1';
