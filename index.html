@@ -122,6 +122,7 @@
         
         <div class="form-group"> <label>Эволюции:</label> <select id="setEvos"> <option value="any">Любое</option> <option value="0">0</option><option value="1">1</option><option value="2">2</option> </select> </div>
         <div class="form-group"> <label>Героизм:</label> <select id="setHeroism"> <option value="any">Любое</option> <option value="0">0</option><option value="1">1</option><option value="2">2</option> </select> </div>
+        <div class="tiny-note">Лимит спец-слотов: 1 эво + 1 героизм + 1 универсальный (макс. 3).</div>
         
         <div class="form-group" style="margin-top: 5px;">
             <label>Цена эликсира:</label>
@@ -266,7 +267,7 @@
     </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v3.6</div>
+<div id="appVersionBadge" class="app-version">v3.7</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -289,7 +290,7 @@
 </div>
 
 <script>
-const rawCards = [{"name":"Archers","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Archer Queen","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Arrows","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Baby Dragon","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Bandit","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Barbarian Barrel","winCondition":false,"spell":true,"evolution":false,"heroism":true},{"name":"Barbarians","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Barbarian Hut","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Bats","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Battle Healer","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Battle Ram","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Berserker","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Balloon","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Bomber","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Bomb Tower","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Boss Bandit","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Bowler","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Cannon","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Cannon Cart","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Clone","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Dark Prince","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Dart Goblin","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Earthquake","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Electro Dragon","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Electro Giant","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Electro Spirit","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Electro Wizard","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Elite Barbarians","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Elixir Collector","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Elixir Golem","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Executioner","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Fireball","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Firecracker","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Fire Spirit","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Fisherman","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Flying Machine","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Freeze","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Furnace","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Giant","winCondition":true,"spell":false,"evolution":false,"heroism":true},{"name":"Giant Skeleton","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Giant Snowball","winCondition":false,"spell":true,"evolution":true,"heroism":false},{"name":"Goblin Barrel","winCondition":true,"spell":true,"evolution":true,"heroism":false},{"name":"Goblin Cage","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Goblin Curse","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Goblin Demolisher","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Goblin Drill","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Goblin Gang","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Goblin Giant","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Goblin Hut","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Goblin Machine","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Goblins","winCondition":false,"spell":false,"evolution":false,"heroism":true},{"name":"Goblinstein","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Golden Knight","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Golem","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Graveyard","winCondition":true,"spell":true,"evolution":false,"heroism":false},{"name":"Guards","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Heal Spirit","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Hog Rider","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Hunter","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Ice Golem","winCondition":false,"spell":false,"evolution":false,"heroism":true},{"name":"Ice Spirit","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Ice Wizard","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Inferno Dragon","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Inferno Tower","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Knight","winCondition":false,"spell":false,"evolution":true,"heroism":true},{"name":"Lava Hound","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Lightning","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Little Prince","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Lumberjack","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Magic Archer","winCondition":false,"spell":false,"evolution":false,"heroism":true},{"name":"Mega Knight","winCondition":"sometimes","spell":false,"evolution":true,"heroism":false},{"name":"Mega Minion","winCondition":false,"spell":false,"evolution":false,"heroism":true},{"name":"Mighty Miner","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Mini P.E.K.K.A.","winCondition":false,"spell":false,"evolution":false,"heroism":true},{"name":"Miner","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Minion Horde","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Minions","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Mirror","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Monk","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Mortar","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Mother Witch","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Musketeer","winCondition":false,"spell":false,"evolution":true,"heroism":true},{"name":"Night Witch","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"P.E.K.K.A.","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Phoenix","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Poison","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Prince","winCondition":"sometimes","spell":false,"evolution":false,"heroism":false},{"name":"Princess","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Rage","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Ram Rider","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Rascals","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Rocket","winCondition":"sometimes","spell":true,"evolution":false,"heroism":false},{"name":"Royal Delivery","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Royal Giant","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Royal Ghost","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Royal Hogs","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Royal Recruits","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Rune Giant","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Skeleton Army","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Skeleton Barrel","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Skeleton Dragons","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Skeleton King","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Skeletons","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Sparky","winCondition":"sometimes","spell":false,"evolution":false,"heroism":false},{"name":"Spear Goblins","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Spirit Empress","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Suspicious Bush","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Tesla","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"The Log","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Three Musketeers","winCondition":"sometimes","spell":false,"evolution":false,"heroism":false},{"name":"Tombstone","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Tornado","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Valkyrie","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Vines","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Void","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Wall Breakers","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Witch","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Wizard","winCondition":false,"spell":false,"evolution":true,"heroism":true},{"name":"X-Bow","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Zap","winCondition":false,"spell":true,"evolution":true,"heroism":false},{"name":"Zappies","winCondition":false,"spell":false,"evolution":false,"heroism":false}];
+const rawCards = [{"name":"Archers","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Archer Queen","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Arrows","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Baby Dragon","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Bandit","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Barbarian Barrel","winCondition":false,"spell":true,"evolution":false,"heroism":true},{"name":"Barbarians","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Barbarian Hut","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Bats","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Battle Healer","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Battle Ram","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Berserker","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Balloon","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Bomber","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Bomb Tower","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Boss Bandit","winCondition":false,"spell":false,"evolution":false,"heroism":true},{"name":"Bowler","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Cannon","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Cannon Cart","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Clone","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Dark Prince","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Dart Goblin","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Earthquake","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Electro Dragon","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Electro Giant","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Electro Spirit","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Electro Wizard","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Elite Barbarians","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Elixir Collector","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Elixir Golem","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Executioner","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Fireball","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Firecracker","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Fire Spirit","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Fisherman","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Flying Machine","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Freeze","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Furnace","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Giant","winCondition":true,"spell":false,"evolution":false,"heroism":true},{"name":"Giant Skeleton","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Giant Snowball","winCondition":false,"spell":true,"evolution":true,"heroism":false},{"name":"Goblin Barrel","winCondition":true,"spell":true,"evolution":true,"heroism":false},{"name":"Goblin Cage","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Goblin Curse","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Goblin Demolisher","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Goblin Drill","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Goblin Gang","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Goblin Giant","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Goblin Hut","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Goblin Machine","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Goblins","winCondition":false,"spell":false,"evolution":false,"heroism":true},{"name":"Goblinstein","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Golden Knight","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Golem","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Graveyard","winCondition":true,"spell":true,"evolution":false,"heroism":false},{"name":"Guards","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Heal Spirit","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Hog Rider","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Hunter","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Ice Golem","winCondition":false,"spell":false,"evolution":false,"heroism":true},{"name":"Ice Spirit","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Ice Wizard","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Inferno Dragon","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Inferno Tower","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Knight","winCondition":false,"spell":false,"evolution":true,"heroism":true},{"name":"Lava Hound","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Lightning","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Little Prince","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Lumberjack","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Magic Archer","winCondition":false,"spell":false,"evolution":false,"heroism":true},{"name":"Mega Knight","winCondition":"sometimes","spell":false,"evolution":true,"heroism":false},{"name":"Mega Minion","winCondition":false,"spell":false,"evolution":false,"heroism":true},{"name":"Mighty Miner","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Mini P.E.K.K.A.","winCondition":false,"spell":false,"evolution":false,"heroism":true},{"name":"Miner","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Minion Horde","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Minions","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Mirror","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Monk","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Mortar","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Mother Witch","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Musketeer","winCondition":false,"spell":false,"evolution":true,"heroism":true},{"name":"Night Witch","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"P.E.K.K.A.","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Phoenix","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Poison","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Prince","winCondition":"sometimes","spell":false,"evolution":false,"heroism":false},{"name":"Princess","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Rage","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Ram Rider","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Rascals","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Rocket","winCondition":"sometimes","spell":true,"evolution":false,"heroism":false},{"name":"Royal Delivery","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Royal Giant","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Royal Ghost","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Royal Hogs","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Royal Recruits","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Rune Giant","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Skeleton Army","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Skeleton Barrel","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Skeleton Dragons","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Skeleton King","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Skeletons","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Sparky","winCondition":"sometimes","spell":false,"evolution":false,"heroism":false},{"name":"Spear Goblins","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Spirit Empress","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Suspicious Bush","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Tesla","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"The Log","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Three Musketeers","winCondition":"sometimes","spell":false,"evolution":false,"heroism":false},{"name":"Tombstone","winCondition":false,"spell":false,"evolution":false,"heroism":false},{"name":"Tornado","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Valkyrie","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Vines","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Void","winCondition":false,"spell":true,"evolution":false,"heroism":false},{"name":"Wall Breakers","winCondition":true,"spell":false,"evolution":true,"heroism":false},{"name":"Witch","winCondition":false,"spell":false,"evolution":true,"heroism":false},{"name":"Wizard","winCondition":false,"spell":false,"evolution":true,"heroism":true},{"name":"X-Bow","winCondition":true,"spell":false,"evolution":false,"heroism":false},{"name":"Zap","winCondition":false,"spell":true,"evolution":true,"heroism":false},{"name":"Zappies","winCondition":false,"spell":false,"evolution":false,"heroism":false}];
 const rawTowers = [{"name":"Cannoneer"},{"name":"Dagger Duchess"},{"name":"Royal Chef"},{"name":"Tower Princess"}];
 
 const elixirCosts = {"Archers":3,"Archer Queen":5,"Arrows":3,"Baby Dragon":4,"Bandit":3,"Barbarian Barrel":2,"Barbarians":5,"Barbarian Hut":6,"Bats":2,"Battle Healer":4,"Battle Ram":4,"Berserker":4,"Balloon":5,"Bomber":2,"Bomb Tower":4,"Boss Bandit":6,"Bowler":5,"Cannon":3,"Cannon Cart":5,"Clone":3,"Dark Prince":4,"Dart Goblin":3,"Earthquake":3,"Electro Dragon":5,"Electro Giant":7,"Electro Spirit":1,"Electro Wizard":4,"Elite Barbarians":6,"Elixir Collector":6,"Elixir Golem":3,"Executioner":5,"Fireball":4,"Firecracker":3,"Fire Spirit":1,"Fisherman":3,"Flying Machine":4,"Freeze":4,"Furnace":4,"Giant":5,"Giant Skeleton":6,"Giant Snowball":2,"Goblin Barrel":3,"Goblin Cage":4,"Goblin Curse":2,"Goblin Demolisher":4,"Goblin Drill":4,"Goblin Gang":3,"Goblin Giant":6,"Goblin Hut":4,"Goblin Machine":5,"Goblins":2,"Goblinstein":5,"Golden Knight":4,"Golem":8,"Graveyard":5,"Guards":3,"Heal Spirit":1,"Hog Rider":4,"Hunter":4,"Ice Golem":2,"Ice Spirit":1,"Ice Wizard":3,"Inferno Dragon":4,"Inferno Tower":5,"Knight":3,"Lava Hound":7,"Lightning":6,"Little Prince":3,"Lumberjack":4,"Magic Archer":4,"Mega Knight":7,"Mega Minion":3,"Mighty Miner":4,"Mini P.E.K.K.A.":4,"Miner":3,"Minion Horde":5,"Minions":3,"Mirror":"?","Monk":5,"Mortar":4,"Mother Witch":4,"Musketeer":4,"Night Witch":4,"P.E.K.K.A.":7,"Phoenix":4,"Poison":4,"Prince":5,"Princess":3,"Rage":2,"Ram Rider":5,"Rascals":5,"Rocket":6,"Royal Delivery":3,"Royal Giant":6,"Royal Ghost":3,"Royal Hogs":5,"Royal Recruits":7,"Rune Giant":4,"Skeleton Army":3,"Skeleton Barrel":3,"Skeleton Dragons":4,"Skeleton King":4,"Skeletons":1,"Sparky":6,"Spear Goblins":2,"Spirit Empress":6,"Suspicious Bush":2,"Tesla":4,"The Log":2,"Three Musketeers":9,"Tombstone":3,"Tornado":3,"Valkyrie":4,"Vines":3,"Void":3,"Wall Breakers":2,"Witch":5,"Wizard":5,"X-Bow":6,"Zap":2,"Zappies":4};
@@ -304,7 +305,9 @@ let cards = rawCards.map(c => ({
     included: true
 }));
 
-const APP_VERSION = '3.6';
+const APP_VERSION = '3.7';
+const MAX_SPECIAL_SLOTS = 3;
+const MAX_SPECIAL_PER_TYPE = 2;
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
@@ -1002,6 +1005,39 @@ function updateThemeHint() {
     document.getElementById('themeHint').textContent = `${hint}${letterPart}${extra}`;
 }
 
+function parseSpecialFilterValue(v) {
+    return v === 'any' ? null : parseInt(v, 10);
+}
+
+function isSpecialSlotSelectionValid(evosValue, heroismValue) {
+    const evos = parseSpecialFilterValue(evosValue);
+    const heroism = parseSpecialFilterValue(heroismValue);
+    if (evos === null || heroism === null) return true;
+    return (evos + heroism) <= MAX_SPECIAL_SLOTS;
+}
+
+function enforceSpecialSlotsFilter(changedField, showMessage = true) {
+    const evoSelect = document.getElementById('setEvos');
+    const heroSelect = document.getElementById('setHeroism');
+    if (!evoSelect || !heroSelect) return;
+
+    const evos = parseSpecialFilterValue(evoSelect.value);
+    const heroism = parseSpecialFilterValue(heroSelect.value);
+    if (evos === null || heroism === null || (evos + heroism) <= MAX_SPECIAL_SLOTS) return;
+
+    if (changedField === 'heroism') {
+        const allowedEvos = Math.max(0, Math.min(MAX_SPECIAL_PER_TYPE, MAX_SPECIAL_SLOTS - heroism));
+        evoSelect.value = String(allowedEvos);
+    } else {
+        const allowedHeroism = Math.max(0, Math.min(MAX_SPECIAL_PER_TYPE, MAX_SPECIAL_SLOTS - evos));
+        heroSelect.value = String(allowedHeroism);
+    }
+
+    if (showMessage) {
+        alert('Лимит слотов: максимум 3 спец-карты (1 эво + 1 героизм + 1 универсальный).');
+    }
+}
+
 function generateDeck(oneByOne) {
     if (isRouletteRunning) return;
     if (!oneByOne || targetDeckQueue.length === 0) {
@@ -1027,6 +1063,11 @@ function generateDeck(oneByOne) {
             constraints.minShame > constraints.maxShame ||
             constraints.minMadness > constraints.maxMadness) {
             return alert('Проверь диапазоны: значение «От» не должно быть больше значения «До».');
+        }
+
+        if (!isSpecialSlotSelectionValid(constraints.evos, constraints.heroism)) {
+            enforceSpecialSlotsFilter('evos', false);
+            return alert('Нельзя выбрать 2 эво + 2 героизма: максимум 3 спец-слота.');
         }
 
         if (getActiveCardPool().length < 8) {
@@ -1096,30 +1137,33 @@ function attemptGenerate(c) {
         let evoCandidates = baseDeck.filter(x => x.evolution);
         let heroCandidates = baseDeck.filter(x => x.heroism);
 
-        // Умное определение целей, чтобы не превысить лимит в 3
+        // Умное определение целей, чтобы соблюдать лимит спец-слотов
         let specificEvos = c.evos !== 'any' ? parseInt(c.evos) : null;
         let specificHero = c.heroism !== 'any' ? parseInt(c.heroism) : null;
         let evoTarget, heroTarget;
 
         if (specificEvos !== null && specificHero !== null) {
+            if ((specificEvos + specificHero) > MAX_SPECIAL_SLOTS) continue;
             evoTarget = specificEvos;
             heroTarget = specificHero;
         } else if (specificEvos !== null) {
             evoTarget = specificEvos;
-            let maxH = Math.min(2, 4 - evoTarget);
+            let maxH = Math.min(MAX_SPECIAL_PER_TYPE, MAX_SPECIAL_SLOTS - evoTarget);
+            if (maxH < 0) continue;
             heroTarget = Math.floor(Math.random() * (Math.min(maxH, heroCandidates.length) + 1));
         } else if (specificHero !== null) {
             heroTarget = specificHero;
-            let maxE = Math.min(2, 4 - heroTarget);
+            let maxE = Math.min(MAX_SPECIAL_PER_TYPE, MAX_SPECIAL_SLOTS - heroTarget);
+            if (maxE < 0) continue;
             evoTarget = Math.floor(Math.random() * (Math.min(maxE, evoCandidates.length) + 1));
         } else {
-            // Оба Any - генерируем валидную пару (сумма <= 4, каждый <= 2)
+            // Оба Any - генерируем валидную пару (сумма <= 3, каждый <= 2)
             let validCombos = [];
-            let maxE = Math.min(2, evoCandidates.length);
-            let maxH = Math.min(2, heroCandidates.length);
+            let maxE = Math.min(MAX_SPECIAL_PER_TYPE, evoCandidates.length);
+            let maxH = Math.min(MAX_SPECIAL_PER_TYPE, heroCandidates.length);
             for(let e=0; e<=maxE; e++) {
                 for(let h=0; h<=maxH; h++) {
-                    if (e+h <= 4) validCombos.push({e,h});
+                    if (e+h <= MAX_SPECIAL_SLOTS) validCombos.push({e,h});
                 }
             }
             if(validCombos.length === 0) continue;
@@ -1128,7 +1172,7 @@ function attemptGenerate(c) {
             heroTarget = pick.h;
         }
 
-        if (evoTarget + heroTarget > 4) continue; // Защита
+        if (evoTarget + heroTarget > MAX_SPECIAL_SLOTS) continue; // Защита
         if (evoCandidates.length < evoTarget) continue;
         if (heroCandidates.length < heroTarget) continue;
 
@@ -1807,12 +1851,15 @@ function playRoulette(t, idx) {
 
 document.getElementById('replaceMode').addEventListener('change', updateReplacementInfo);
 document.getElementById('deckGrid').addEventListener('click', handleDeckSlotPick);
+document.getElementById('setEvos').addEventListener('change', () => enforceSpecialSlotsFilter('evos'));
+document.getElementById('setHeroism').addEventListener('change', () => enforceSpecialSlotsFilter('heroism'));
 
 renderFilters();
 updateCardPoolInfo();
 updateThemeLetterOptions();
 updateThemeHint();
 updateReplacementInfo();
+enforceSpecialSlotsFilter('evos', false);
 renderManualCardSelect();
 document.getElementById('appVersionBadge').textContent = `v${APP_VERSION}`;
 clearDeck();
