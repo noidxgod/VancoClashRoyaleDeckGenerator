@@ -316,9 +316,8 @@
                         <div class="top-similar-controls">
                             <label for="topSimilarDiffCount">Отличается карт:</label>
                             <select id="topSimilarDiffCount">
+                                <option value="0">0</option>
                                 <option value="1" selected>1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
                             </select>
                             <button class="btn-filter btn-mini" onclick="clearTopSimilarSearch()">Сбросить</button>
                         </div>
@@ -386,7 +385,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.10</div>
+<div id="appVersionBadge" class="app-version">v4.11</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -438,7 +437,7 @@ let cards = rawCards.map(c => {
     };
 });
 
-const APP_VERSION = '4.10';
+const APP_VERSION = '4.11';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 1000;
@@ -1414,13 +1413,9 @@ function createTopSimilarStats() {
     return {
         exact: 0,
         d1: 0,
-        d2: 0,
-        d3: 0,
         buckets: {
             exact: createTopBucketCounter(),
-            d1: createTopBucketCounter(),
-            d2: createTopBucketCounter(),
-            d3: createTopBucketCounter()
+            d1: createTopBucketCounter()
         }
     };
 }
@@ -1454,7 +1449,7 @@ function toggleTopDeckDetails(metaRank) {
 function showSimilarForDeckRank(metaRank, diffCount = 1) {
     const rank = Number(metaRank);
     if (!rank) return;
-    const diff = Math.min(3, Math.max(1, Number(diffCount) || 1));
+    const diff = Math.min(1, Math.max(0, Number(diffCount) || 0));
     topDeckState.similarBaseRank = rank;
     topDeckState.similarDiffCount = diff;
     const globalSelect = document.getElementById('topSimilarDiffCount');
@@ -1466,7 +1461,7 @@ function showSimilarForDeckRankFromSelect(metaRank) {
     const rank = Number(metaRank);
     if (!rank) return;
     const localSelect = document.getElementById(`topDeckDiffSelect-${rank}`);
-    const diff = Number(localSelect?.value) || 1;
+    const diff = Number(localSelect?.value) || 0;
     showSimilarForDeckRank(rank, diff);
 }
 
@@ -1484,7 +1479,7 @@ function buildDeckDifferenceInfo(baseDeck, candidateDeck) {
 }
 
 function collectTopDeckDetailedInfo(baseDeck) {
-    const out = { exact: [], d1: [], d2: [], d3: [] };
+    const out = { exact: [], d1: [] };
     if (!baseDeck) return out;
 
     for (const deck of topDeckState.all) {
@@ -1497,12 +1492,12 @@ function collectTopDeckDetailedInfo(baseDeck) {
         }
 
         const diff = countDeckNameDiff(baseDeck, deck);
-        if (diff < 1 || diff > 3) continue;
+        if (diff !== 1) continue;
         const diffInfo = buildDeckDifferenceInfo(baseDeck, deck);
-        out[`d${diff}`].push({ ...entry, ...diffInfo });
+        out.d1.push({ ...entry, ...diffInfo });
     }
 
-    for (const key of ['exact', 'd1', 'd2', 'd3']) {
+    for (const key of ['exact', 'd1']) {
         out[key].sort((a, b) => a.rank - b.rank);
     }
 
@@ -1523,9 +1518,9 @@ function renderTopDeckDiffRows(items, maxRows = 8) {
     if (!items?.length) return '<div class="top-detail-row">Нет похожих колод.</div>';
     const rows = items.slice(0, maxRows).map(item => {
         const nick = item.playerName ? ` · ${escapeHtml(item.playerName)}` : '';
-        const removed = item.removed?.length ? item.removed.map(escapeHtml).join(', ') : '—';
-        const added = item.added?.length ? item.added.map(escapeHtml).join(', ') : '—';
-        return `<div class="top-detail-row"><strong>#${item.rank}${nick}</strong> • − ${removed} • + ${added}</div>`;
+        const removed = escapeHtml(item.removed?.[0] || '—');
+        const added = escapeHtml(item.added?.[0] || '—');
+        return `<div class="top-detail-row"><strong>#${item.rank}${nick}</strong> • -${removed} +${added}</div>`;
     }).join('');
     const tail = items.length > maxRows ? `<div class="top-detail-more">Показано ${maxRows} из ${items.length}.</div>` : '';
     return `${rows}${tail}`;
@@ -1569,16 +1564,6 @@ function computeTopDeckSimilarCounters(decks) {
                 b.similarStats.d1 += 1;
                 incrementTopBucketCounters(a.similarStats.buckets.d1, b.metaRank);
                 incrementTopBucketCounters(b.similarStats.buckets.d1, a.metaRank);
-            } else if (diff === 2) {
-                a.similarStats.d2 += 1;
-                b.similarStats.d2 += 1;
-                incrementTopBucketCounters(a.similarStats.buckets.d2, b.metaRank);
-                incrementTopBucketCounters(b.similarStats.buckets.d2, a.metaRank);
-            } else if (diff === 3) {
-                a.similarStats.d3 += 1;
-                b.similarStats.d3 += 1;
-                incrementTopBucketCounters(a.similarStats.buckets.d3, b.metaRank);
-                incrementTopBucketCounters(b.similarStats.buckets.d3, a.metaRank);
             }
         }
     }
@@ -1611,7 +1596,7 @@ function renderTopSimilarPanel(baseDeck) {
     const playerText = baseDeck.playerName ? ` · ${escapeHtml(baseDeck.playerName)}` : '';
 
     title.innerHTML = `Похожие к колоде #${baseDeck.metaRank}${playerText}`;
-    diffSelect.value = String(topDeckState.similarDiffCount || 1);
+    diffSelect.value = String(topDeckState.similarDiffCount ?? 1);
     stats.innerHTML = [
         `<strong>Точно такая же:</strong> ${formatTopBucketStat('Топ 10', exactStats[10])} • ${formatTopBucketStat('Топ 100', exactStats[100])} • ${formatTopBucketStat('Топ 1000', exactStats[1000])}`,
         `<strong>С 1 отличающейся картой:</strong> ${formatTopBucketStat('Топ 10', diff1Stats[10])} • ${formatTopBucketStat('Топ 100', diff1Stats[100])} • ${formatTopBucketStat('Топ 1000', diff1Stats[1000])}`
@@ -1636,22 +1621,23 @@ function applyTopSimilarSearch() {
     }
 
     renderTopSimilarPanel(baseDeck);
-    const diffCount = Math.min(3, Math.max(1, Number(topDeckState.similarDiffCount) || 1));
+    const diffCount = Math.min(1, Math.max(0, Number(topDeckState.similarDiffCount) || 0));
     topDeckState.similarDiffCount = diffCount;
     topDeckState.filtered = topDeckState.all
         .filter(deck => deck.metaRank !== baseDeck.metaRank)
-        .filter(deck => countDeckNameDiff(baseDeck, deck) === diffCount);
+        .filter(deck => diffCount === 0 ? deck.key === baseDeck.key : countDeckNameDiff(baseDeck, deck) === 1);
 
     renderTopDecksList();
     const label = topDeckState.lastRequest ? ` (${topDeckState.lastRequest.label})` : '';
-    setTopDecksStatus(`Похожие (отличается ${diffCount}): ${topDeckState.filtered.length} колод${label}.`);
+    const modeLabel = diffCount === 0 ? 'точно такие же' : 'отличается 1 карта';
+    setTopDecksStatus(`Похожие (${modeLabel}): ${topDeckState.filtered.length} колод${label}.`);
 }
 
 function findSimilarTopDecks(filteredIndex) {
     const deck = topDeckState.filtered[filteredIndex];
     if (!deck) return;
     const diffSelect = document.getElementById('topSimilarDiffCount');
-    const diff = Math.min(3, Math.max(1, Number(diffSelect?.value) || 1));
+    const diff = Math.min(1, Math.max(0, Number(diffSelect?.value) || 0));
     showSimilarForDeckRank(deck.metaRank, diff);
 }
 
@@ -1666,7 +1652,7 @@ function clearTopSimilarSearch() {
 
 function onTopSimilarDiffChange() {
     const diffSelect = document.getElementById('topSimilarDiffCount');
-    topDeckState.similarDiffCount = Math.min(3, Math.max(1, Number(diffSelect?.value) || 1));
+    topDeckState.similarDiffCount = Math.min(1, Math.max(0, Number(diffSelect?.value) || 0));
     if (topDeckState.similarBaseRank !== null) {
         applyTopSimilarSearch();
     }
@@ -1722,7 +1708,7 @@ function renderTopDecksList() {
         const sb = ss.buckets || createTopSimilarStats().buckets;
         const detailsOpen = isTopDeckDetailsOpen(deck.metaRank);
         const selectedDiff = topDeckState.similarBaseRank === deck.metaRank
-            ? Math.min(3, Math.max(1, Number(topDeckState.similarDiffCount) || 1))
+            ? Math.min(1, Math.max(0, Number(topDeckState.similarDiffCount) || 0))
             : 1;
         const cardStrip = (deck.previewCards || []).map(card => {
             const classes = ['top-card-mini'];
@@ -1768,16 +1754,6 @@ function renderTopDecksList() {
                             ${renderTopSideBucketValue(sb.d1[10])}
                             ${renderTopSideBucketValue(sb.d1[100])}
                             ${renderTopSideBucketValue(sb.d1[1000])}
-
-                            <div class="top-side-grid-label">2 карты</div>
-                            ${renderTopSideBucketValue(sb.d2[10])}
-                            ${renderTopSideBucketValue(sb.d2[100])}
-                            ${renderTopSideBucketValue(sb.d2[1000])}
-
-                            <div class="top-side-grid-label">3 карты</div>
-                            ${renderTopSideBucketValue(sb.d3[10])}
-                            ${renderTopSideBucketValue(sb.d3[100])}
-                            ${renderTopSideBucketValue(sb.d3[1000])}
                         </div>
                         <button class="btn-filter btn-mini top-side-detail-toggle" onclick="toggleTopDeckDetails(${deck.metaRank})">${detailsOpen ? 'Скрыть детали' : 'Подробнее'}</button>
                         ${detailsOpen ? `
@@ -1786,16 +1762,13 @@ function renderTopDecksList() {
                                     const detail = collectTopDeckDetailedInfo(deck);
                                     return [
                                         renderTopDeckDetailCard('Точно такие же', detail.exact, false),
-                                        renderTopDeckDetailCard('Отличается 1 карта', detail.d1, true),
-                                        renderTopDeckDetailCard('Отличается 2 карты', detail.d2, true),
-                                        renderTopDeckDetailCard('Отличается 3 карты', detail.d3, true)
+                                        renderTopDeckDetailCard('Отличается 1 карта', detail.d1, true)
                                     ].join('');
                                 })()}
                                 <div class="top-side-actions">
                                     <select id="topDeckDiffSelect-${deck.metaRank}">
+                                        <option value="0" ${selectedDiff === 0 ? 'selected' : ''}>0 карт</option>
                                         <option value="1" ${selectedDiff === 1 ? 'selected' : ''}>1 карта</option>
-                                        <option value="2" ${selectedDiff === 2 ? 'selected' : ''}>2 карты</option>
-                                        <option value="3" ${selectedDiff === 3 ? 'selected' : ''}>3 карты</option>
                                     </select>
                                     <button class="btn-blue btn-mini" onclick="showSimilarForDeckRankFromSelect(${deck.metaRank})">Показать похожие</button>
                                 </div>
