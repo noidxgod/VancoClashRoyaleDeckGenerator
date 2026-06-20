@@ -72,14 +72,6 @@
         .preload-bar-fill { width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #4a90e2, #6ff0d2); transition: width .25s ease, background .25s ease; }
         .preload-panel.done .preload-bar-fill { background: linear-gradient(90deg, #54d66f, #9af27b); }
         .preload-panel.warn .preload-bar-fill { background: linear-gradient(90deg, #e2b853, #e27a4a); }
-        .chat-status { border: 1px solid #3f4152; border-radius: 6px; background: #1b1d28; padding: 6px; font-size: 11px; color: #aeb3c7; line-height: 1.25; }
-        .chat-status.connected { border-color: #54d66f; color: #dfffe5; }
-        .chat-status.error { border-color: #e24a4a; color: #ffd8d8; }
-        .chat-command-list { max-height: 110px; overflow-y: auto; display: grid; gap: 4px; }
-        .chat-command-item { border: 1px solid #3f4152; border-radius: 6px; padding: 5px; background: #1e2130; font-size: 10px; color: #dbe1f4; line-height: 1.25; }
-        .chat-command-item strong { color: #ffffff; }
-        .chat-command-item .chat-command-meta { color: #99a4c4; }
-        .chat-permission-select { width: 100%; }
 
         .main-area { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .top-decks-panel { width: 100%; max-width: none; background: #2b2d3a; border: 1px solid #3f4152; border-radius: 10px; padding: 10px; display: none; flex-direction: column; gap: 8px; }
@@ -411,28 +403,6 @@
             <div class="tiny-note" id="replaceInfo">Без повторов заменено: 0/8</div>
         </div>
 
-        <div class="tool-panel" id="youtubeChatPanel">
-            <div class="tool-title">YouTube чат</div>
-            <input type="text" id="youtubeBackendUrl" class="text-input" placeholder="Адрес бэкенда (например https://...vercel.app)">
-            <input type="text" id="youtubeStreamInput" class="text-input" placeholder="Ссылка на стрим / videoId / liveChatId">
-            <div class="inline-row">
-                <button class="btn-blue btn-mini" onclick="connectYoutubeChat()">Подключить</button>
-                <button class="btn-filter btn-mini" onclick="disconnectYoutubeChat()">Отключить</button>
-            </div>
-            <label class="checkbox-group" style="gap:6px;">
-                <input type="checkbox" id="youtubeChatAutoExecute" checked>
-                <span>Выполнять команды</span>
-            </label>
-            <select id="youtubeChatPermission" class="chat-permission-select">
-                <option value="all">Команды от всех</option>
-                <option value="trusted">Только стример/модеры/спонсоры</option>
-                <option value="mods">Только стример/модеры</option>
-            </select>
-            <div class="chat-status" id="youtubeChatStatus">Чат не подключён.</div>
-            <div class="chat-command-list" id="youtubeChatCommands"></div>
-            <div class="tiny-note">Команды: !колода, !хаос, !замена, !карта Ведьма, !бан Мегарыцарь.</div>
-        </div>
-
         <div class="tool-panel preload-panel" id="imagePreloadPanel">
             <div class="tool-title">Загрузка карт</div>
             <div class="preload-row">
@@ -449,7 +419,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.24</div>
+<div id="appVersionBadge" class="app-version">v4.20</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -681,12 +651,11 @@ function preloadDeckImages(deck, options = {}) {
     return preloadImages(urls, options);
 }
 
-const APP_VERSION = '4.24';
+const APP_VERSION = '4.23';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
 const TOP_DECK_RENDER_LIMIT = 20;
-const YOUTUBE_CHAT_COMMAND_COOLDOWN_MS = 3500;
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false, isDeckPreparing = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
@@ -704,15 +673,6 @@ const topDeckState = {
     similarBaseRank: null,
     similarDiffCount: 1,
     variantsExpandedByRank: {}
-};
-const youtubeChatState = {
-    connected: false,
-    readyForCommands: false,
-    timer: null,
-    pageToken: '',
-    seenCommandIds: new Set(),
-    lastActionAt: new Map(),
-    lastLiveTitle: ''
 };
 
 const retroRoyalePool = new Set([
@@ -2698,255 +2658,6 @@ function replaceSelectedCardInDeck() {
     updateReplacementInfo();
 }
 
-function setYoutubeChatStatus(text, mode = '') {
-    const status = document.getElementById('youtubeChatStatus');
-    if (!status) return;
-    status.textContent = text;
-    status.classList.toggle('connected', mode === 'connected');
-    status.classList.toggle('error', mode === 'error');
-}
-
-function normalizeYoutubeBackendUrl(raw) {
-    let value = String(raw || '').trim();
-    if (!value) {
-        if (location.hostname.endsWith('github.io')) return '';
-        return `${location.origin}/api/youtube-chat`;
-    }
-    value = value.replace(/\/+$/, '');
-    if (/\/api\/youtube-chat$/i.test(value)) return value;
-    return `${value}/api/youtube-chat`;
-}
-
-function loadYoutubeChatSettings() {
-    const backendInput = document.getElementById('youtubeBackendUrl');
-    const streamInput = document.getElementById('youtubeStreamInput');
-    const autoInput = document.getElementById('youtubeChatAutoExecute');
-    const permissionInput = document.getElementById('youtubeChatPermission');
-    if (backendInput) backendInput.value = localStorage.getItem('youtubeChatBackendUrl') || '';
-    if (streamInput) streamInput.value = localStorage.getItem('youtubeChatSource') || '';
-    if (autoInput) autoInput.checked = localStorage.getItem('youtubeChatAutoExecute') !== 'false';
-    if (permissionInput) permissionInput.value = localStorage.getItem('youtubeChatPermission') || 'all';
-}
-
-function saveYoutubeChatSettings() {
-    const backendInput = document.getElementById('youtubeBackendUrl');
-    const streamInput = document.getElementById('youtubeStreamInput');
-    const autoInput = document.getElementById('youtubeChatAutoExecute');
-    const permissionInput = document.getElementById('youtubeChatPermission');
-    if (backendInput) localStorage.setItem('youtubeChatBackendUrl', backendInput.value.trim());
-    if (streamInput) localStorage.setItem('youtubeChatSource', streamInput.value.trim());
-    if (autoInput) localStorage.setItem('youtubeChatAutoExecute', String(autoInput.checked));
-    if (permissionInput) localStorage.setItem('youtubeChatPermission', permissionInput.value);
-}
-
-function addYoutubeChatCommandLog(command, resultText) {
-    const list = document.getElementById('youtubeChatCommands');
-    if (!list || !command) return;
-    const item = document.createElement('div');
-    item.className = 'chat-command-item';
-    item.innerHTML = `<strong>${escapeHtml(command.raw || command.name)}</strong><br><span class="chat-command-meta">${escapeHtml(command.author?.name || 'чат')} · ${escapeHtml(resultText || '')}</span>`;
-    list.prepend(item);
-    while (list.children.length > 8) list.lastElementChild?.remove();
-}
-
-function isYoutubeCommandAllowed(command) {
-    const mode = document.getElementById('youtubeChatPermission')?.value || 'all';
-    const author = command?.author || {};
-    if (mode === 'all') return true;
-    if (mode === 'trusted') return Boolean(author.isOwner || author.isModerator || author.isSponsor);
-    if (mode === 'mods') return Boolean(author.isOwner || author.isModerator);
-    return true;
-}
-
-function canRunYoutubeAction(action) {
-    const now = Date.now();
-    const last = youtubeChatState.lastActionAt.get(action) || 0;
-    if ((now - last) < YOUTUBE_CHAT_COMMAND_COOLDOWN_MS) return false;
-    youtubeChatState.lastActionAt.set(action, now);
-    return true;
-}
-
-function findCardByChatText(rawText) {
-    const text = String(rawText || '').trim();
-    if (!text) return null;
-    const key = normalizeCardKey(text);
-    return cards.find(card =>
-        normalizeCardKey(card.name) === key ||
-        normalizeCardKey(card.ruName) === key ||
-        makeCardSlug(card.name) === makeCardSlug(text) ||
-        makeCardSlug(card.ruName) === makeCardSlug(text)
-    ) || cards.find(card =>
-        normalizeCardKey(card.ruName).includes(key) ||
-        normalizeCardKey(card.name).includes(key)
-    ) || null;
-}
-
-function refreshBuildControlsAfterPoolChange() {
-    renderFilters();
-    updateCardPoolInfo();
-    renderManualCardSelect();
-    updateThemeLetterOptions();
-    updateThemeHint();
-}
-
-async function generateChaosDeckFromChat() {
-    const poolSelect = document.getElementById('cardPoolMode');
-    if (poolSelect) {
-        poolSelect.value = 'chaos';
-        refreshBuildControlsAfterPoolChange();
-    }
-    setAppMode('build');
-    await generateDeck(false);
-}
-
-function applyChatCardPick(rawCardName) {
-    const card = findCardByChatText(rawCardName);
-    if (!card) return `карта не найдена: ${rawCardName || '—'}`;
-    if (!card.included) card.included = true;
-    if (currentDeck.some(item => item.name === card.name)) return `${card.ruName} уже в колоде`;
-
-    const next = { ...card, isEvo: false, isHeroism: false };
-    if (currentDeck.length < 8) {
-        currentDeck.push(next);
-    } else {
-        const index = Number.isInteger(selectedDeckSlotIndex) ? selectedDeckSlotIndex : Math.floor(Math.random() * 8);
-        currentDeck[index] = next;
-    }
-    resetReplacementHistory(false);
-    applyCurrentDeckToUi({ customName: `Чат выбрал: ${card.ruName}` });
-    return `добавлена ${card.ruName}`;
-}
-
-function banChatCard(rawCardName) {
-    const card = findCardByChatText(rawCardName);
-    if (!card) return `карта не найдена: ${rawCardName || '—'}`;
-    card.included = false;
-    refreshBuildControlsAfterPoolChange();
-    return `${card.ruName} убрана из пула`;
-}
-
-function applyChatPunishment() {
-    const punishments = [
-        'Следующий проигрыш = чат меняет винкон',
-        'Победа только в 2 короны или колода портится',
-        'После проигрыша заменить самую дорогую карту',
-        'Играть без права прожимать первую эмоцию',
-        'Если первая башня падает у тебя - !хаос обязателен'
-    ];
-    const text = punishments[Math.floor(Math.random() * punishments.length)];
-    setDeckName(`Наказание: ${text}`);
-    return text;
-}
-
-async function executeYoutubeChatCommand(command) {
-    if (!command || youtubeChatState.seenCommandIds.has(command.id)) return;
-    youtubeChatState.seenCommandIds.add(command.id);
-
-    if (!isYoutubeCommandAllowed(command)) {
-        addYoutubeChatCommandLog(command, 'нет прав на команду');
-        return;
-    }
-    if (!canRunYoutubeAction(command.action)) {
-        addYoutubeChatCommandLog(command, 'cooldown');
-        return;
-    }
-
-    try {
-        if (command.action === 'generate_deck') {
-            setAppMode('build');
-            await generateDeck(false);
-            addYoutubeChatCommandLog(command, 'собрана новая колода');
-        } else if (command.action === 'chaos_deck') {
-            await generateChaosDeckFromChat();
-            addYoutubeChatCommandLog(command, 'собрана ХАОС-колода');
-        } else if (command.action === 'replace_random') {
-            if (currentDeck.length !== 8) await generateDeck(false);
-            else replaceRandomCardInDeck();
-            addYoutubeChatCommandLog(command, 'замена выполнена');
-        } else if (command.action === 'pick_card') {
-            addYoutubeChatCommandLog(command, applyChatCardPick(command.args));
-        } else if (command.action === 'ban_card') {
-            addYoutubeChatCommandLog(command, banChatCard(command.args));
-        } else if (command.action === 'vote') {
-            addYoutubeChatCommandLog(command, `голос: ${command.args || '—'}`);
-        } else if (command.action === 'punishment') {
-            addYoutubeChatCommandLog(command, applyChatPunishment());
-        }
-    } catch (e) {
-        addYoutubeChatCommandLog(command, `ошибка: ${e.message || 'не удалось выполнить'}`);
-    }
-}
-
-function buildYoutubeChatRequestUrl() {
-    const backend = normalizeYoutubeBackendUrl(document.getElementById('youtubeBackendUrl')?.value || '');
-    const source = document.getElementById('youtubeStreamInput')?.value.trim() || '';
-    if (!backend) throw new Error('Укажи адрес бэкенда. Для GitHub Pages нужен внешний бэкенд, например Vercel.');
-    if (!source) throw new Error('Укажи ссылку на стрим, videoId, channelId или liveChatId.');
-
-    const url = new URL(backend, location.href);
-    url.searchParams.set('source', source);
-    if (youtubeChatState.pageToken) url.searchParams.set('pageToken', youtubeChatState.pageToken);
-    return url;
-}
-
-function scheduleYoutubeChatPoll(delayMs) {
-    clearTimeout(youtubeChatState.timer);
-    if (!youtubeChatState.connected) return;
-    const delay = Math.max(1200, Number(delayMs) || 5000);
-    youtubeChatState.timer = setTimeout(() => pollYoutubeChat(), delay);
-}
-
-async function pollYoutubeChat() {
-    if (!youtubeChatState.connected) return;
-    try {
-        const url = buildYoutubeChatRequestUrl();
-        const response = await fetch(url);
-        const data = await response.json().catch(() => null);
-        if (!response.ok || !data?.ok) throw new Error(data?.error || `Backend error ${response.status}`);
-
-        youtubeChatState.pageToken = data.nextPageToken || youtubeChatState.pageToken;
-        youtubeChatState.lastLiveTitle = data.live?.title || youtubeChatState.lastLiveTitle;
-        const msgCount = Array.isArray(data.messages) ? data.messages.length : 0;
-        const commandCount = Array.isArray(data.commands) ? data.commands.length : 0;
-        const titlePart = youtubeChatState.lastLiveTitle ? ` · ${youtubeChatState.lastLiveTitle}` : '';
-        setYoutubeChatStatus(`Чат подключён${titlePart}. Сообщений: ${msgCount}, команд: ${commandCount}.`, 'connected');
-
-        if (youtubeChatState.readyForCommands && document.getElementById('youtubeChatAutoExecute')?.checked) {
-            for (const command of (data.commands || [])) {
-                await executeYoutubeChatCommand(command);
-            }
-        } else if (!youtubeChatState.readyForCommands) {
-            youtubeChatState.readyForCommands = true;
-            if (commandCount) setYoutubeChatStatus(`Чат подключён. История пропущена, новые команды будут выполняться.`, 'connected');
-        }
-        scheduleYoutubeChatPoll(data.pollingIntervalMillis || 5000);
-    } catch (e) {
-        setYoutubeChatStatus(`Ошибка чата: ${e.message || 'не удалось прочитать чат'}`, 'error');
-        scheduleYoutubeChatPoll(6000);
-    }
-}
-
-function connectYoutubeChat() {
-    saveYoutubeChatSettings();
-    disconnectYoutubeChat(false);
-    youtubeChatState.connected = true;
-    youtubeChatState.readyForCommands = false;
-    youtubeChatState.pageToken = '';
-    youtubeChatState.seenCommandIds.clear();
-    youtubeChatState.lastActionAt.clear();
-    setYoutubeChatStatus('Подключаю YouTube чат...');
-    pollYoutubeChat();
-}
-
-function disconnectYoutubeChat(updateStatus = true) {
-    youtubeChatState.connected = false;
-    youtubeChatState.readyForCommands = false;
-    youtubeChatState.pageToken = '';
-    clearTimeout(youtubeChatState.timer);
-    youtubeChatState.timer = null;
-    if (updateStatus) setYoutubeChatStatus('Чат отключён.');
-}
-
 function normalizePlayerTag(raw) {
     return String(raw || '')
         .toUpperCase()
@@ -3304,12 +3015,7 @@ document.getElementById('topApiSort').addEventListener('change', loadTopDecks);
 document.getElementById('topLeaderboardSeason').addEventListener('change', loadTopDecks);
 document.getElementById('topSimilarDiffCount').addEventListener('change', onTopSimilarDiffChange);
 document.getElementById('topRenderLimit').addEventListener('change', updateTopRenderLimit);
-document.getElementById('youtubeBackendUrl').addEventListener('change', saveYoutubeChatSettings);
-document.getElementById('youtubeStreamInput').addEventListener('change', saveYoutubeChatSettings);
-document.getElementById('youtubeChatAutoExecute').addEventListener('change', saveYoutubeChatSettings);
-document.getElementById('youtubeChatPermission').addEventListener('change', saveYoutubeChatSettings);
 
-loadYoutubeChatSettings();
 renderFilters();
 updateCardPoolInfo();
 updateThemeLetterOptions();
