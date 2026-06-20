@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clash Royale Deck Randomizer</title>
+    <link rel="preconnect" href="https://royaleapi.github.io" crossorigin>
+    <link rel="preconnect" href="https://cdn.royaleapi.com" crossorigin>
+    <link rel="dns-prefetch" href="//royaleapi.github.io">
+    <link rel="dns-prefetch" href="//cdn.royaleapi.com">
+    <link rel="icon" href="data:,">
     <style>
         :root {
             --bg-main: #1e1e24;
@@ -61,6 +66,12 @@
         .tiny-note { font-size: 11px; color: #aeb3c7; line-height: 1.2; }
         .inline-row { display: flex; gap: 6px; }
         .inline-row > * { flex: 1; }
+        .preload-panel { margin-top: auto; }
+        .preload-row { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; color: #e2e5f4; }
+        .preload-bar { height: 8px; overflow: hidden; border-radius: 999px; background: #191a24; border: 1px solid #3f4152; }
+        .preload-bar-fill { width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #4a90e2, #6ff0d2); transition: width .25s ease, background .25s ease; }
+        .preload-panel.done .preload-bar-fill { background: linear-gradient(90deg, #54d66f, #9af27b); }
+        .preload-panel.warn .preload-bar-fill { background: linear-gradient(90deg, #e2b853, #e27a4a); }
 
         .main-area { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .top-decks-panel { width: 100%; max-width: none; background: #2b2d3a; border: 1px solid #3f4152; border-radius: 10px; padding: 10px; display: none; flex-direction: column; gap: 8px; }
@@ -392,11 +403,23 @@
             <div class="tiny-note" id="replaceInfo">Без повторов заменено: 0/8</div>
         </div>
 
+        <div class="tool-panel preload-panel" id="imagePreloadPanel">
+            <div class="tool-title">Загрузка карт</div>
+            <div class="preload-row">
+                <span id="imagePreloadStatus">Готовлю загрузку...</span>
+                <span id="imagePreloadCount">0/0</span>
+            </div>
+            <div class="preload-bar">
+                <div class="preload-bar-fill" id="imagePreloadBar"></div>
+            </div>
+            <div class="tiny-note" id="imagePreloadDetails">Картинки будут заранее загружены в кэш браузера.</div>
+        </div>
+
     </div>
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.19</div>
+<div id="appVersionBadge" class="app-version">v4.20</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -429,6 +452,20 @@ const translations = {"Archers":"Лучницы","Archer Queen":"Королев�
 const CR_ASSETS_BASE = 'https://royaleapi.github.io/cr-api-assets';
 const CR_CARD_ASSETS_BASE = `${CR_ASSETS_BASE}/cards`;
 const CR_CARD_VARIANT_ASSETS_BASE = 'https://cdn.royaleapi.com/static/img/cards';
+const CR_TOWER_ASSETS_BASE = `${CR_ASSETS_BASE}/towers`;
+const PRELOAD_IMAGE_CONCURRENCY = 8;
+const PRELOAD_VISIBLE_DECK_TIMEOUT = 1200;
+const imagePreloadCache = new Map();
+const imagePreloadResults = new Map();
+const imagePreloadState = {
+    tracked: new Set(),
+    counted: new Set(),
+    total: 0,
+    loaded: 0,
+    failed: 0,
+    finished: false
+};
+let allCardImagesWarmupStarted = false;
 
 function toCardAssetSlug(name) {
     return String(name || '').toLowerCase().replace(/\s+/g, '-').replace(/\./g, '');
@@ -449,12 +486,157 @@ let cards = rawCards.map(c => {
     };
 });
 
-const APP_VERSION = '4.19';
+function uniqueImageUrls(urls) {
+    return [...new Set(urls.filter(Boolean))];
+}
+
+function preloadImage(url) {
+    if (!url) return Promise.resolve(false);
+    if (imagePreloadCache.has(url)) return imagePreloadCache.get(url);
+
+    const promise = new Promise(resolve => {
+        const img = new Image();
+        img.decoding = 'async';
+        img.loading = 'eager';
+        const finish = (success) => {
+            imagePreloadResults.set(url, success);
+            countTrackedImagePreload(url, success);
+            resolve(success);
+        };
+        img.onload = () => finish(true);
+        img.onerror = () => finish(false);
+        img.src = url;
+    });
+    imagePreloadCache.set(url, promise);
+    return promise;
+}
+
+function countTrackedImagePreload(url, success) {
+    if (!imagePreloadState.tracked.has(url) || imagePreloadState.counted.has(url)) return;
+    imagePreloadState.counted.add(url);
+    if (success) imagePreloadState.loaded += 1;
+    else imagePreloadState.failed += 1;
+    updateImagePreloadPanel();
+}
+
+function updateImagePreloadPanel() {
+    const panel = document.getElementById('imagePreloadPanel');
+    const status = document.getElementById('imagePreloadStatus');
+    const count = document.getElementById('imagePreloadCount');
+    const bar = document.getElementById('imagePreloadBar');
+    const details = document.getElementById('imagePreloadDetails');
+    if (!panel || !status || !count || !bar || !details) return;
+
+    const completed = imagePreloadState.loaded + imagePreloadState.failed;
+    const total = imagePreloadState.total || 0;
+    const percent = total ? Math.round((completed / total) * 100) : 0;
+    panel.classList.toggle('done', imagePreloadState.finished && imagePreloadState.failed === 0);
+    panel.classList.toggle('warn', imagePreloadState.finished && imagePreloadState.failed > 0);
+    bar.style.width = `${percent}%`;
+    count.textContent = `${completed}/${total}`;
+
+    if (!total) {
+        status.textContent = 'Готовлю загрузку...';
+        details.textContent = 'Картинки будут заранее загружены в кэш браузера.';
+    } else if (imagePreloadState.finished && imagePreloadState.failed === 0) {
+        status.textContent = 'Все карты загружены';
+        details.textContent = 'Новые колоды должны открываться без пустых слотов.';
+    } else if (imagePreloadState.finished) {
+        status.textContent = 'Загрузка завершена';
+        details.textContent = `Загружено: ${imagePreloadState.loaded}, ошибок: ${imagePreloadState.failed}.`;
+    } else {
+        status.textContent = 'Загружаю карты...';
+        details.textContent = `Загружено карт: ${imagePreloadState.loaded} из ${total}.`;
+    }
+}
+
+function preloadImages(urls, { concurrency = PRELOAD_IMAGE_CONCURRENCY, timeoutMs = 0 } = {}) {
+    const queue = uniqueImageUrls(urls);
+    if (queue.length === 0) return Promise.resolve([]);
+
+    let nextIndex = 0;
+    const workerCount = Math.min(concurrency, queue.length);
+    const worker = async () => {
+        const results = [];
+        while (nextIndex < queue.length) {
+            const url = queue[nextIndex++];
+            results.push(await preloadImage(url));
+        }
+        return results;
+    };
+
+    const task = Promise.all(Array.from({ length: workerCount }, worker)).then(result => result.flat());
+    if (!timeoutMs) return task;
+    return Promise.race([
+        task,
+        new Promise(resolve => setTimeout(() => resolve([]), timeoutMs))
+    ]);
+}
+
+function getTowerImageUrl(towerName) {
+    const resolved = resolveTowerName(towerName);
+    if (!resolved) return '';
+    return `${CR_CARD_ASSETS_BASE}/${resolved.toLowerCase().replace(/\s+/g, '-')}.png`;
+}
+
+function getAllPreloadImageUrls() {
+    const urls = [];
+    for (const card of cards) {
+        urls.push(card.img);
+        if (card.evolution) urls.push(card.imgEvo);
+        if (card.heroism) urls.push(card.imgHeroism);
+    }
+    for (const tower of rawTowers) {
+        urls.push(getTowerImageUrl(tower.name));
+    }
+    return uniqueImageUrls(urls);
+}
+
+function scheduleAllCardImagesWarmup() {
+    if (allCardImagesWarmupStarted) return;
+    allCardImagesWarmupStarted = true;
+
+    const urls = getAllPreloadImageUrls();
+    imagePreloadState.tracked = new Set(urls);
+    imagePreloadState.counted = new Set();
+    imagePreloadState.total = urls.length;
+    imagePreloadState.loaded = 0;
+    imagePreloadState.failed = 0;
+    imagePreloadState.finished = false;
+    for (const url of urls) {
+        if (imagePreloadResults.has(url)) {
+            countTrackedImagePreload(url, imagePreloadResults.get(url));
+        }
+    }
+    updateImagePreloadPanel();
+
+    const startWarmup = () => {
+        preloadImages(urls, { concurrency: 6 }).then(() => {
+            imagePreloadState.finished = true;
+            updateImagePreloadPanel();
+        });
+    };
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(startWarmup, { timeout: 1500 });
+    } else {
+        setTimeout(startWarmup, 300);
+    }
+}
+
+function preloadDeckImages(deck, options = {}) {
+    const urls = [];
+    for (const card of deck || []) {
+        getCardImageCandidates(card).forEach(url => urls.push(url));
+    }
+    return preloadImages(urls, options);
+}
+
+const APP_VERSION = '4.20';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
 const TOP_DECK_RENDER_LIMIT = 20;
-let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false;
+let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false, isDeckPreparing = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
 let importedTowerName = null;
@@ -1056,7 +1238,7 @@ function renderFilters() {
     const pool = [...cards].filter(isCardInCurrentPool);
     const markup = pool
         .sort((a,b)=>a.ruName.localeCompare(b.ruName))
-        .map(card => `<label class="card-checkbox"><input type="checkbox" ${card.included ? 'checked' : ''} onchange="toggleCard('${card.name}', this.checked)"><img src="${card.img}" alt="${card.ruName}">${card.ruName}</label>`)
+        .map(card => `<label class="card-checkbox"><input type="checkbox" ${card.included ? 'checked' : ''} onchange="toggleCard('${card.name}', this.checked)"><img src="${card.img}" loading="lazy" decoding="async" alt="${card.ruName}">${card.ruName}</label>`)
         .join('');
     list.innerHTML = markup;
 }
@@ -1756,7 +1938,7 @@ function renderTopDecksList() {
                 <div class="${classes.join(' ')}" title="${title}">
                     ${card.isEvo ? '<span class="top-mini-badge evo">Э</span>' : ''}
                     ${card.isHeroism ? '<span class="top-mini-badge hero">Г</span>' : ''}
-                    <img src="${imageSrc}" data-fallback="${imageFallback}" onerror="advanceCardImageFallback(this)" alt="${alt}">
+                    <img src="${imageSrc}" data-fallback="${imageFallback}" loading="lazy" decoding="async" onerror="advanceCardImageFallback(this)" alt="${alt}">
                 </div>
             `;
         }).join('');
@@ -1800,9 +1982,9 @@ function renderTopDecksList() {
                             ${shownVariations.length ? shownVariations.map(v => `
                                 <div class="top-variant-row">
                                     <div class="top-variant-main">
-                                        <img class="top-variant-mini" src="${v.removedImg}" alt="${escapeHtml(v.removedRu)}" onerror="this.onerror=null;this.src='${CR_CARD_ASSETS_BASE}/_invalid.png'">
+                                        <img class="top-variant-mini" src="${v.removedImg}" loading="lazy" decoding="async" alt="${escapeHtml(v.removedRu)}" onerror="this.onerror=null;this.src='${CR_CARD_ASSETS_BASE}/_invalid.png'">
                                         <span class="top-variant-arrow">→</span>
-                                        <img class="top-variant-mini" src="${v.addedImg}" alt="${escapeHtml(v.addedRu)}" onerror="this.onerror=null;this.src='${CR_CARD_ASSETS_BASE}/_invalid.png'">
+                                        <img class="top-variant-mini" src="${v.addedImg}" loading="lazy" decoding="async" alt="${escapeHtml(v.addedRu)}" onerror="this.onerror=null;this.src='${CR_CARD_ASSETS_BASE}/_invalid.png'">
                                         <div class="top-variant-label">${escapeHtml(v.removedRu)} → ${escapeHtml(v.addedRu)}</div>
                                     </div>
                                     <div class="top-variant-ranks">${escapeHtml(formatRankNumbersList(v.ranks))}</div>
@@ -1944,8 +2126,8 @@ function applyTopDeckByFilteredIndex(filteredIndex, switchToBuild = false) {
     }
 }
 
-function generateDeck(oneByOne) {
-    if (isRouletteRunning) return;
+async function generateDeck(oneByOne) {
+    if (isRouletteRunning || isDeckPreparing) return;
     if (!oneByOne || targetDeckQueue.length === 0) {
         let constraints = { 
             spells: document.getElementById('setSpells').value, 
@@ -1984,6 +2166,13 @@ function generateDeck(oneByOne) {
         if (!finalDeck) return alert("Невозможно собрать колоду по заданным критериям! Ослабьте ограничения.");
         
         finalDeck.sort((a,b) => (a.isEvo ? -1 : b.isEvo ? 1 : a.isHeroism ? -1 : b.isHeroism ? 1 : 0));
+        isDeckPreparing = true;
+        setDeckName('Загружаю картинки колоды...');
+        try {
+            await preloadDeckImages(finalDeck, { timeoutMs: PRELOAD_VISIBLE_DECK_TIMEOUT });
+        } finally {
+            isDeckPreparing = false;
+        }
         importedTowerName = null;
         currentDeck = [...finalDeck];
         resetReplacementHistory(false);
@@ -2131,9 +2320,9 @@ function getCardImageCandidates(c) {
     };
 
     if (c?.isEvo) {
-        if (c?.heroism) push(c.imgHeroismEvo);
+        if (c?.isHeroism && c?.heroism) push(c.imgHeroismEvo);
         push(c.imgEvo);
-        if (c?.heroism) push(c.imgHeroism);
+        if (c?.isHeroism && c?.heroism) push(c.imgHeroism);
     }
     if (c?.isHeroism) push(c.imgHeroism);
     push(c?.img);
@@ -2175,7 +2364,7 @@ function getCardInnerMarkup(c) {
     const src = candidates[0] || c.img;
     const fallback = encodeURIComponent(JSON.stringify(candidates.slice(1)));
     const alt = escapeHtml(c.ruName || c.name);
-    return `${badges}<img src="${src}" data-fallback="${fallback}" onerror="advanceCardImageFallback(this)" alt="${alt}">`;
+    return `${badges}<img src="${src}" data-fallback="${fallback}" loading="eager" decoding="async" fetchpriority="high" onerror="advanceCardImageFallback(this)" alt="${alt}">`;
 }
 
 function getCardSlotMarkup(c, idx) {
@@ -2219,7 +2408,9 @@ function renderTower() {
         const resolved = resolveTowerName(towerName);
         if (!resolved) return false;
         const ru = translations[resolved] || resolved;
-        slot.innerHTML = `<img src="https://royaleapi.github.io/cr-api-assets/towers/${resolved.toLowerCase().replace(/\s+/g,'-')}.png" onerror="this.src='https://royaleapi.github.io/cr-api-assets/cards/${resolved.toLowerCase().replace(/\s+/g,'-')}.png'"><div class="badge badge-heroism" style="bottom:4px;top:auto;left:0;width:100%;text-align:center;color:#111;">${ru}</div>`;
+        const towerSrc = getTowerImageUrl(resolved);
+        const fallbackSrc = `${CR_TOWER_ASSETS_BASE}/${resolved.toLowerCase().replace(/\s+/g,'-')}.png`;
+        slot.innerHTML = `<img src="${towerSrc}" loading="eager" decoding="async" fetchpriority="high" onerror="this.src='${fallbackSrc}'"><div class="badge badge-heroism" style="bottom:4px;top:auto;left:0;width:100%;text-align:center;color:#111;">${ru}</div>`;
         slot.style.display = 'flex';
         slot.className = 'card-slot filled';
         return true;
@@ -2758,7 +2949,7 @@ function playRoulette(t, idx) {
     for(let i=0;i<10;i++) pool.push(visualPool[Math.floor(Math.random()*visualPool.length)]);
     
     track.style.transition = 'none'; track.style.transform = 'translateX(0px)';
-    track.innerHTML = pool.map(x=>`<img src="${x.img}" alt="${x.ruName || x.name}">`).join('');
+    track.innerHTML = pool.map(x=>`<img src="${x.img}" loading="eager" decoding="async" alt="${x.ruName || x.name}">`).join('');
     
     setTimeout(() => {
         track.style.transition = 'transform 3s cubic-bezier(0.1, 0.8, 0.2, 1)';
@@ -2805,6 +2996,7 @@ updateTopRenderLimit();
 setAppMode('build');
 document.getElementById('appVersionBadge').textContent = `v${APP_VERSION}`;
 clearDeck();
+scheduleAllCardImagesWarmup();
 </script>
 </body>
 </html>
