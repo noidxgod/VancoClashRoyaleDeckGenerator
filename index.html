@@ -84,6 +84,23 @@
         .chat-message-item { border: 1px solid #34394f; border-radius: 6px; padding: 5px; background: #1a1d2a; font-size: 10px; color: #dbe1f4; line-height: 1.25; }
         .chat-message-author { color: #8fb2ff; font-weight: 800; }
         .chat-message-text { color: #d9def2; }
+        .stream-command-box { background: #1b1e2c; border: 1px solid #3f4152; border-radius: 8px; padding: 7px; display: grid; gap: 7px; }
+        .stream-command-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 11px; font-weight: 800; color: #e6ebff; }
+        .stream-command-badge { border: 1px solid #4a4f68; background: #22283d; color: #dce5ff; border-radius: 999px; padding: 2px 7px; font-size: 10px; white-space: nowrap; }
+        .stream-command-badge.paused { border-color: #e2b853; color: #ffe6a3; }
+        .stream-command-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(58px, 1fr)); gap: 4px; }
+        .stream-command-stat { background: #24283a; border: 1px solid #3a4058; border-radius: 6px; padding: 4px; text-align: center; }
+        .stream-command-stat strong { display: block; color: #fff; font-size: 12px; line-height: 1; }
+        .stream-command-stat span { color: #9ea8c8; font-size: 9px; }
+        .stream-command-help { display: flex; flex-wrap: wrap; gap: 4px; }
+        .stream-command-chip { border: 1px solid #3e4665; background: #23283b; color: #d8e0ff; border-radius: 999px; padding: 3px 7px; font-size: 10px; }
+        .stream-command-chip.mod { border-color: #e2b853; color: #ffe6a3; }
+        .stream-command-queue { max-height: 130px; overflow-y: auto; display: grid; gap: 4px; }
+        .stream-command-entry { border: 1px solid #39405a; background: #202437; border-radius: 6px; padding: 5px; font-size: 10px; line-height: 1.25; color: #dbe1f4; }
+        .stream-command-entry.pending { border-color: #e2b853; }
+        .stream-command-entry.done { border-color: #54d66f; }
+        .stream-command-entry.blocked { border-color: #e24a4a; }
+        .stream-command-entry .meta { color: #9ea8c8; }
 
         .main-area { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .top-decks-panel { width: 100%; max-width: none; background: #2b2d3a; border: 1px solid #3f4152; border-radius: 10px; padding: 10px; display: none; flex-direction: column; gap: 8px; }
@@ -443,12 +460,32 @@
                 <option value="trusted">Только стример/модеры/спонсоры</option>
                 <option value="mods">Только стример/модеры</option>
             </select>
+            <div class="stream-command-box">
+                <div class="stream-command-head">
+                    <span>Приём команд</span>
+                    <span class="stream-command-badge" id="streamCommandModeBadge">Авто</span>
+                </div>
+                <div class="stream-command-stats">
+                    <div class="stream-command-stat"><strong id="streamCommandReceived">0</strong><span>принято</span></div>
+                    <div class="stream-command-stat"><strong id="streamCommandExecuted">0</strong><span>выполнено</span></div>
+                    <div class="stream-command-stat"><strong id="streamCommandQueued">0</strong><span>в очереди</span></div>
+                    <div class="stream-command-stat"><strong id="streamCommandBlocked">0</strong><span>отклонено</span></div>
+                </div>
+                <div class="inline-row">
+                    <button class="btn-filter btn-mini" onclick="toggleStreamCommandIntake()" id="streamCommandPauseBtn">Пауза</button>
+                    <button class="btn-blue btn-mini" onclick="runQueuedStreamCommands()">Выполнить очередь</button>
+                </div>
+                <button class="btn-filter btn-mini" onclick="clearStreamCommandQueue()">Очистить приёмник</button>
+                <div class="stream-command-help" id="streamCommandHelp"></div>
+                <div class="tiny-note">Очередь и результат команд:</div>
+                <div class="stream-command-queue" id="streamCommandQueue"></div>
+            </div>
             <div class="chat-status" id="youtubeChatStatus">Чат не подключён.</div>
             <div class="tiny-note">Сообщения чата:</div>
             <div class="chat-message-list" id="youtubeChatMessages"></div>
             <div class="tiny-note">Найденные команды:</div>
             <div class="chat-command-list" id="youtubeChatCommands"></div>
-            <div class="tiny-note">Команды: !колода, !хаос, !замена, !карта Ведьма, !бан Мегарыцарь.</div>
+            <div class="tiny-note">Золотые команды доступны только стримеру/модерам. Если выключить выполнение, команды будут попадать в очередь.</div>
             <div class="tiny-note">Если чат не подключается, проверь ограничения API-ключа в Google Cloud.</div>
         </div>
 
@@ -470,7 +507,7 @@
 
 <div class="release-toolbar">
     <button class="changelog-trigger" onclick="toggleChangelogModal(true)">Что нового</button>
-    <div id="appVersionBadge" class="app-version">v4.26</div>
+    <div id="appVersionBadge" class="app-version">v4.27</div>
 </div>
 
 <div class="modal-overlay" id="filterModal">
@@ -501,6 +538,14 @@
         </div>
         <div class="tiny-note">Рабочий сайт живёт на ветке main, новые функции сначала проверяются в staging.</div>
         <div class="changelog-list">
+            <div class="changelog-entry">
+                <div class="changelog-entry-head"><span>v4.27</span><span class="changelog-entry-status">staging</span></div>
+                <ul>
+                    <li>Добавлен приёмник стрим-команд: счётчики, пауза, очередь и ручное выполнение.</li>
+                    <li>Команды разделены на зрительские и модераторские, чтобы чат не ломал настройки без прав.</li>
+                    <li>Добавлены команды для башни, кард-пула, очистки колоды и быстрой статистики текущей колоды.</li>
+                </ul>
+            </div>
             <div class="changelog-entry">
                 <div class="changelog-entry-head"><span>v4.26</span><span class="changelog-entry-status">staging</span></div>
                 <ul>
@@ -764,7 +809,7 @@ function preloadDeckImages(deck, options = {}) {
     return preloadImages(urls, options);
 }
 
-const APP_VERSION = '4.26';
+const APP_VERSION = '4.27';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
@@ -799,9 +844,37 @@ const youtubeChatState = {
     liveInfo: null,
     seenMessageIds: new Set(),
     seenCommandIds: new Set(),
+    pendingCommands: [],
+    commandIntakePaused: false,
+    commandStats: {
+        received: 0,
+        executed: 0,
+        queued: 0,
+        blocked: 0,
+        cooldown: 0
+    },
     lastActionAt: new Map(),
     lastLiveTitle: ''
 };
+
+const streamCommandDefinitions = [
+    { action: 'generate_deck', label: '!колода', title: 'Новая рандомная колода', aliases: ['колода', 'deck', 'дек', 'рандом'] },
+    { action: 'chaos_deck', label: '!хаос', title: 'Колода из пула ХАОС', aliases: ['хаос', 'chaos'] },
+    { action: 'replace_random', label: '!замена', title: 'Заменить случайную карту', aliases: ['замена', 'replace', 'реролл', 'reroll'] },
+    { action: 'pick_card', label: '!карта <название>', title: 'Добавить/заменить карту', aliases: ['карта', 'card'], needsArgs: true },
+    { action: 'tower_random', label: '!башня', title: 'Перерандомить башню', aliases: ['башня', 'tower'] },
+    { action: 'deck_stats', label: '!статы', title: 'Показать статы текущей колоды', aliases: ['статы', 'stats'] },
+    { action: 'punishment', label: '!наказание', title: 'Случайное наказание', aliases: ['наказание', 'punish'] },
+    { action: 'vote', label: '!голос <вариант>', title: 'Голосование чата', aliases: ['голос', 'vote'], needsArgs: true },
+    { action: 'ban_card', label: '!бан <карта>', title: 'Убрать карту из пула', aliases: ['бан', 'ban'], needsArgs: true, modOnly: true },
+    { action: 'set_pool', label: '!пул <все|ретро|хаос>', title: 'Сменить кард-пул', aliases: ['пул', 'pool'], needsArgs: true, modOnly: true },
+    { action: 'clear_deck', label: '!очистить', title: 'Очистить колоду', aliases: ['очистить', 'clear'], modOnly: true }
+];
+
+const streamCommandAliasMap = streamCommandDefinitions.reduce((acc, command) => {
+    command.aliases.forEach(alias => acc[alias] = command.action);
+    return acc;
+}, {});
 
 const retroRoyalePool = new Set([
     'Minions','Archers','Knight','Spear Goblins','Goblins','Bomber','Skeletons','Barbarians','Fire Spirit','Bats','Royal Giant','Ice Spirit',
@@ -2935,27 +3008,7 @@ function parseYoutubeChatCommand(message) {
     const [rawName, ...rest] = withoutPrefix.split(/\s+/);
     const name = normalizeYoutubeCommandName(rawName);
     const args = rest.join(' ').trim();
-    const aliases = {
-        'колода': 'generate_deck',
-        'deck': 'generate_deck',
-        'дек': 'generate_deck',
-        'рандом': 'generate_deck',
-        'хаос': 'chaos_deck',
-        'chaos': 'chaos_deck',
-        'замена': 'replace_random',
-        'replace': 'replace_random',
-        'реролл': 'replace_random',
-        'reroll': 'replace_random',
-        'карта': 'pick_card',
-        'card': 'pick_card',
-        'бан': 'ban_card',
-        'ban': 'ban_card',
-        'голос': 'vote',
-        'vote': 'vote',
-        'наказание': 'punishment',
-        'punish': 'punishment'
-    };
-    const action = aliases[name] || '';
+    const action = streamCommandAliasMap[name] || '';
     if (!action) return null;
     return {
         id: message.id,
@@ -3017,9 +3070,82 @@ function addYoutubeChatMessagesLog(messages) {
     while (list.children.length > 30) list.lastElementChild?.remove();
 }
 
+function getStreamCommandDefinition(action) {
+    return streamCommandDefinitions.find(command => command.action === action) || null;
+}
+
+function isYoutubeAuthorMod(author = {}) {
+    return Boolean(author.isOwner || author.isModerator);
+}
+
+function updateStreamCommandUi() {
+    const stats = youtubeChatState.commandStats;
+    const queued = youtubeChatState.pendingCommands.length;
+    if (document.getElementById('streamCommandReceived')) document.getElementById('streamCommandReceived').textContent = stats.received;
+    if (document.getElementById('streamCommandExecuted')) document.getElementById('streamCommandExecuted').textContent = stats.executed;
+    if (document.getElementById('streamCommandQueued')) document.getElementById('streamCommandQueued').textContent = queued;
+    if (document.getElementById('streamCommandBlocked')) document.getElementById('streamCommandBlocked').textContent = stats.blocked + stats.cooldown;
+
+    const badge = document.getElementById('streamCommandModeBadge');
+    const auto = document.getElementById('youtubeChatAutoExecute')?.checked;
+    if (badge) {
+        badge.textContent = youtubeChatState.commandIntakePaused ? 'Пауза' : (auto ? 'Авто' : 'Ручной');
+        badge.classList.toggle('paused', youtubeChatState.commandIntakePaused);
+    }
+    const pauseBtn = document.getElementById('streamCommandPauseBtn');
+    if (pauseBtn) pauseBtn.textContent = youtubeChatState.commandIntakePaused ? 'Возобновить' : 'Пауза';
+}
+
+function resetStreamCommandState(options = {}) {
+    youtubeChatState.pendingCommands = [];
+    youtubeChatState.commandStats = { received: 0, executed: 0, queued: 0, blocked: 0, cooldown: 0 };
+    if (options.resetPause) youtubeChatState.commandIntakePaused = false;
+    if (options.clearLogs) {
+        const queue = document.getElementById('streamCommandQueue');
+        const commands = document.getElementById('youtubeChatCommands');
+        if (queue) queue.innerHTML = '';
+        if (commands) commands.innerHTML = '';
+    }
+    updateStreamCommandUi();
+}
+
+function renderStreamCommandHelp() {
+    const help = document.getElementById('streamCommandHelp');
+    if (!help) return;
+    help.innerHTML = streamCommandDefinitions.map(command =>
+        `<span class="stream-command-chip${command.modOnly ? ' mod' : ''}" title="${escapeHtml(command.title)}">${escapeHtml(command.label)}</span>`
+    ).join('');
+}
+
+function addStreamCommandReceipt(command, state, detailText = '') {
+    const queue = document.getElementById('streamCommandQueue');
+    if (!queue || !command) return;
+    const stateLabel = {
+        pending: 'ожидает',
+        done: 'выполнено',
+        blocked: 'отклонено'
+    }[state] || state;
+    const item = document.createElement('div');
+    item.className = `stream-command-entry ${state}`;
+    item.innerHTML = `<strong>${escapeHtml(command.raw || command.name)}</strong><br><span class="meta">${escapeHtml(command.author?.name || 'чат')} · ${escapeHtml(stateLabel)}${detailText ? ` · ${escapeHtml(detailText)}` : ''}</span>`;
+    queue.prepend(item);
+    while (queue.children.length > 14) queue.lastElementChild?.remove();
+}
+
+function toggleStreamCommandIntake() {
+    youtubeChatState.commandIntakePaused = !youtubeChatState.commandIntakePaused;
+    updateStreamCommandUi();
+}
+
+function clearStreamCommandQueue() {
+    resetStreamCommandState({ clearLogs: true });
+}
+
 function isYoutubeCommandAllowed(command) {
     const mode = document.getElementById('youtubeChatPermission')?.value || 'all';
     const author = command?.author || {};
+    const definition = getStreamCommandDefinition(command?.action);
+    if (definition?.modOnly && !isYoutubeAuthorMod(author)) return false;
     if (mode === 'all') return true;
     if (mode === 'trusted') return Boolean(author.isOwner || author.isModerator || author.isSponsor);
     if (mode === 'mods') return Boolean(author.isOwner || author.isModerator);
@@ -3032,6 +3158,14 @@ function canRunYoutubeAction(action) {
     if ((now - last) < YOUTUBE_CHAT_COMMAND_COOLDOWN_MS) return false;
     youtubeChatState.lastActionAt.set(action, now);
     return true;
+}
+
+async function runQueuedStreamCommands() {
+    const pending = youtubeChatState.pendingCommands.splice(0);
+    updateStreamCommandUi();
+    for (const command of pending) {
+        await executeYoutubeChatCommand(command);
+    }
 }
 
 function findCardByChatText(rawText) {
@@ -3093,6 +3227,49 @@ function banChatCard(rawCardName) {
     return `${card.ruName} убрана из пула`;
 }
 
+function rerollTowerFromChat() {
+    importedTowerName = null;
+    const towerToggle = document.getElementById('setRandomTower');
+    if (towerToggle) towerToggle.checked = true;
+    renderTower();
+    return 'башня перерандомлена';
+}
+
+function setChatCardPool(rawPoolName) {
+    const text = normalizeCardKey(rawPoolName);
+    const poolMap = [
+        { value: 'all', names: ['все', 'всё', 'all', 'full'] },
+        { value: 'retro', names: ['ретро', 'retro', 'ретро рояль'] },
+        { value: 'chaos', names: ['хаос', 'chaos'] }
+    ];
+    const found = poolMap.find(pool => pool.names.some(name => normalizeCardKey(name) === text));
+    if (!found) return 'пул не найден: используй все, ретро или хаос';
+    const select = document.getElementById('cardPoolMode');
+    if (select) {
+        select.value = found.value;
+        refreshBuildControlsAfterPoolChange();
+    }
+    const label = found.value === 'all' ? 'Все карты' : found.value === 'retro' ? 'Ретро рояль' : 'ХАОС';
+    return `кард-пул: ${label}`;
+}
+
+function formatCurrentDeckStatsForChat() {
+    if (currentDeck.length !== 8) return 'полной колоды пока нет';
+    return `avg ${calcAvgElixir(currentDeck)} · токс ${document.getElementById('toxicityValue')?.textContent || '0'} · стыд ${document.getElementById('shameValue')?.textContent || '0'} · безумие ${document.getElementById('madnessValue')?.textContent || '0'}`;
+}
+
+async function replaceRandomCardFromChat() {
+    if (currentDeck.length !== 8) {
+        await generateDeck(false);
+        return 'колоды не было, собрана новая';
+    }
+    const idx = Math.floor(Math.random() * 8);
+    const oldName = currentDeck[idx]?.ruName || 'карта';
+    const ok = replaceCardAtIndex(idx);
+    const newName = currentDeck[idx]?.ruName || 'карта';
+    return ok ? `${oldName} → ${newName}` : 'замена не выполнена';
+}
+
 function applyChatPunishment() {
     const punishments = [
         'Следующий проигрыш = чат меняет винкон',
@@ -3106,42 +3283,100 @@ function applyChatPunishment() {
     return text;
 }
 
-async function executeYoutubeChatCommand(command) {
+async function acceptYoutubeChatCommand(command) {
     if (!command || youtubeChatState.seenCommandIds.has(command.id)) return;
     youtubeChatState.seenCommandIds.add(command.id);
+    youtubeChatState.commandStats.received += 1;
 
-    if (!isYoutubeCommandAllowed(command)) {
-        addYoutubeChatCommandLog(command, 'нет прав на команду');
+    const definition = getStreamCommandDefinition(command.action);
+    if (!definition) {
+        youtubeChatState.commandStats.blocked += 1;
+        addStreamCommandReceipt(command, 'blocked', 'неизвестная команда');
+        updateStreamCommandUi();
         return;
     }
+    if (definition.needsArgs && !command.args) {
+        youtubeChatState.commandStats.blocked += 1;
+        addYoutubeChatCommandLog(command, `нужен аргумент: ${definition.label}`);
+        addStreamCommandReceipt(command, 'blocked', `нужен аргумент: ${definition.label}`);
+        updateStreamCommandUi();
+        return;
+    }
+    if (!isYoutubeCommandAllowed(command)) {
+        youtubeChatState.commandStats.blocked += 1;
+        addYoutubeChatCommandLog(command, 'нет прав на команду');
+        addStreamCommandReceipt(command, 'blocked', 'нет прав');
+        updateStreamCommandUi();
+        return;
+    }
+    if (youtubeChatState.commandIntakePaused) {
+        youtubeChatState.commandStats.blocked += 1;
+        addStreamCommandReceipt(command, 'blocked', 'приём на паузе');
+        updateStreamCommandUi();
+        return;
+    }
+
+    if (!document.getElementById('youtubeChatAutoExecute')?.checked) {
+        youtubeChatState.pendingCommands.push(command);
+        youtubeChatState.commandStats.queued = youtubeChatState.pendingCommands.length;
+        addYoutubeChatCommandLog(command, 'ожидает ручного выполнения');
+        addStreamCommandReceipt(command, 'pending', definition.title);
+        updateStreamCommandUi();
+        return;
+    }
+
+    await executeYoutubeChatCommand(command);
+}
+
+async function executeYoutubeChatCommand(command) {
+    if (!command) return;
     if (!canRunYoutubeAction(command.action)) {
+        youtubeChatState.commandStats.cooldown += 1;
         addYoutubeChatCommandLog(command, 'cooldown');
+        addStreamCommandReceipt(command, 'blocked', 'cooldown');
+        updateStreamCommandUi();
         return;
     }
 
     try {
+        let resultText = '';
         if (command.action === 'generate_deck') {
             setAppMode('build');
             await generateDeck(false);
-            addYoutubeChatCommandLog(command, 'собрана новая колода');
+            resultText = 'собрана новая колода';
         } else if (command.action === 'chaos_deck') {
             await generateChaosDeckFromChat();
-            addYoutubeChatCommandLog(command, 'собрана ХАОС-колода');
+            resultText = 'собрана ХАОС-колода';
         } else if (command.action === 'replace_random') {
-            if (currentDeck.length !== 8) await generateDeck(false);
-            else replaceRandomCardInDeck();
-            addYoutubeChatCommandLog(command, 'замена выполнена');
+            resultText = await replaceRandomCardFromChat();
         } else if (command.action === 'pick_card') {
-            addYoutubeChatCommandLog(command, applyChatCardPick(command.args));
+            resultText = applyChatCardPick(command.args);
         } else if (command.action === 'ban_card') {
-            addYoutubeChatCommandLog(command, banChatCard(command.args));
+            resultText = banChatCard(command.args);
+        } else if (command.action === 'tower_random') {
+            resultText = rerollTowerFromChat();
+        } else if (command.action === 'set_pool') {
+            resultText = setChatCardPool(command.args);
+        } else if (command.action === 'clear_deck') {
+            clearDeck();
+            resultText = 'колода очищена';
+        } else if (command.action === 'deck_stats') {
+            resultText = formatCurrentDeckStatsForChat();
         } else if (command.action === 'vote') {
-            addYoutubeChatCommandLog(command, `голос: ${command.args || '—'}`);
+            resultText = `голос: ${command.args || '—'}`;
         } else if (command.action === 'punishment') {
-            addYoutubeChatCommandLog(command, applyChatPunishment());
+            resultText = applyChatPunishment();
         }
+        youtubeChatState.commandStats.executed += 1;
+        addYoutubeChatCommandLog(command, resultText || 'выполнено');
+        addStreamCommandReceipt(command, 'done', resultText || 'выполнено');
     } catch (e) {
+        youtubeChatState.commandStats.blocked += 1;
         addYoutubeChatCommandLog(command, `ошибка: ${e.message || 'не удалось выполнить'}`);
+        addStreamCommandReceipt(command, 'blocked', e.message || 'ошибка');
+    } finally {
+        youtubeChatState.commandStats.queued = youtubeChatState.pendingCommands.length;
+        updateStreamCommandUi();
     }
 }
 
@@ -3165,9 +3400,9 @@ async function pollYoutubeChat() {
         setYoutubeChatStatus(`Чат подключён${titlePart}. Сообщений: ${msgCount}, команд: ${commandCount}.`, 'connected');
         addYoutubeChatMessagesLog(data.messages || []);
 
-        if (youtubeChatState.readyForCommands && document.getElementById('youtubeChatAutoExecute')?.checked) {
+        if (youtubeChatState.readyForCommands) {
             for (const command of (data.commands || [])) {
-                await executeYoutubeChatCommand(command);
+                await acceptYoutubeChatCommand(command);
             }
         } else if (!youtubeChatState.readyForCommands) {
             youtubeChatState.readyForCommands = true;
@@ -3191,6 +3426,9 @@ function connectYoutubeChat() {
     youtubeChatState.seenMessageIds.clear();
     youtubeChatState.seenCommandIds.clear();
     youtubeChatState.lastActionAt.clear();
+    resetStreamCommandState({ resetPause: true, clearLogs: true });
+    const messages = document.getElementById('youtubeChatMessages');
+    if (messages) messages.innerHTML = '';
     setYoutubeChatStatus('Подключаю YouTube чат через API...');
     pollYoutubeChat();
 }
@@ -3205,6 +3443,7 @@ function disconnectYoutubeChat(updateStatus = true) {
     clearTimeout(youtubeChatState.timer);
     youtubeChatState.timer = null;
     if (updateStatus) setYoutubeChatStatus('Чат отключён.');
+    updateStreamCommandUi();
 }
 
 function normalizePlayerTag(raw) {
@@ -3565,10 +3804,18 @@ document.getElementById('topLeaderboardSeason').addEventListener('change', loadT
 document.getElementById('topSimilarDiffCount').addEventListener('change', onTopSimilarDiffChange);
 document.getElementById('topRenderLimit').addEventListener('change', updateTopRenderLimit);
 document.getElementById('youtubeStreamInput').addEventListener('change', saveYoutubeChatSettings);
-document.getElementById('youtubeChatAutoExecute').addEventListener('change', saveYoutubeChatSettings);
-document.getElementById('youtubeChatPermission').addEventListener('change', saveYoutubeChatSettings);
+document.getElementById('youtubeChatAutoExecute').addEventListener('change', () => {
+    saveYoutubeChatSettings();
+    updateStreamCommandUi();
+});
+document.getElementById('youtubeChatPermission').addEventListener('change', () => {
+    saveYoutubeChatSettings();
+    updateStreamCommandUi();
+});
 
 loadYoutubeChatSettings();
+renderStreamCommandHelp();
+updateStreamCommandUi();
 renderFilters();
 updateCardPoolInfo();
 updateThemeLetterOptions();
