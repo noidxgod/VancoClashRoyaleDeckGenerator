@@ -616,11 +616,7 @@ function scheduleAllCardImagesWarmup() {
             updateImagePreloadPanel();
         });
     };
-    if ('requestIdleCallback' in window) {
-        requestIdleCallback(startWarmup, { timeout: 1500 });
-    } else {
-        setTimeout(startWarmup, 300);
-    }
+    setTimeout(startWarmup, 50);
 }
 
 function preloadDeckImages(deck, options = {}) {
@@ -631,7 +627,7 @@ function preloadDeckImages(deck, options = {}) {
     return preloadImages(urls, options);
 }
 
-const APP_VERSION = '4.20';
+const APP_VERSION = '4.21';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
