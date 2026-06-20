@@ -396,7 +396,7 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.18</div>
+<div id="appVersionBadge" class="app-version">v4.19</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -449,7 +449,7 @@ let cards = rawCards.map(c => {
     };
 });
 
-const APP_VERSION = '4.18';
+const APP_VERSION = '4.19';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
@@ -897,11 +897,11 @@ function analyzeDeckMetrics(deck) {
     const annoyingCards = {
         'Freeze':18,'Rage':12,'Mirror':12,'Goblin Barrel':15,'X-Bow':16,'Royal Recruits':12,'Elite Barbarians':17,'Firecracker':12,
         'Mega Knight':16,'Royal Giant':12,'Earthquake':14,'Tornado':10,'Elixir Golem':14,'Clone':17,'Balloon':12,'Hog Rider':10,
-        'Goblin Drill':11,'Princess':9,'Rocket':11:13,'Vines':9,'Wall Breakers':10
+        'Goblin Drill':11,'Princess':9,'Rocket':11,'Vines':9,'Wall Breakers':10
     };
     const shameCards = {
         'Freeze':20,'Mirror':16,'Elite Barbarians':20,'Mega Knight':18,'Firecracker':15,'Goblin Barrel':16,'X-Bow':18,'Earthquake':15,
-        'Royal Giant':13,'Clone':19,'Rage':14,'Rocket':12:14,'Princess':9,'Hog Rider':9,'Vines':10,'Wall Breakers':9,'Royal Recruits':12
+        'Royal Giant':13,'Clone':19,'Rage':14,'Rocket':12,'Princess':9,'Hog Rider':9,'Vines':10,'Wall Breakers':9,'Royal Recruits':12
     };
 
     const has = (...arr) => arr.every(n => nameSet.has(n));
