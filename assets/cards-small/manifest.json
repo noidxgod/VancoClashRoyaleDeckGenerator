@@ -1,0 +1,3124 @@
+{
+  "width": 220,
+  "quality": 82,
+  "generatedAt": "2026-06-20T02:03:36Z",
+  "items": [
+    {
+      "kind": "card",
+      "file": "archer-queen.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/archer-queen.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 151408,
+      "outputBytes": 12704,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "archers.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/archers.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 150985,
+      "outputBytes": 10974,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "archers-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/archers-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 124367,
+      "outputBytes": 11568,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "arrows.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/arrows.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 127040,
+      "outputBytes": 8498,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "baby-dragon.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/baby-dragon.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 129546,
+      "outputBytes": 7716,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "baby-dragon-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/baby-dragon-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 117906,
+      "outputBytes": 10452,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "balloon.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/balloon.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 145863,
+      "outputBytes": 9430,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "balloon-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/balloon-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 136377,
+      "outputBytes": 13556,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "bandit.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/bandit.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 120732,
+      "outputBytes": 11474,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "barbarian-barrel.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/barbarian-barrel.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 149762,
+      "outputBytes": 8924,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "barbarian-barrel-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/barbarian-barrel-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 119298,
+      "outputBytes": 11006,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "barbarian-hut.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/barbarian-hut.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 144860,
+      "outputBytes": 9762,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "barbarians.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/barbarians.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 114510,
+      "outputBytes": 9136,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "barbarians-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/barbarians-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 120958,
+      "outputBytes": 11120,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "bats.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/bats.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 126952,
+      "outputBytes": 8034,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "bats-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/bats-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 129914,
+      "outputBytes": 11976,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "battle-healer.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/battle-healer.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 128601,
+      "outputBytes": 8278,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "battle-ram.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/battle-ram.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 128980,
+      "outputBytes": 8030,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "battle-ram-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/battle-ram-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 125540,
+      "outputBytes": 11068,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "berserker.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/berserker.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 129667,
+      "outputBytes": 9750,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "bomb-tower.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/bomb-tower.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 130071,
+      "outputBytes": 7552,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "bomber.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/bomber.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 139334,
+      "outputBytes": 9402,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "bomber-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/bomber-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 131406,
+      "outputBytes": 11744,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "boss-bandit.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/boss-bandit.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 129861,
+      "outputBytes": 11496,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "bowler.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/bowler.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 125281,
+      "outputBytes": 6984,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "bowler-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/bowler-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 120567,
+      "outputBytes": 10870,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "cannon.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/cannon.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 126894,
+      "outputBytes": 7898,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "cannon-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/cannon-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 117168,
+      "outputBytes": 10448,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "cannon-cart.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/cannon-cart.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 141429,
+      "outputBytes": 9164,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "clone.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/clone.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 106855,
+      "outputBytes": 6886,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "dark-prince.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/dark-prince.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 129025,
+      "outputBytes": 8260,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "dark-prince-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/dark-prince-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 127269,
+      "outputBytes": 12024,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "dart-goblin.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/dart-goblin.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 134883,
+      "outputBytes": 8184,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "dart-goblin-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/dart-goblin-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 124442,
+      "outputBytes": 11610,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "earthquake.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/earthquake.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 126487,
+      "outputBytes": 6106,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "electro-dragon.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/electro-dragon.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 123743,
+      "outputBytes": 9046,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "electro-dragon-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/electro-dragon-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 111883,
+      "outputBytes": 10174,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "electro-giant.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/electro-giant.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 117631,
+      "outputBytes": 9468,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "electro-spirit.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/electro-spirit.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 104647,
+      "outputBytes": 9502,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "electro-wizard.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/electro-wizard.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 132946,
+      "outputBytes": 12962,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "elite-barbarians.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/elite-barbarians.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 131965,
+      "outputBytes": 8962,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "elixir-collector.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/elixir-collector.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 129117,
+      "outputBytes": 8160,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "elixir-golem.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/elixir-golem.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 110424,
+      "outputBytes": 6814,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "executioner.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/executioner.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 124677,
+      "outputBytes": 7134,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "executioner-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/executioner-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 118389,
+      "outputBytes": 10580,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "fire-spirit.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/fire-spirit.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 131487,
+      "outputBytes": 8320,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "fireball.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/fireball.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 123797,
+      "outputBytes": 6450,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "firecracker.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/firecracker.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 131128,
+      "outputBytes": 8844,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "firecracker-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/firecracker-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 121124,
+      "outputBytes": 10972,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "fisherman.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/fisherman.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 130950,
+      "outputBytes": 13146,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "flying-machine.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/flying-machine.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 159487,
+      "outputBytes": 10994,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "freeze.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/freeze.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 136477,
+      "outputBytes": 8592,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "furnace.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/furnace.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 140558,
+      "outputBytes": 9600,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "furnace-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/furnace-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 132061,
+      "outputBytes": 11910,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "giant.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/giant.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 136801,
+      "outputBytes": 7894,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "giant-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/giant-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 126429,
+      "outputBytes": 11700,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "giant-skeleton.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/giant-skeleton.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 157539,
+      "outputBytes": 9864,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "giant-snowball.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/giant-snowball.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 113852,
+      "outputBytes": 6248,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "giant-snowball-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/giant-snowball-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 119266,
+      "outputBytes": 9558,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "goblin-barrel.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/goblin-barrel.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 135753,
+      "outputBytes": 7680,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "goblin-barrel-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/goblin-barrel-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 133739,
+      "outputBytes": 12796,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "goblin-cage.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/goblin-cage.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 140840,
+      "outputBytes": 8008,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "goblin-cage-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/goblin-cage-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 122146,
+      "outputBytes": 11042,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "goblin-curse.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/goblin-curse.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 112373,
+      "outputBytes": 8798,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "goblin-demolisher.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/goblin-demolisher.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 141886,
+      "outputBytes": 9754,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "goblin-drill.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/goblin-drill.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 147714,
+      "outputBytes": 8034,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "goblin-drill-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/goblin-drill-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 128088,
+      "outputBytes": 10844,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "goblin-gang.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/goblin-gang.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 156303,
+      "outputBytes": 11104,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "goblin-giant.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/goblin-giant.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 141483,
+      "outputBytes": 10176,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "goblin-giant-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/goblin-giant-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 127197,
+      "outputBytes": 12846,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "goblin-hut.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/goblin-hut.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 151797,
+      "outputBytes": 11776,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "goblin-machine.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/goblin-machine.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 127437,
+      "outputBytes": 12240,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "goblins.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/goblins.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 126701,
+      "outputBytes": 7888,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "goblins-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/goblins-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 130419,
+      "outputBytes": 12714,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "goblinstein.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/goblinstein.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 135709,
+      "outputBytes": 12202,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "golden-knight.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/golden-knight.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 142868,
+      "outputBytes": 11724,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "golem.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/golem.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 118431,
+      "outputBytes": 6532,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "graveyard.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/graveyard.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 117357,
+      "outputBytes": 10590,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "guards.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/guards.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 125912,
+      "outputBytes": 7812,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "heal-spirit.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/heal-spirit.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 126738,
+      "outputBytes": 6782,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "hog-rider.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/hog-rider.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 131428,
+      "outputBytes": 7680,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "hunter.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/hunter.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 128087,
+      "outputBytes": 8684,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "hunter-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/hunter-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 131474,
+      "outputBytes": 11758,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "ice-golem.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/ice-golem.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 121660,
+      "outputBytes": 7918,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "ice-golem-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/ice-golem-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 128459,
+      "outputBytes": 11726,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "ice-spirit.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/ice-spirit.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 135591,
+      "outputBytes": 9062,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "ice-spirit-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/ice-spirit-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 119864,
+      "outputBytes": 10368,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "ice-wizard.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/ice-wizard.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 123132,
+      "outputBytes": 11960,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "inferno-dragon.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/inferno-dragon.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 129397,
+      "outputBytes": 12362,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "inferno-dragon-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/inferno-dragon-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 124609,
+      "outputBytes": 12862,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "inferno-tower.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/inferno-tower.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 120823,
+      "outputBytes": 6896,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "knight.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/knight.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 153676,
+      "outputBytes": 10754,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "knight-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/knight-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 142953,
+      "outputBytes": 11922,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "knight-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/knight-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 126032,
+      "outputBytes": 11988,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism-evolution",
+      "file": "knight-hero-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/knight-hero-ev1.png",
+      "required": false,
+      "status": "ok",
+      "originalBytes": 139003,
+      "outputBytes": 12710,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "lava-hound.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/lava-hound.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 112152,
+      "outputBytes": 10006,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "lightning.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/lightning.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 142331,
+      "outputBytes": 9114,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "little-prince.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/little-prince.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 127270,
+      "outputBytes": 11454,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "lumberjack.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/lumberjack.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 124211,
+      "outputBytes": 12044,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "lumberjack-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/lumberjack-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 125736,
+      "outputBytes": 13348,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "magic-archer.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/magic-archer.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 127054,
+      "outputBytes": 11528,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "magic-archer-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/magic-archer-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 120061,
+      "outputBytes": 13396,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "mega-knight.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/mega-knight.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 114074,
+      "outputBytes": 10724,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "mega-knight-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/mega-knight-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 110518,
+      "outputBytes": 11626,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "mega-minion.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/mega-minion.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 158495,
+      "outputBytes": 9848,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "mega-minion-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/mega-minion-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 124746,
+      "outputBytes": 12190,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "mighty-miner.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/mighty-miner.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 133888,
+      "outputBytes": 11626,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "miner.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/miner.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 121119,
+      "outputBytes": 11362,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "mini-pekka.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/mini-pekka.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 145092,
+      "outputBytes": 8362,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "mini-pekka-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/mini-pekka-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 125850,
+      "outputBytes": 11904,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "minion-horde.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/minion-horde.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 142074,
+      "outputBytes": 9418,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "minion-horde-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/minion-horde-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 133160,
+      "outputBytes": 12340,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "minions.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/minions.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 133625,
+      "outputBytes": 8776,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "mirror.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/mirror.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 92364,
+      "outputBytes": 5892,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "monk.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/monk.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 115760,
+      "outputBytes": 10786,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "mortar.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/mortar.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 150505,
+      "outputBytes": 11078,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "mortar-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/mortar-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 132978,
+      "outputBytes": 11800,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "mother-witch.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/mother-witch.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 117721,
+      "outputBytes": 11556,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "musketeer.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/musketeer.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 138281,
+      "outputBytes": 9210,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "musketeer-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/musketeer-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 130055,
+      "outputBytes": 10978,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "musketeer-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/musketeer-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 131104,
+      "outputBytes": 12494,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism-evolution",
+      "file": "musketeer-hero-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/musketeer-hero-ev1.png",
+      "required": false,
+      "status": "ok",
+      "originalBytes": 142671,
+      "outputBytes": 13138,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "night-witch.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/night-witch.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 118623,
+      "outputBytes": 11034,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "pekka.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/pekka.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 125580,
+      "outputBytes": 7044,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "pekka-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/pekka-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 127942,
+      "outputBytes": 12148,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "phoenix.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/phoenix.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 109604,
+      "outputBytes": 10912,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "poison.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/poison.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 119225,
+      "outputBytes": 6650,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "prince.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/prince.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 146529,
+      "outputBytes": 9078,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "princess.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/princess.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 140042,
+      "outputBytes": 13354,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "princess-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/princess-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 116013,
+      "outputBytes": 11964,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "rage.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/rage.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 116774,
+      "outputBytes": 6428,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "ram-rider.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/ram-rider.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 137753,
+      "outputBytes": 13584,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "rascals.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/rascals.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 142314,
+      "outputBytes": 10696,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "rocket.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/rocket.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 126993,
+      "outputBytes": 7298,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "royal-delivery.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/royal-delivery.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 133053,
+      "outputBytes": 10010,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "royal-ghost.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/royal-ghost.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 125017,
+      "outputBytes": 12076,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "royal-ghost-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/royal-ghost-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 126805,
+      "outputBytes": 13804,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "royal-giant.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/royal-giant.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 131404,
+      "outputBytes": 9316,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "royal-giant-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/royal-giant-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 116739,
+      "outputBytes": 10896,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "royal-hogs.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/royal-hogs.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 145420,
+      "outputBytes": 9518,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "royal-hogs-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/royal-hogs-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 126458,
+      "outputBytes": 11070,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "royal-recruits.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/royal-recruits.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 154506,
+      "outputBytes": 12156,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "royal-recruits-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/royal-recruits-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 122946,
+      "outputBytes": 11294,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "rune-giant.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/rune-giant.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 134998,
+      "outputBytes": 8374,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "skeleton-army.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/skeleton-army.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 132165,
+      "outputBytes": 8004,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "skeleton-army-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/skeleton-army-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 139458,
+      "outputBytes": 13036,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "skeleton-barrel.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/skeleton-barrel.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 137370,
+      "outputBytes": 10000,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "skeleton-barrel-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/skeleton-barrel-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 133715,
+      "outputBytes": 12938,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "skeleton-dragons.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/skeleton-dragons.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 136606,
+      "outputBytes": 11120,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "skeleton-king.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/skeleton-king.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 132939,
+      "outputBytes": 11780,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "skeletons.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/skeletons.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 123669,
+      "outputBytes": 8502,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "skeletons-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/skeletons-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 126584,
+      "outputBytes": 11178,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "sparky.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/sparky.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 137449,
+      "outputBytes": 13126,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "spear-goblins.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/spear-goblins.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 147457,
+      "outputBytes": 10278,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "spirit-empress.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/spirit-empress.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 117856,
+      "outputBytes": 12632,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "suspicious-bush.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/suspicious-bush.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 125890,
+      "outputBytes": 8910,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "tesla.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/tesla.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 128746,
+      "outputBytes": 9626,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "tesla-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/tesla-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 112860,
+      "outputBytes": 11274,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "the-log.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/the-log.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 130249,
+      "outputBytes": 11838,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "three-musketeers.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/three-musketeers.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 150331,
+      "outputBytes": 11370,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "tombstone.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/tombstone.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 113858,
+      "outputBytes": 6724,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "tombstone-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/tombstone-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 129150,
+      "outputBytes": 12312,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "tornado.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/tornado.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 130257,
+      "outputBytes": 7754,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "valkyrie.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/valkyrie.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 148663,
+      "outputBytes": 9834,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "valkyrie-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/valkyrie-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 119466,
+      "outputBytes": 10716,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "vines.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/vines.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 110663,
+      "outputBytes": 7778,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "void.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/void.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 105403,
+      "outputBytes": 7518,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "wall-breakers.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/wall-breakers.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 112332,
+      "outputBytes": 9962,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "wall-breakers-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/wall-breakers-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 132422,
+      "outputBytes": 12666,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "witch.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/witch.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 149912,
+      "outputBytes": 9126,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "witch-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/witch-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 132373,
+      "outputBytes": 12040,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "wizard.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/wizard.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 128594,
+      "outputBytes": 7258,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "wizard-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/wizard-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 127017,
+      "outputBytes": 10564,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism",
+      "file": "wizard-hero.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/wizard-hero.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 128424,
+      "outputBytes": 12186,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "heroism-evolution",
+      "file": "wizard-hero-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/wizard-hero-ev1.png",
+      "required": false,
+      "status": "ok",
+      "originalBytes": 139931,
+      "outputBytes": 12956,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "x-bow.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/x-bow.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 127145,
+      "outputBytes": 7820,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "zap.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/zap.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 137311,
+      "outputBytes": 9858,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "evolution",
+      "file": "zap-ev1.webp",
+      "source": "https://cdn.royaleapi.com/static/img/cards/zap-ev1.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 111083,
+      "outputBytes": 11000,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "card",
+      "file": "zappies.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/zappies.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 124619,
+      "outputBytes": 9284,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "tower",
+      "file": "cannoneer.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/cannoneer.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 106713,
+      "outputBytes": 9472,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "tower",
+      "file": "dagger-duchess.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/dagger-duchess.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 104370,
+      "outputBytes": 9544,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "tower",
+      "file": "royal-chef.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/royal-chef.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 102804,
+      "outputBytes": 8764,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    },
+    {
+      "kind": "tower",
+      "file": "tower-princess.webp",
+      "source": "https://royaleapi.github.io/cr-api-assets/cards/tower-princess.png",
+      "required": true,
+      "status": "ok",
+      "originalBytes": 108748,
+      "outputBytes": 9352,
+      "originalSize": [
+        302,
+        363
+      ],
+      "outputSize": [
+        220,
+        264
+      ]
+    }
+  ],
+  "summary": {
+    "entries": 183,
+    "failures": 0,
+    "originalBytesDownloaded": 23609930,
+    "outputBytes": 1863772
+  }
+}
