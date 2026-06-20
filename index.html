@@ -80,6 +80,10 @@
         .chat-command-item strong { color: #ffffff; }
         .chat-command-item .chat-command-meta { color: #99a4c4; }
         .chat-permission-select { width: 100%; }
+        .chat-message-list { max-height: 150px; overflow-y: auto; display: grid; gap: 4px; }
+        .chat-message-item { border: 1px solid #34394f; border-radius: 6px; padding: 5px; background: #1a1d2a; font-size: 10px; color: #dbe1f4; line-height: 1.25; }
+        .chat-message-author { color: #8fb2ff; font-weight: 800; }
+        .chat-message-text { color: #d9def2; }
 
         .main-area { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .top-decks-panel { width: 100%; max-width: none; background: #2b2d3a; border: 1px solid #3f4152; border-radius: 10px; padding: 10px; display: none; flex-direction: column; gap: 8px; }
@@ -424,8 +428,8 @@
 
         <div class="tool-panel" id="youtubeChatPanel">
             <div class="tool-title">YouTube чат</div>
-            <input type="text" id="youtubeBackendUrl" class="text-input" placeholder="Адрес бэкенда (например https://...vercel.app)">
-            <input type="text" id="youtubeStreamInput" class="text-input" placeholder="Ссылка на стрим / videoId / liveChatId">
+            <div class="tiny-note">Режим: YouTube API напрямую, без backend.</div>
+            <input type="text" id="youtubeStreamInput" class="text-input" placeholder="Ссылка на стрим / videoId">
             <div class="inline-row">
                 <button class="btn-blue btn-mini" onclick="connectYoutubeChat()">Подключить</button>
                 <button class="btn-filter btn-mini" onclick="disconnectYoutubeChat()">Отключить</button>
@@ -440,8 +444,12 @@
                 <option value="mods">Только стример/модеры</option>
             </select>
             <div class="chat-status" id="youtubeChatStatus">Чат не подключён.</div>
+            <div class="tiny-note">Сообщения чата:</div>
+            <div class="chat-message-list" id="youtubeChatMessages"></div>
+            <div class="tiny-note">Найденные команды:</div>
             <div class="chat-command-list" id="youtubeChatCommands"></div>
             <div class="tiny-note">Команды: !колода, !хаос, !замена, !карта Ведьма, !бан Мегарыцарь.</div>
+            <div class="tiny-note">Если чат не подключается, проверь ограничения API-ключа в Google Cloud.</div>
         </div>
 
         <div class="tool-panel preload-panel" id="imagePreloadPanel">
@@ -462,7 +470,7 @@
 
 <div class="release-toolbar">
     <button class="changelog-trigger" onclick="toggleChangelogModal(true)">Что нового</button>
-    <div id="appVersionBadge" class="app-version">v4.25</div>
+    <div id="appVersionBadge" class="app-version">v4.26</div>
 </div>
 
 <div class="modal-overlay" id="filterModal">
@@ -493,6 +501,14 @@
         </div>
         <div class="tiny-note">Рабочий сайт живёт на ветке main, новые функции сначала проверяются в staging.</div>
         <div class="changelog-list">
+            <div class="changelog-entry">
+                <div class="changelog-entry-head"><span>v4.26</span><span class="changelog-entry-status">staging</span></div>
+                <ul>
+                    <li>YouTube-чат переведён на бесплатный режим прямо через YouTube Data API.</li>
+                    <li>Backend больше не нужен для подключения чата на GitHub Pages.</li>
+                    <li>Добавлен вывод обычных сообщений чата для проверки стримов.</li>
+                </ul>
+            </div>
             <div class="changelog-entry">
                 <div class="changelog-entry-head"><span>v4.25</span><span class="changelog-entry-status">staging</span></div>
                 <ul>
@@ -748,12 +764,14 @@ function preloadDeckImages(deck, options = {}) {
     return preloadImages(urls, options);
 }
 
-const APP_VERSION = '4.25';
+const APP_VERSION = '4.26';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
 const TOP_DECK_RENDER_LIMIT = 20;
 const YOUTUBE_CHAT_COMMAND_COOLDOWN_MS = 3500;
+const YOUTUBE_BROWSER_API_KEY = 'AIzaSyApSatdYHXuMVVo9iwsNrrqkRpAejfbqrg';
+const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3';
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false, isDeckPreparing = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
@@ -777,6 +795,9 @@ const youtubeChatState = {
     readyForCommands: false,
     timer: null,
     pageToken: '',
+    liveChatId: '',
+    liveInfo: null,
+    seenMessageIds: new Set(),
     seenCommandIds: new Set(),
     lastActionAt: new Map(),
     lastLiveTitle: ''
@@ -2777,37 +2798,199 @@ function setYoutubeChatStatus(text, mode = '') {
     status.classList.toggle('error', mode === 'error');
 }
 
-function normalizeYoutubeBackendUrl(raw) {
-    let value = String(raw || '').trim();
-    if (!value) {
-        if (location.hostname.endsWith('github.io')) return '';
-        return `${location.origin}/api/youtube-chat`;
-    }
-    value = value.replace(/\/+$/, '');
-    if (/\/api\/youtube-chat$/i.test(value)) return value;
-    return `${value}/api/youtube-chat`;
-}
-
 function loadYoutubeChatSettings() {
-    const backendInput = document.getElementById('youtubeBackendUrl');
     const streamInput = document.getElementById('youtubeStreamInput');
     const autoInput = document.getElementById('youtubeChatAutoExecute');
     const permissionInput = document.getElementById('youtubeChatPermission');
-    if (backendInput) backendInput.value = localStorage.getItem('youtubeChatBackendUrl') || '';
     if (streamInput) streamInput.value = localStorage.getItem('youtubeChatSource') || '';
     if (autoInput) autoInput.checked = localStorage.getItem('youtubeChatAutoExecute') !== 'false';
     if (permissionInput) permissionInput.value = localStorage.getItem('youtubeChatPermission') || 'all';
 }
 
 function saveYoutubeChatSettings() {
-    const backendInput = document.getElementById('youtubeBackendUrl');
     const streamInput = document.getElementById('youtubeStreamInput');
     const autoInput = document.getElementById('youtubeChatAutoExecute');
     const permissionInput = document.getElementById('youtubeChatPermission');
-    if (backendInput) localStorage.setItem('youtubeChatBackendUrl', backendInput.value.trim());
     if (streamInput) localStorage.setItem('youtubeChatSource', streamInput.value.trim());
     if (autoInput) localStorage.setItem('youtubeChatAutoExecute', String(autoInput.checked));
     if (permissionInput) localStorage.setItem('youtubeChatPermission', permissionInput.value);
+}
+
+function normalizeYoutubeText(value) {
+    return String(value || '').trim();
+}
+
+function extractYoutubeVideoId(input) {
+    const value = normalizeYoutubeText(input);
+    if (!value) return '';
+    if (/^[a-zA-Z0-9_-]{11}$/.test(value)) return value;
+    const patterns = [
+        /(?:youtube\.com\/watch\?[^#]*v=)([a-zA-Z0-9_-]{11})/,
+        /(?:youtube\.com\/live\/)([a-zA-Z0-9_-]{11})/,
+        /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+        /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+        /(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/
+    ];
+    for (const pattern of patterns) {
+        const match = value.match(pattern);
+        if (match) return match[1];
+    }
+    return '';
+}
+
+function isLikelyYoutubeLiveChatId(value) {
+    const text = normalizeYoutubeText(value);
+    return Boolean(text && !/^https?:\/\//i.test(text) && text.length > 20 && !/^[a-zA-Z0-9_-]{11}$/.test(text));
+}
+
+async function fetchYoutubeApi(path, params = {}) {
+    const key = YOUTUBE_BROWSER_API_KEY.trim();
+    if (!key) throw new Error('YouTube API key не задан.');
+
+    const url = new URL(`${YOUTUBE_API_BASE}${path}`);
+    for (const [paramKey, paramValue] of Object.entries(params)) {
+        if (paramValue !== undefined && paramValue !== null && paramValue !== '') {
+            url.searchParams.set(paramKey, String(paramValue));
+        }
+    }
+    url.searchParams.set('key', key);
+
+    const response = await fetch(url);
+    const data = await response.json().catch(() => null);
+    if (!response.ok) {
+        const reason = data?.error?.errors?.[0]?.reason || data?.error?.status || '';
+        const message = data?.error?.message || `YouTube API error ${response.status}`;
+        if (reason === 'refererNotAllowedMapError' || message.includes('referer')) {
+            throw new Error('API-ключ не разрешён для этого домена. Проверь HTTP referrers в Google Cloud.');
+        }
+        if (reason === 'quotaExceeded') {
+            throw new Error('Квота YouTube API закончилась на сегодня.');
+        }
+        throw new Error(message);
+    }
+    return data;
+}
+
+async function resolveYoutubeLiveInfoFromInput() {
+    const source = document.getElementById('youtubeStreamInput')?.value.trim() || '';
+    if (!source) throw new Error('Укажи ссылку на live-стрим YouTube или videoId.');
+
+    if (isLikelyYoutubeLiveChatId(source)) {
+        return {
+            videoId: '',
+            liveChatId: source,
+            title: 'YouTube live chat',
+            channelTitle: ''
+        };
+    }
+
+    const videoId = extractYoutubeVideoId(source);
+    if (!videoId) throw new Error('Не удалось найти videoId. Вставь ссылку на конкретный стрим, например youtube.com/watch?v=...');
+
+    const data = await fetchYoutubeApi('/videos', {
+        part: 'snippet,liveStreamingDetails',
+        id: videoId
+    });
+    const item = data?.items?.[0];
+    if (!item) throw new Error('Видео не найдено через YouTube API.');
+    const liveChatId = item?.liveStreamingDetails?.activeLiveChatId || '';
+    if (!liveChatId) throw new Error('У этого видео нет активного live-чата. Стрим должен идти прямо сейчас, чат должен быть включён.');
+
+    return {
+        videoId,
+        liveChatId,
+        title: item?.snippet?.title || '',
+        channelTitle: item?.snippet?.channelTitle || ''
+    };
+}
+
+function mapYoutubeApiMessage(item) {
+    const snippet = item?.snippet || {};
+    const authorDetails = item?.authorDetails || {};
+    return {
+        id: item?.id || '',
+        type: snippet.type || '',
+        publishedAt: snippet.publishedAt || '',
+        text: snippet.displayMessage || snippet.textMessageDetails?.messageText || '',
+        author: {
+            name: authorDetails.displayName || '',
+            channelId: authorDetails.channelId || '',
+            profileImageUrl: authorDetails.profileImageUrl || '',
+            isOwner: Boolean(authorDetails.isChatOwner),
+            isModerator: Boolean(authorDetails.isChatModerator),
+            isSponsor: Boolean(authorDetails.isChatSponsor),
+            isVerified: Boolean(authorDetails.isVerified)
+        }
+    };
+}
+
+function normalizeYoutubeCommandName(value) {
+    return String(value || '').toLowerCase().replace(/^!+/, '').replace(/^\/+/, '').trim();
+}
+
+function parseYoutubeChatCommand(message) {
+    const text = normalizeYoutubeText(message.text);
+    if (!/^[!\/]/.test(text)) return null;
+    const withoutPrefix = text.replace(/^[!\/]+/, '').trim();
+    const [rawName, ...rest] = withoutPrefix.split(/\s+/);
+    const name = normalizeYoutubeCommandName(rawName);
+    const args = rest.join(' ').trim();
+    const aliases = {
+        'колода': 'generate_deck',
+        'deck': 'generate_deck',
+        'дек': 'generate_deck',
+        'рандом': 'generate_deck',
+        'хаос': 'chaos_deck',
+        'chaos': 'chaos_deck',
+        'замена': 'replace_random',
+        'replace': 'replace_random',
+        'реролл': 'replace_random',
+        'reroll': 'replace_random',
+        'карта': 'pick_card',
+        'card': 'pick_card',
+        'бан': 'ban_card',
+        'ban': 'ban_card',
+        'голос': 'vote',
+        'vote': 'vote',
+        'наказание': 'punishment',
+        'punish': 'punishment'
+    };
+    const action = aliases[name] || '';
+    if (!action) return null;
+    return {
+        id: message.id,
+        action,
+        name,
+        args,
+        raw: text,
+        author: message.author
+    };
+}
+
+async function fetchYoutubeChatPage() {
+    if (!youtubeChatState.liveChatId) {
+        youtubeChatState.liveInfo = await resolveYoutubeLiveInfoFromInput();
+        youtubeChatState.liveChatId = youtubeChatState.liveInfo.liveChatId;
+        youtubeChatState.lastLiveTitle = youtubeChatState.liveInfo.title || '';
+    }
+
+    const data = await fetchYoutubeApi('/liveChat/messages', {
+        liveChatId: youtubeChatState.liveChatId,
+        part: 'snippet,authorDetails',
+        pageToken: youtubeChatState.pageToken,
+        maxResults: 200,
+        profileImageSize: 32,
+        hl: 'ru'
+    });
+    const messages = (data?.items || []).map(mapYoutubeApiMessage);
+    const commands = messages.map(parseYoutubeChatCommand).filter(Boolean);
+    return {
+        live: youtubeChatState.liveInfo,
+        nextPageToken: data?.nextPageToken || '',
+        pollingIntervalMillis: data?.pollingIntervalMillis || 5000,
+        messages,
+        commands
+    };
 }
 
 function addYoutubeChatCommandLog(command, resultText) {
@@ -2818,6 +3001,20 @@ function addYoutubeChatCommandLog(command, resultText) {
     item.innerHTML = `<strong>${escapeHtml(command.raw || command.name)}</strong><br><span class="chat-command-meta">${escapeHtml(command.author?.name || 'чат')} · ${escapeHtml(resultText || '')}</span>`;
     list.prepend(item);
     while (list.children.length > 8) list.lastElementChild?.remove();
+}
+
+function addYoutubeChatMessagesLog(messages) {
+    const list = document.getElementById('youtubeChatMessages');
+    if (!list || !Array.isArray(messages)) return;
+    for (const message of messages) {
+        if (!message?.id || youtubeChatState.seenMessageIds.has(message.id)) continue;
+        youtubeChatState.seenMessageIds.add(message.id);
+        const item = document.createElement('div');
+        item.className = 'chat-message-item';
+        item.innerHTML = `<span class="chat-message-author">${escapeHtml(message.author?.name || 'чат')}:</span> <span class="chat-message-text">${escapeHtml(message.text || '')}</span>`;
+        list.prepend(item);
+    }
+    while (list.children.length > 30) list.lastElementChild?.remove();
 }
 
 function isYoutubeCommandAllowed(command) {
@@ -2948,18 +3145,6 @@ async function executeYoutubeChatCommand(command) {
     }
 }
 
-function buildYoutubeChatRequestUrl() {
-    const backend = normalizeYoutubeBackendUrl(document.getElementById('youtubeBackendUrl')?.value || '');
-    const source = document.getElementById('youtubeStreamInput')?.value.trim() || '';
-    if (!backend) throw new Error('Укажи адрес бэкенда. Для GitHub Pages нужен внешний бэкенд, например Vercel.');
-    if (!source) throw new Error('Укажи ссылку на стрим, videoId, channelId или liveChatId.');
-
-    const url = new URL(backend, location.href);
-    url.searchParams.set('source', source);
-    if (youtubeChatState.pageToken) url.searchParams.set('pageToken', youtubeChatState.pageToken);
-    return url;
-}
-
 function scheduleYoutubeChatPoll(delayMs) {
     clearTimeout(youtubeChatState.timer);
     if (!youtubeChatState.connected) return;
@@ -2970,10 +3155,7 @@ function scheduleYoutubeChatPoll(delayMs) {
 async function pollYoutubeChat() {
     if (!youtubeChatState.connected) return;
     try {
-        const url = buildYoutubeChatRequestUrl();
-        const response = await fetch(url);
-        const data = await response.json().catch(() => null);
-        if (!response.ok || !data?.ok) throw new Error(data?.error || `Backend error ${response.status}`);
+        const data = await fetchYoutubeChatPage();
 
         youtubeChatState.pageToken = data.nextPageToken || youtubeChatState.pageToken;
         youtubeChatState.lastLiveTitle = data.live?.title || youtubeChatState.lastLiveTitle;
@@ -2981,6 +3163,7 @@ async function pollYoutubeChat() {
         const commandCount = Array.isArray(data.commands) ? data.commands.length : 0;
         const titlePart = youtubeChatState.lastLiveTitle ? ` · ${youtubeChatState.lastLiveTitle}` : '';
         setYoutubeChatStatus(`Чат подключён${titlePart}. Сообщений: ${msgCount}, команд: ${commandCount}.`, 'connected');
+        addYoutubeChatMessagesLog(data.messages || []);
 
         if (youtubeChatState.readyForCommands && document.getElementById('youtubeChatAutoExecute')?.checked) {
             for (const command of (data.commands || [])) {
@@ -3003,9 +3186,12 @@ function connectYoutubeChat() {
     youtubeChatState.connected = true;
     youtubeChatState.readyForCommands = false;
     youtubeChatState.pageToken = '';
+    youtubeChatState.liveChatId = '';
+    youtubeChatState.liveInfo = null;
+    youtubeChatState.seenMessageIds.clear();
     youtubeChatState.seenCommandIds.clear();
     youtubeChatState.lastActionAt.clear();
-    setYoutubeChatStatus('Подключаю YouTube чат...');
+    setYoutubeChatStatus('Подключаю YouTube чат через API...');
     pollYoutubeChat();
 }
 
@@ -3013,6 +3199,9 @@ function disconnectYoutubeChat(updateStatus = true) {
     youtubeChatState.connected = false;
     youtubeChatState.readyForCommands = false;
     youtubeChatState.pageToken = '';
+    youtubeChatState.liveChatId = '';
+    youtubeChatState.liveInfo = null;
+    youtubeChatState.seenMessageIds.clear();
     clearTimeout(youtubeChatState.timer);
     youtubeChatState.timer = null;
     if (updateStatus) setYoutubeChatStatus('Чат отключён.');
@@ -3375,7 +3564,6 @@ document.getElementById('topApiSort').addEventListener('change', loadTopDecks);
 document.getElementById('topLeaderboardSeason').addEventListener('change', loadTopDecks);
 document.getElementById('topSimilarDiffCount').addEventListener('change', onTopSimilarDiffChange);
 document.getElementById('topRenderLimit').addEventListener('change', updateTopRenderLimit);
-document.getElementById('youtubeBackendUrl').addEventListener('change', saveYoutubeChatSettings);
 document.getElementById('youtubeStreamInput').addEventListener('change', saveYoutubeChatSettings);
 document.getElementById('youtubeChatAutoExecute').addEventListener('change', saveYoutubeChatSettings);
 document.getElementById('youtubeChatPermission').addEventListener('change', saveYoutubeChatSettings);
