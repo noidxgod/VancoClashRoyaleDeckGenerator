@@ -182,7 +182,18 @@
         .cards-list { flex: 1; overflow-y: auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .card-checkbox { display: flex; align-items: center; gap: 8px; font-size: 13px; cursor: pointer; }
         .card-checkbox img { width: 30px; height: 35px; }
-        .app-version { position: fixed; right: 12px; bottom: 10px; font-size: 11px; color: #b8bccf; background: rgba(20, 21, 30, 0.8); border: 1px solid #3f4152; border-radius: 999px; padding: 4px 10px; z-index: 30; }
+        .release-toolbar { position: fixed; right: 12px; bottom: 10px; display: flex; align-items: center; gap: 6px; z-index: 30; }
+        .app-version, .changelog-trigger { font-size: 11px; color: #b8bccf; background: rgba(20, 21, 30, 0.86); border: 1px solid #3f4152; border-radius: 999px; padding: 4px 10px; }
+        .changelog-trigger { color: #e2e7ff; cursor: pointer; }
+        .changelog-trigger:hover { border-color: #5d84ff; color: #fff; }
+        .changelog-modal-content { width: min(680px, calc(100vw - 24px)); gap: 12px; }
+        .changelog-list { overflow-y: auto; display: grid; gap: 10px; padding-right: 4px; }
+        .changelog-entry { background: #242635; border: 1px solid #3f4152; border-radius: 8px; padding: 10px; display: grid; gap: 7px; }
+        .changelog-entry-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 800; color: #eef2ff; }
+        .changelog-entry-status { font-size: 10px; text-transform: uppercase; letter-spacing: 0.35px; color: #111; background: #e2b853; border-radius: 999px; padding: 2px 7px; }
+        .changelog-entry-status.production { background: #54d66f; }
+        .changelog-entry ul { margin: 0; padding-left: 18px; color: #cbd2ea; font-size: 13px; line-height: 1.35; }
+        .changelog-entry li + li { margin-top: 4px; }
 
         @media (max-width: 1180px) {
             .container { flex-direction: column; }
@@ -449,7 +460,10 @@
 </div>
 </div>
 
-<div id="appVersionBadge" class="app-version">v4.24</div>
+<div class="release-toolbar">
+    <button class="changelog-trigger" onclick="toggleChangelogModal(true)">Что нового</button>
+    <div id="appVersionBadge" class="app-version">v4.25</div>
+</div>
 
 <div class="modal-overlay" id="filterModal">
     <div class="modal-content">
@@ -468,6 +482,59 @@
         <div id="cardPoolInfo" class="tiny-note" style="margin-bottom:8px;">Активный кард-пул: Все карты</div>
         <div class="cards-list" id="cardsFilterList"></div>
         <button class="btn-red" onclick="toggleModal(false)" style="margin-top:10px">Закрыть</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="changelogModal">
+    <div class="modal-content changelog-modal-content">
+        <div class="modal-header">
+            <h3>История изменений</h3>
+            <button class="btn-filter btn-mini" onclick="toggleChangelogModal(false)" style="margin:0;">Закрыть</button>
+        </div>
+        <div class="tiny-note">Рабочий сайт живёт на ветке main, новые функции сначала проверяются в staging.</div>
+        <div class="changelog-list">
+            <div class="changelog-entry">
+                <div class="changelog-entry-head"><span>v4.25</span><span class="changelog-entry-status">staging</span></div>
+                <ul>
+                    <li>Добавлена история изменений прямо на сайт.</li>
+                    <li>Добавлена тестовая ветка staging и система версий через Git-теги.</li>
+                    <li>Добавлена инструкция по релизам и безопасным откатам.</li>
+                </ul>
+            </div>
+            <div class="changelog-entry">
+                <div class="changelog-entry-head"><span>v4.24</span><span class="changelog-entry-status">staging</span></div>
+                <ul>
+                    <li>Добавлен backend для YouTube live-чата без хранения API ключа в HTML.</li>
+                    <li>Добавлена панель YouTube чат и команды: !колода, !хаос, !замена, !карта, !бан.</li>
+                    <li>Добавлена документация по локальному запуску и деплою backend.</li>
+                </ul>
+            </div>
+            <div class="changelog-entry">
+                <div class="changelog-entry-head"><span>v4.23</span><span class="changelog-entry-status production">production</span></div>
+                <ul>
+                    <li>Финальный текст загрузки картинок упрощён до: Все карты загружены.</li>
+                </ul>
+            </div>
+            <div class="changelog-entry">
+                <div class="changelog-entry-head"><span>v4.22</span><span class="changelog-entry-status production">production</span></div>
+                <ul>
+                    <li>Добавлены локальные уменьшенные WebP-изображения карт.</li>
+                    <li>Колоды используют оптимизированные изображения для более быстрой загрузки.</li>
+                </ul>
+            </div>
+            <div class="changelog-entry">
+                <div class="changelog-entry-head"><span>v4.21</span><span class="changelog-entry-status production">production</span></div>
+                <ul>
+                    <li>Предзагрузка картинок запускается автоматически без отдельной кнопки.</li>
+                </ul>
+            </div>
+            <div class="changelog-entry">
+                <div class="changelog-entry-head"><span>v4.20</span><span class="changelog-entry-status production">production</span></div>
+                <ul>
+                    <li>Добавлена панель прогресса загрузки картинок.</li>
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -681,7 +748,7 @@ function preloadDeckImages(deck, options = {}) {
     return preloadImages(urls, options);
 }
 
-const APP_VERSION = '4.24';
+const APP_VERSION = '4.25';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
@@ -1323,6 +1390,10 @@ function selectAll(state) {
 }
 
 function toggleModal(s) { document.getElementById('filterModal').classList.toggle('active', s); }
+
+function toggleChangelogModal(show) {
+    document.getElementById('changelogModal').classList.toggle('active', show);
+}
 
 function getActiveCardPool() {
     return cards.filter(c => c.included && isCardInCurrentPool(c));
