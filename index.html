@@ -545,7 +545,7 @@ function updateImagePreloadPanel() {
         details.textContent = 'Картинки будут заранее загружены в кэш браузера.';
     } else if (imagePreloadState.finished && imagePreloadState.failed === 0) {
         status.textContent = 'Все карты загружены';
-        details.textContent = 'Новые колоды должны открываться без пустых слотов.';
+        details.textContent = 'Все карты загружены';
     } else if (imagePreloadState.finished) {
         status.textContent = 'Загрузка завершена';
         details.textContent = `Загружено: ${imagePreloadState.loaded}, ошибок: ${imagePreloadState.failed}.`;
@@ -651,7 +651,7 @@ function preloadDeckImages(deck, options = {}) {
     return preloadImages(urls, options);
 }
 
-const APP_VERSION = '4.22';
+const APP_VERSION = '4.23';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
