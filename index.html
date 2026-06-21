@@ -86,9 +86,10 @@
         .tiny-note { font-size: 11px; color: #aeb3c7; line-height: 1.2; }
         .inline-row { display: flex; gap: 6px; }
         .inline-row > * { flex: 1; }
-        .right-tools .inline-row { display: grid; grid-template-columns: 1fr 1fr; }
-        .right-tools .inline-row > *:last-child:nth-child(odd) { grid-column: 1 / -1; }
-        .right-tools .inline-row .btn-mini { white-space: nowrap; }
+        .tool-panel .inline-row { display: grid; grid-template-columns: 1fr 1fr; }
+        .tool-panel .inline-row > *:last-child:nth-child(odd) { grid-column: 1 / -1; }
+        .tool-panel .inline-row .btn-mini { white-space: nowrap; }
+        .main-area #youtubeChatPanel { width: 100%; max-width: 460px; text-align: left; }
         .preload-panel { margin-top: auto; }
         .preload-row { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; color: #e2e5f4; }
         .preload-bar { height: 8px; overflow: hidden; border-radius: 999px; background: #191a24; border: 1px solid #3f4152; }
@@ -487,28 +488,8 @@
             <div style="position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: red; z-index: 5;"></div>
             <div class="roulette-track" id="rouletteTrack"></div>
         </div>
-    </div>
 
-    <div class="right-tools">
-        <h2>Инструменты</h2>
-        <div class="tool-panel">
-            <div class="tool-title">Колода последнего соперника</div>
-            <input type="text" id="playerTagInput" class="text-input" placeholder="Твой ID/тег (например #2JGYG2YY)">
-            <button class="btn-blue btn-mini" onclick="loadLastOpponentDeck()">Загрузить последнего соперника</button>
-            <div class="tiny-note">Берётся колода соперника из последнего доступного боя.</div>
-        </div>
-
-        <div class="tool-panel">
-            <div class="tool-title">Замены в текущей колоде</div>
-            <div class="form-group"> <label>Режим:</label> <select id="replaceMode"> <option value="unique">Без повторов</option> <option value="repeat">С повторами</option> </select> </div>
-            <button class="btn-blue btn-mini" onclick="replaceRandomCardInDeck()">Заменить случайную карту</button>
-            <button class="btn-blue btn-mini" onclick="replaceSelectedCardInDeck()">Заменить выбранную (клик по карте)</button>
-            <button class="btn-filter btn-mini" onclick="resetReplacementHistory(true)">Сбросить историю замен</button>
-            <div class="tiny-note" id="replaceSelectedInfo">Выбран слот: —</div>
-            <div class="tiny-note" id="replaceInfo">Без повторов заменено: 0/8</div>
-        </div>
-
-        <div class="tool-panel" id="youtubeChatPanel">
+        <div class="tool-panel build-only" id="youtubeChatPanel">
             <div class="tool-title">YouTube чат</div>
             <div class="tiny-note">Режим: YouTube API напрямую, без backend.</div>
             <div class="stream-access-gate" id="streamAccessGate">
@@ -570,6 +551,26 @@
                 </details>
             </div>
         </div>
+    </div>
+
+    <div class="right-tools">
+        <h2>Инструменты</h2>
+        <div class="tool-panel">
+            <div class="tool-title">Колода последнего соперника</div>
+            <input type="text" id="playerTagInput" class="text-input" placeholder="Твой ID/тег (например #2JGYG2YY)">
+            <button class="btn-blue btn-mini" onclick="loadLastOpponentDeck()">Загрузить последнего соперника</button>
+            <div class="tiny-note">Берётся колода соперника из последнего доступного боя.</div>
+        </div>
+
+        <div class="tool-panel">
+            <div class="tool-title">Замены в текущей колоде</div>
+            <div class="form-group"> <label>Режим:</label> <select id="replaceMode"> <option value="unique">Без повторов</option> <option value="repeat">С повторами</option> </select> </div>
+            <button class="btn-blue btn-mini" onclick="replaceRandomCardInDeck()">Заменить случайную карту</button>
+            <button class="btn-blue btn-mini" onclick="replaceSelectedCardInDeck()">Заменить выбранную (клик по карте)</button>
+            <button class="btn-filter btn-mini" onclick="resetReplacementHistory(true)">Сбросить историю замен</button>
+            <div class="tiny-note" id="replaceSelectedInfo">Выбран слот: —</div>
+            <div class="tiny-note" id="replaceInfo">Без повторов заменено: 0/8</div>
+        </div>
 
         <div class="tool-panel preload-panel" id="imagePreloadPanel">
             <div class="tool-title">Загрузка карт</div>
@@ -628,6 +629,7 @@
                     <li>Выпадающие списки получили единую стрелку — длинный текст больше не обрезается.</li>
                     <li>Ряды кнопок в инструментах выровнены в аккуратную сетку; плавающий бейдж версии не перекрывает блоки.</li>
                     <li>Кнопки режимов («Создание колод» / «Топ колоды») перенесены в верх центральной колонки над названием колоды; на телефоне остаются сверху.</li>
+                    <li>Панель «YouTube чат» перенесена под колоду в центр — правая колонка стала короче, интерфейс компактнее.</li>
                     <li>Улучшена адаптивность под телефон: колода-сетка и блоки больше не вылезают за экран.</li>
                 </ul>
             </div>
