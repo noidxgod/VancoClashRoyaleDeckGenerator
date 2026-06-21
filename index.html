@@ -263,7 +263,8 @@
         .changelog-entry li + li { margin-top: 4px; }
 
         @media (max-width: 1180px) {
-            .container { flex-direction: column; }
+            .app-shell { align-items: center; }
+            .container { flex-direction: column; max-width: 600px; }
             .sidebar, .right-tools { width: 100%; }
             .main-area { order: -1; }
             .main-area .view-switch { order: -1; }
