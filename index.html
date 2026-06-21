@@ -34,6 +34,7 @@
         body { background-color: var(--bg-main); background-image: radial-gradient(1200px 620px at 50% -12%, #262a44 0%, rgba(38,42,68,0) 62%), linear-gradient(180deg, #1b1c25 0%, #141520 100%); background-attachment: fixed; color: var(--text-main); margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 18px 12px 60px; }
         .app-shell { width: 100%; max-width: 1450px; display: flex; flex-direction: column; gap: 12px; }
         .view-switch { display: flex; gap: 8px; flex-wrap: wrap; }
+        .main-area .view-switch { width: 100%; justify-content: center; }
         .view-switch button { background: #353849; color: #d7dbef; border: 1px solid #474b63; box-shadow: var(--shadow-btn); letter-spacing: 0.2px; }
         .view-switch button:hover { background: #3f4459; color: #fff; border-color: #5a6188; }
         .view-switch button.active { background: linear-gradient(180deg, #6a92ff, #4f78ee); color: #fff; border-color: #7ea2ff; box-shadow: 0 4px 14px rgba(79,120,238,0.45); }
@@ -254,6 +255,8 @@
         @media (max-width: 1180px) {
             .container { flex-direction: column; }
             .sidebar, .right-tools { width: 100%; }
+            .main-area { order: -1; }
+            .main-area .view-switch { order: -1; }
             .top-decks-layout { grid-template-columns: 1fr; }
             .top-deck-item { grid-template-columns: 1fr; }
         }
@@ -262,7 +265,7 @@
             body { padding: 10px 8px 70px; }
             .container { padding: 14px; gap: 14px; border-radius: 14px; }
             .sidebar, .right-tools { padding: 14px; border-radius: 12px; }
-            .view-switch button { flex: 1; min-width: 0; padding: 10px 8px; font-size: 13px; }
+            .view-switch button { flex: 1; min-width: 0; padding: 10px 6px; font-size: 12.5px; line-height: 1.15; overflow-wrap: anywhere; }
             .deck-grid { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, auto); gap: 10px 8px; width: 100%; max-width: 360px; }
             .deck-grid .card-slot { width: 100%; }
             .deck-stats-panel, .deck-title-display, .avg-elixir-panel { max-width: 100%; }
@@ -292,11 +295,6 @@
 <body>
 
 <div class="app-shell">
-    <div class="view-switch">
-        <button id="tabBuildBtn" class="active" onclick="setAppMode('build')">Создание колод</button>
-        <button id="tabTopBtn" onclick="setAppMode('top')">Топ колоды(Royal API)</button>
-        <button id="tabTopLbBtn" onclick="setAppMode('leaderboard')">Топ колоды(LeaderBoard Decks)</button>
-    </div>
 
 <div class="container" id="appContainer">
     <div class="sidebar">
@@ -384,6 +382,11 @@
     </div>
 
     <div class="main-area">
+        <div class="view-switch">
+            <button id="tabBuildBtn" class="active" onclick="setAppMode('build')">Создание колод</button>
+            <button id="tabTopBtn" onclick="setAppMode('top')">Топ колоды(Royal API)</button>
+            <button id="tabTopLbBtn" onclick="setAppMode('leaderboard')">Топ колоды(LeaderBoard Decks)</button>
+        </div>
         <div id="topDecksPanel" class="top-decks-panel">
             <div class="top-decks-layout">
                 <div class="top-settings-col">
@@ -624,6 +627,7 @@
                     <li>У кнопок появились состояния наведения, нажатия и фокуса; поля ввода подсвечиваются при фокусе.</li>
                     <li>Выпадающие списки получили единую стрелку — длинный текст больше не обрезается.</li>
                     <li>Ряды кнопок в инструментах выровнены в аккуратную сетку; плавающий бейдж версии не перекрывает блоки.</li>
+                    <li>Кнопки режимов («Создание колод» / «Топ колоды») перенесены в верх центральной колонки над названием колоды; на телефоне остаются сверху.</li>
                     <li>Улучшена адаптивность под телефон: колода-сетка и блоки больше не вылезают за экран.</li>
                 </ul>
             </div>
