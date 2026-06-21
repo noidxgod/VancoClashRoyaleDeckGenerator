@@ -89,14 +89,15 @@
         .tool-panel .inline-row { display: grid; grid-template-columns: 1fr 1fr; }
         .tool-panel .inline-row > *:last-child:nth-child(odd) { grid-column: 1 / -1; }
         .tool-panel .inline-row .btn-mini { white-space: nowrap; }
-        .preload-panel { margin-top: auto; overflow: hidden; max-height: 190px; transition: opacity .6s ease, transform .6s ease, max-height .6s ease, padding .6s ease, margin .6s ease, border-color .25s ease, box-shadow .25s ease; }
+        .preload-panel { margin-top: auto; overflow: hidden; max-height: 190px; transition: opacity .6s ease, transform .6s ease, border-color .25s ease, box-shadow .25s ease; }
         .preload-row { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; color: #e2e5f4; }
         .preload-bar { height: 8px; overflow: hidden; border-radius: 999px; background: #191a24; border: 1px solid #3f4152; }
         .preload-bar-fill { width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #4a90e2, #6ff0d2); transition: width .25s ease, background .25s ease; }
         .preload-panel.done { border-color: rgba(84,214,111,0.75); animation: preload-success-pulse .95s ease-out 1; }
         .preload-panel.done .preload-bar-fill { background: linear-gradient(90deg, #54d66f, #9af27b); }
         .preload-panel.warn .preload-bar-fill { background: linear-gradient(90deg, #e2b853, #e27a4a); }
-        .preload-panel.fade-out { opacity: 0; transform: translateY(8px); max-height: 0; padding-top: 0; padding-bottom: 0; margin-top: 0; border-width: 0; pointer-events: none; }
+        .preload-panel.fade-out { opacity: 0; transform: translateY(8px); pointer-events: none; }
+        .preload-panel.is-hidden { display: none; }
         @keyframes preload-success-pulse {
             0% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 0 0 rgba(84,214,111,0); }
             38% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 0 22px rgba(84,214,111,0.42); }
@@ -650,6 +651,7 @@
                 <div class="changelog-entry-head"><span>v5.1</span><span class="changelog-entry-status production">production</span></div>
                 <ul>
                     <li>В вертикальной раскладке блок настроек перенесён под переключатели режимов и над колодой, чтобы кнопки сборки были ближе к колоде.</li>
+                    <li>Панель `Все карты загружены` теперь затухает на месте и больше не подпрыгивает перед исчезновением.</li>
                 </ul>
             </div>
             <div class="changelog-entry">
@@ -719,8 +721,10 @@ const imagePreloadState = {
     failed: 0,
     finished: false,
     hideTimer: null,
+    removeTimer: null,
     hideScheduled: false,
-    hidden: false
+    hidden: false,
+    removed: false
 };
 let allCardImagesWarmupStarted = false;
 
@@ -794,7 +798,8 @@ function updateImagePreloadPanel() {
     const isSuccess = imagePreloadState.finished && imagePreloadState.failed === 0;
     panel.classList.toggle('done', isSuccess);
     panel.classList.toggle('warn', imagePreloadState.finished && imagePreloadState.failed > 0);
-    panel.classList.toggle('fade-out', imagePreloadState.hidden);
+    panel.classList.toggle('fade-out', imagePreloadState.hidden && !imagePreloadState.removed);
+    panel.classList.toggle('is-hidden', imagePreloadState.removed);
     bar.style.width = `${percent}%`;
     count.textContent = `${completed}/${total}`;
 
@@ -818,6 +823,11 @@ function updateImagePreloadPanel() {
         imagePreloadState.hideTimer = setTimeout(() => {
             imagePreloadState.hidden = true;
             updateImagePreloadPanel();
+            clearTimeout(imagePreloadState.removeTimer);
+            imagePreloadState.removeTimer = setTimeout(() => {
+                imagePreloadState.removed = true;
+                updateImagePreloadPanel();
+            }, 650);
         }, 3000);
     }
 }
@@ -895,8 +905,11 @@ function scheduleAllCardImagesWarmup() {
     imagePreloadState.finished = false;
     imagePreloadState.hideScheduled = false;
     imagePreloadState.hidden = false;
+    imagePreloadState.removed = false;
     clearTimeout(imagePreloadState.hideTimer);
+    clearTimeout(imagePreloadState.removeTimer);
     imagePreloadState.hideTimer = null;
+    imagePreloadState.removeTimer = null;
     for (const url of urls) {
         if (imagePreloadResults.has(url)) {
             countTrackedImagePreload(url, imagePreloadResults.get(url));
