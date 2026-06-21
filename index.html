@@ -616,7 +616,7 @@
 
 <div class="release-toolbar">
     <button class="changelog-trigger" onclick="toggleChangelogModal(true)">Что нового</button>
-    <div id="appVersionBadge" class="app-version">v5.1</div>
+    <div id="appVersionBadge" class="app-version">v5.2</div>
 </div>
 
 <div class="modal-overlay" id="filterModal">
@@ -647,6 +647,12 @@
         </div>
         <div class="tiny-note">Рабочий сайт живёт на ветке main, новые функции сначала проверяются в staging.</div>
         <div class="changelog-list">
+            <div class="changelog-entry">
+                <div class="changelog-entry-head"><span>v5.2</span><span class="changelog-entry-status production">production</span></div>
+                <ul>
+                    <li>Обновлён пароль для стрим-инструментов, старые сохранённые разблокировки сброшены.</li>
+                </ul>
+            </div>
             <div class="changelog-entry">
                 <div class="changelog-entry-head"><span>v5.1</span><span class="changelog-entry-status production">production</span></div>
                 <ul>
@@ -935,7 +941,7 @@ function preloadDeckImages(deck, options = {}) {
     return preloadImages(urls, options);
 }
 
-const APP_VERSION = '5.1';
+const APP_VERSION = '5.2';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
@@ -944,8 +950,8 @@ const YOUTUBE_CHAT_COMMAND_COOLDOWN_MS = 3500;
 const YOUTUBE_BROWSER_API_KEY = 'AIzaSyApSatdYHXuMVVo9iwsNrrqkRpAejfbqrg';
 const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3';
 const VERTICAL_BUILD_LAYOUT_QUERY = '(max-width: 1180px)';
-const STREAM_ACCESS_PASSWORD_SHA256 = 'dc4ec1898858938b3a70601a5f0baca1738ad2504b713008ab9e9bc8aff42962';
-const STREAM_ACCESS_STORAGE_KEY = 'crStreamToolsUnlocked';
+const STREAM_ACCESS_PASSWORD_SHA256 = 'aa12e1265c050c917263bbc03bd195176f88f235f19f8617c50faaf9c1228cfc';
+const STREAM_ACCESS_STORAGE_KEY = 'crStreamToolsUnlockedV52';
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false, isDeckPreparing = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
