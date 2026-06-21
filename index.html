@@ -89,7 +89,6 @@
         .tool-panel .inline-row { display: grid; grid-template-columns: 1fr 1fr; }
         .tool-panel .inline-row > *:last-child:nth-child(odd) { grid-column: 1 / -1; }
         .tool-panel .inline-row .btn-mini { white-space: nowrap; }
-        .main-area #youtubeChatPanel { width: 100%; max-width: 460px; text-align: left; }
         .preload-panel { margin-top: auto; }
         .preload-row { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; color: #e2e5f4; }
         .preload-bar { height: 8px; overflow: hidden; border-radius: 999px; background: #191a24; border: 1px solid #3f4152; }
@@ -203,6 +202,12 @@
         .deck-area-row { display: flex; gap: 18px; align-items: center; justify-content: center; width: 100%; flex-wrap: wrap; }
         .deck-side-col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 
+        .deck-tools-row { display: flex; gap: 12px; align-items: stretch; justify-content: center; width: 100%; max-width: 720px; flex-wrap: wrap; }
+        .deck-tools-row > .tool-panel { flex: 1 1 280px; min-width: 0; padding: 9px 10px; gap: 5px; }
+        .deck-tools-row .tool-title { padding-bottom: 3px; }
+        .deck-tools-row .btn-mini { padding: 6px 8px; }
+        .deck-tools-row .tiny-note { line-height: 1.15; }
+
         .tower-area { display: flex; justify-content: center; align-items: center; min-height: 100px; gap: 10px; }
 
         .card-slot { width: 80px; height: 100px; background-color: #1e1e24; border: 2px dashed #3f4152; border-radius: 10px; position: relative; display: flex; justify-content: center; align-items: center; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
@@ -222,7 +227,6 @@
         .badge { position: absolute; top: 4px; padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: bold; z-index: 10; }
         .badge-evo { background-color: var(--evo-color); left: 4px; }
         .badge-heroism { background-color: var(--hero-color); right: 4px; color: #111; }
-
 
         .deck-title-display { width: 100%; max-width: 420px; background: linear-gradient(180deg, #2f3142, #282a38); border:1px solid #3a3d52; border-radius:12px; padding:14px 16px; text-align:center; font-size:24px; font-weight:800; line-height:1.2; min-height:64px; display:flex; align-items:center; justify-content:center; box-shadow: var(--shadow-soft); }
         .deck-title-display.is-loading { opacity: 0.7; }
@@ -497,7 +501,31 @@
             <div class="roulette-track" id="rouletteTrack"></div>
         </div>
 
-        <div class="tool-panel build-only" id="youtubeChatPanel">
+        <div class="deck-tools-row build-only">
+            <div class="tool-panel">
+                <div class="tool-title">Колода последнего соперника</div>
+                <input type="text" id="playerTagInput" class="text-input" placeholder="Твой ID/тег (например #2JGYG2YY)">
+                <button class="btn-blue btn-mini" onclick="loadLastOpponentDeck()">Загрузить последнего соперника</button>
+                <div class="tiny-note">Берётся колода соперника из последнего доступного боя.</div>
+            </div>
+
+            <div class="tool-panel">
+                <div class="tool-title">Замены в текущей колоде</div>
+                <div class="form-group"> <label>Режим:</label> <select id="replaceMode"> <option value="unique">Без повторов</option> <option value="repeat">С повторами</option> </select> </div>
+                <button class="btn-blue btn-mini" onclick="replaceRandomCardInDeck()">Заменить случайную карту</button>
+                <button class="btn-blue btn-mini" onclick="replaceSelectedCardInDeck()">Заменить выбранную (клик по карте)</button>
+                <button class="btn-filter btn-mini" onclick="resetReplacementHistory(true)">Сбросить историю замен</button>
+                <div class="tiny-note" id="replaceSelectedInfo">Выбран слот: —</div>
+                <div class="tiny-note" id="replaceInfo">Без повторов заменено: 0/8</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="right-tools">
+        <h2>Инструменты</h2>
+
+        <div class="tool-panel" id="youtubeChatPanel">
             <div class="tool-title">YouTube чат</div>
             <div class="tiny-note">Режим: YouTube API напрямую, без backend.</div>
             <div class="stream-access-gate" id="streamAccessGate">
@@ -559,26 +587,6 @@
                 </details>
             </div>
         </div>
-    </div>
-
-    <div class="right-tools">
-        <h2>Инструменты</h2>
-        <div class="tool-panel">
-            <div class="tool-title">Колода последнего соперника</div>
-            <input type="text" id="playerTagInput" class="text-input" placeholder="Твой ID/тег (например #2JGYG2YY)">
-            <button class="btn-blue btn-mini" onclick="loadLastOpponentDeck()">Загрузить последнего соперника</button>
-            <div class="tiny-note">Берётся колода соперника из последнего доступного боя.</div>
-        </div>
-
-        <div class="tool-panel">
-            <div class="tool-title">Замены в текущей колоде</div>
-            <div class="form-group"> <label>Режим:</label> <select id="replaceMode"> <option value="unique">Без повторов</option> <option value="repeat">С повторами</option> </select> </div>
-            <button class="btn-blue btn-mini" onclick="replaceRandomCardInDeck()">Заменить случайную карту</button>
-            <button class="btn-blue btn-mini" onclick="replaceSelectedCardInDeck()">Заменить выбранную (клик по карте)</button>
-            <button class="btn-filter btn-mini" onclick="resetReplacementHistory(true)">Сбросить историю замен</button>
-            <div class="tiny-note" id="replaceSelectedInfo">Выбран слот: —</div>
-            <div class="tiny-note" id="replaceInfo">Без повторов заменено: 0/8</div>
-        </div>
 
         <div class="tool-panel preload-panel" id="imagePreloadPanel">
             <div class="tool-title">Загрузка карт</div>
@@ -639,6 +647,7 @@
                     <li>Кнопки режимов («Создание колод» / «Топ колоды») перенесены в верх центральной колонки над названием колоды; на телефоне остаются сверху.</li>
                     <li>Панель «YouTube чат» перенесена под колоду в центр — правая колонка стала короче, интерфейс компактнее.</li>
                     <li>Карта башни вынесена вправо от колоды, «Средняя цена» — под башню; на узких экранах столбик переносится под колоду.</li>
+                    <li>YouTube-чат и блоки «Колода последнего соперника» + «Замены» поменяны местами: чат — в правой колонке, эти две панели — компактно в ряд под колодой.</li>
                     <li>Улучшена адаптивность под телефон: колода-сетка и блоки больше не вылезают за экран.</li>
                 </ul>
             </div>
@@ -1198,7 +1207,6 @@ const themeModeHints = {
     'no-spells': 'Ровно 0 заклинаний в колоде.'
 };
 
-
 const OPENROUTER_API_KEY = ""; // При желании вставь сюда свой ключ OpenRouter
 const USE_AI_DECK_NAME = false; // true = пробовать AI, false = всегда локальный генератор
 
@@ -1372,7 +1380,6 @@ async function generateDeckName() {
     }
 }
 
-
 function clampScore(v) { return Math.max(0, Math.min(100, Math.round(v))); }
 
 function setStatCard(idValue, idLabel, score, labels) {
@@ -1510,7 +1517,6 @@ function analyzeDeckMetrics(deck) {
         madness: clampScore(madness)
     };
 }
-
 
 function metricsMatchFilters(metrics, c) {
     return metrics.toxicity >= c.minToxicity && metrics.toxicity <= c.maxToxicity &&
