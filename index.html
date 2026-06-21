@@ -103,9 +103,14 @@
         .stream-command-entry .meta { color: #9ea8c8; }
         .stream-access-gate { background: #1b1e2c; border: 1px solid #4a4f68; border-radius: 8px; padding: 8px; display: grid; gap: 7px; }
         .stream-access-state { color: #ffe6a3; font-size: 11px; font-weight: 800; line-height: 1.25; }
-        .stream-access-gate.unlocked { border-color: #54d66f; }
+        .stream-access-gate.unlocked { display: none; }
         .stream-access-gate.unlocked .stream-access-state { color: #9dffae; }
         .stream-access-content.locked { display: none; }
+        .stream-info-details { margin-top: 2px; }
+        .stream-info-details summary { width: 24px; height: 24px; border-radius: 999px; border: 1px solid #4a4f68; background: #22283d; color: #dce5ff; display: grid; place-items: center; cursor: pointer; font-size: 13px; font-weight: 900; list-style: none; user-select: none; }
+        .stream-info-details summary::-webkit-details-marker { display: none; }
+        .stream-info-details summary:hover { border-color: #6d8dff; color: #fff; }
+        .stream-info-panel { margin-top: 6px; background: #1b1e2c; border: 1px solid #3f4152; border-radius: 8px; padding: 7px; display: grid; gap: 5px; }
 
         .main-area { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .top-decks-panel { width: 100%; max-width: none; background: #2b2d3a; border: 1px solid #3f4152; border-radius: 10px; padding: 10px; display: none; flex-direction: column; gap: 8px; }
@@ -465,6 +470,7 @@
                 <div class="inline-row">
                     <button class="btn-blue btn-mini" onclick="connectYoutubeChat()">Подключить</button>
                     <button class="btn-filter btn-mini" onclick="disconnectYoutubeChat()">Отключить</button>
+                    <button class="btn-filter btn-mini" onclick="lockStreamAccess()">Закрыть доступ</button>
                 </div>
                 <label class="checkbox-group" style="gap:6px;">
                     <input type="checkbox" id="youtubeChatAutoExecute" checked>
@@ -500,8 +506,13 @@
                 <div class="chat-message-list" id="youtubeChatMessages"></div>
                 <div class="tiny-note">Найденные команды:</div>
                 <div class="chat-command-list" id="youtubeChatCommands"></div>
-                <div class="tiny-note">Золотые команды доступны только стримеру/модерам. Если выключить выполнение, команды будут попадать в очередь.</div>
-                <div class="tiny-note">Если чат не подключается, проверь ограничения API-ключа в Google Cloud.</div>
+                <details class="stream-info-details">
+                    <summary title="Информация о командах и API">?</summary>
+                    <div class="stream-info-panel">
+                        <div class="tiny-note">Золотые команды доступны только стримеру/модерам. Если выключить выполнение, команды будут попадать в очередь.</div>
+                        <div class="tiny-note">Если чат не подключается, проверь ограничения API-ключа в Google Cloud.</div>
+                    </div>
+                </details>
             </div>
         </div>
 
@@ -523,7 +534,7 @@
 
 <div class="release-toolbar">
     <button class="changelog-trigger" onclick="toggleChangelogModal(true)">Что нового</button>
-    <div id="appVersionBadge" class="app-version">v4.28</div>
+    <div id="appVersionBadge" class="app-version">v4.29</div>
 </div>
 
 <div class="modal-overlay" id="filterModal">
@@ -554,6 +565,14 @@
         </div>
         <div class="tiny-note">Рабочий сайт живёт на ветке main, новые функции сначала проверяются в staging.</div>
         <div class="changelog-list">
+            <div class="changelog-entry">
+                <div class="changelog-entry-head"><span>v4.29</span><span class="changelog-entry-status">staging</span></div>
+                <ul>
+                    <li>После правильного пароля окно ввода ключа скрывается.</li>
+                    <li>Длинные подсказки YouTube-чата спрятаны под значок `?`.</li>
+                    <li>Добавлена кнопка `Закрыть доступ` внутри открытых стрим-инструментов.</li>
+                </ul>
+            </div>
             <div class="changelog-entry">
                 <div class="changelog-entry-head"><span>v4.28</span><span class="changelog-entry-status">staging</span></div>
                 <ul>
@@ -833,7 +852,7 @@ function preloadDeckImages(deck, options = {}) {
     return preloadImages(urls, options);
 }
 
-const APP_VERSION = '4.28';
+const APP_VERSION = '4.29';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
