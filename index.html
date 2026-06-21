@@ -89,12 +89,19 @@
         .tool-panel .inline-row { display: grid; grid-template-columns: 1fr 1fr; }
         .tool-panel .inline-row > *:last-child:nth-child(odd) { grid-column: 1 / -1; }
         .tool-panel .inline-row .btn-mini { white-space: nowrap; }
-        .preload-panel { margin-top: auto; }
+        .preload-panel { margin-top: auto; overflow: hidden; max-height: 190px; transition: opacity .6s ease, transform .6s ease, max-height .6s ease, padding .6s ease, margin .6s ease, border-color .25s ease, box-shadow .25s ease; }
         .preload-row { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; color: #e2e5f4; }
         .preload-bar { height: 8px; overflow: hidden; border-radius: 999px; background: #191a24; border: 1px solid #3f4152; }
         .preload-bar-fill { width: 0%; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #4a90e2, #6ff0d2); transition: width .25s ease, background .25s ease; }
+        .preload-panel.done { border-color: rgba(84,214,111,0.75); animation: preload-success-pulse .95s ease-out 1; }
         .preload-panel.done .preload-bar-fill { background: linear-gradient(90deg, #54d66f, #9af27b); }
         .preload-panel.warn .preload-bar-fill { background: linear-gradient(90deg, #e2b853, #e27a4a); }
+        .preload-panel.fade-out { opacity: 0; transform: translateY(8px); max-height: 0; padding-top: 0; padding-bottom: 0; margin-top: 0; border-width: 0; pointer-events: none; }
+        @keyframes preload-success-pulse {
+            0% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 0 0 rgba(84,214,111,0); }
+            38% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 0 22px rgba(84,214,111,0.42); }
+            100% { box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 0 0 rgba(84,214,111,0); }
+        }
         .chat-status { border: 1px solid #3f4152; border-radius: 6px; background: #1b1d28; padding: 6px; font-size: 11px; color: #aeb3c7; line-height: 1.25; }
         .chat-status.connected { border-color: #54d66f; color: #dfffe5; }
         .chat-status.error { border-color: #e24a4a; color: #ffd8d8; }
@@ -607,7 +614,7 @@
 
 <div class="release-toolbar">
     <button class="changelog-trigger" onclick="toggleChangelogModal(true)">Что нового</button>
-    <div id="appVersionBadge" class="app-version">v4.30</div>
+    <div id="appVersionBadge" class="app-version">v4.31</div>
 </div>
 
 <div class="modal-overlay" id="filterModal">
@@ -638,6 +645,12 @@
         </div>
         <div class="tiny-note">Рабочий сайт живёт на ветке main, новые функции сначала проверяются в staging.</div>
         <div class="changelog-list">
+            <div class="changelog-entry">
+                <div class="changelog-entry-head"><span>v4.31</span><span class="changelog-entry-status">staging</span></div>
+                <ul>
+                    <li>Панель `Загрузка карт` после успешной загрузки коротко подсвечивается и сама плавно исчезает через 3 секунды.</li>
+                </ul>
+            </div>
             <div class="changelog-entry">
                 <div class="changelog-entry-head"><span>v4.30</span><span class="changelog-entry-status">staging</span></div>
                 <ul>
@@ -752,7 +765,10 @@ const imagePreloadState = {
     total: 0,
     loaded: 0,
     failed: 0,
-    finished: false
+    finished: false,
+    hideTimer: null,
+    hideScheduled: false,
+    hidden: false
 };
 let allCardImagesWarmupStarted = false;
 
@@ -823,8 +839,10 @@ function updateImagePreloadPanel() {
     const completed = imagePreloadState.loaded + imagePreloadState.failed;
     const total = imagePreloadState.total || 0;
     const percent = total ? Math.round((completed / total) * 100) : 0;
-    panel.classList.toggle('done', imagePreloadState.finished && imagePreloadState.failed === 0);
+    const isSuccess = imagePreloadState.finished && imagePreloadState.failed === 0;
+    panel.classList.toggle('done', isSuccess);
     panel.classList.toggle('warn', imagePreloadState.finished && imagePreloadState.failed > 0);
+    panel.classList.toggle('fade-out', imagePreloadState.hidden);
     bar.style.width = `${percent}%`;
     count.textContent = `${completed}/${total}`;
 
@@ -840,6 +858,15 @@ function updateImagePreloadPanel() {
     } else {
         status.textContent = 'Загружаю карты...';
         details.textContent = `Загружено карт: ${imagePreloadState.loaded} из ${total}.`;
+    }
+
+    if (isSuccess && !imagePreloadState.hideScheduled) {
+        imagePreloadState.hideScheduled = true;
+        clearTimeout(imagePreloadState.hideTimer);
+        imagePreloadState.hideTimer = setTimeout(() => {
+            imagePreloadState.hidden = true;
+            updateImagePreloadPanel();
+        }, 3000);
     }
 }
 
@@ -914,6 +941,10 @@ function scheduleAllCardImagesWarmup() {
     imagePreloadState.loaded = 0;
     imagePreloadState.failed = 0;
     imagePreloadState.finished = false;
+    imagePreloadState.hideScheduled = false;
+    imagePreloadState.hidden = false;
+    clearTimeout(imagePreloadState.hideTimer);
+    imagePreloadState.hideTimer = null;
     for (const url of urls) {
         if (imagePreloadResults.has(url)) {
             countTrackedImagePreload(url, imagePreloadResults.get(url));
@@ -939,7 +970,7 @@ function preloadDeckImages(deck, options = {}) {
     return preloadImages(urls, options);
 }
 
-const APP_VERSION = '4.30';
+const APP_VERSION = '4.31';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
