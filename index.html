@@ -192,13 +192,18 @@
         
         .avg-elixir-panel { display: none; align-items: center; gap: 8px; font-size: 16px; font-weight: bold; background: linear-gradient(180deg, #2f3142, #282a38); padding: 9px 18px; border-radius: 10px; border: 1px solid #3a3d52; box-shadow: var(--shadow-soft); }
         .avg-elixir-val { color: #ff8df0; font-size: 20px; }
+        .deck-side-col .avg-elixir-panel { font-size: 13px; padding: 7px 12px; gap: 6px; white-space: nowrap; }
+        .deck-side-col .avg-elixir-val { font-size: 16px; }
         .avg-elixir-icon { width: 14px; height: 14px; background: radial-gradient(circle at 30% 30%, #ff8df0, #c413b5 70%); border: 1.5px solid #222; border-radius: 0 50% 50% 50%; transform: rotate(45deg); display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.6); }
 
         .deck-grid { display: grid; grid-template-columns: repeat(4, 80px); grid-template-rows: repeat(2, 100px); gap: 15px 10px; }
         .deck-grid .card-slot { cursor: pointer; }
         .deck-grid .card-slot.filled:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba(0,0,0,0.45); }
 
-        .tower-area { display: flex; justify-content: center; align-items: center; min-height: 100px; width: 100%; gap: 10px; margin-top: 5px; }
+        .deck-area-row { display: flex; gap: 18px; align-items: center; justify-content: center; width: 100%; flex-wrap: wrap; }
+        .deck-side-col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+
+        .tower-area { display: flex; justify-content: center; align-items: center; min-height: 100px; gap: 10px; }
 
         .card-slot { width: 80px; height: 100px; background-color: #1e1e24; border: 2px dashed #3f4152; border-radius: 10px; position: relative; display: flex; justify-content: center; align-items: center; transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease; }
         .card-slot img { width: 100%; height: 100%; object-fit: contain; border-radius: 6px; }
@@ -456,10 +461,6 @@
             </div>
         </div>
 
-        <div id="averageElixirDisplay" class="avg-elixir-panel build-only">
-            Средняя цена: <span id="avgElixirValue" class="avg-elixir-val">0.0</span> <div class="avg-elixir-icon"></div>
-        </div>
-
         <div id="deckNameValue" class="deck-title-display build-only">Собери колоду, чтобы получить название</div>
         <div id="deckStatsPanel" class="deck-stats-panel build-only" style="display:none;">
             <div class="stat-card">
@@ -479,10 +480,17 @@
             </div>
         </div>
 
-        <div class="deck-grid build-only" id="deckGrid"></div>
-        <div class="tower-area build-only" id="towerArea">
-            <div class="card-slot" id="towerSlot" style="display: none;"></div>
-            <div id="secretsArea" style="display: flex; gap: 10px;"></div>
+        <div class="deck-area-row build-only">
+            <div class="deck-grid" id="deckGrid"></div>
+            <div class="deck-side-col">
+                <div class="tower-area" id="towerArea">
+                    <div class="card-slot" id="towerSlot" style="display: none;"></div>
+                    <div id="secretsArea" style="display: flex; gap: 10px;"></div>
+                </div>
+                <div id="averageElixirDisplay" class="avg-elixir-panel">
+                    Средняя цена: <span id="avgElixirValue" class="avg-elixir-val">0.0</span> <div class="avg-elixir-icon"></div>
+                </div>
+            </div>
         </div>
         <div class="roulette-container build-only" id="rouletteContainer">
             <div style="position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: red; z-index: 5;"></div>
@@ -630,6 +638,7 @@
                     <li>Ряды кнопок в инструментах выровнены в аккуратную сетку; плавающий бейдж версии не перекрывает блоки.</li>
                     <li>Кнопки режимов («Создание колод» / «Топ колоды») перенесены в верх центральной колонки над названием колоды; на телефоне остаются сверху.</li>
                     <li>Панель «YouTube чат» перенесена под колоду в центр — правая колонка стала короче, интерфейс компактнее.</li>
+                    <li>Карта башни вынесена вправо от колоды, «Средняя цена» — под башню; на узких экранах столбик переносится под колоду.</li>
                     <li>Улучшена адаптивность под телефон: колода-сетка и блоки больше не вылезают за экран.</li>
                 </ul>
             </div>
