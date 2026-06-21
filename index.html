@@ -31,7 +31,7 @@
         }
 
         * { box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, 'Inter', Roboto, sans-serif; }
-        body { background-color: var(--bg-main); background-image: radial-gradient(1200px 620px at 50% -12%, #262a44 0%, rgba(38,42,68,0) 62%), linear-gradient(180deg, #1b1c25 0%, #141520 100%); background-attachment: fixed; color: var(--text-main); margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 18px 12px; }
+        body { background-color: var(--bg-main); background-image: radial-gradient(1200px 620px at 50% -12%, #262a44 0%, rgba(38,42,68,0) 62%), linear-gradient(180deg, #1b1c25 0%, #141520 100%); background-attachment: fixed; color: var(--text-main); margin: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 18px 12px 60px; }
         .app-shell { width: 100%; max-width: 1450px; display: flex; flex-direction: column; gap: 12px; }
         .view-switch { display: flex; gap: 8px; flex-wrap: wrap; }
         .view-switch button { background: #353849; color: #d7dbef; border: 1px solid #474b63; box-shadow: var(--shadow-btn); letter-spacing: 0.2px; }
@@ -51,10 +51,11 @@
 
         .form-group { display: flex; justify-content: space-between; align-items: center; font-size: 14px; }
         .sidebar .form-group { margin: 0; }
-        select { background-color: var(--bg-main); color: var(--text-main); border: 1px solid var(--border-color); padding: 5px 8px; border-radius: 7px; width: 100px; cursor: pointer; transition: border-color .15s ease, box-shadow .15s ease; }
+        select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-color: var(--bg-main); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%23aeb3c7' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 9px center; color: var(--text-main); border: 1px solid var(--border-color); padding: 6px 26px 6px 9px; border-radius: 7px; width: 100px; cursor: pointer; transition: border-color .15s ease, box-shadow .15s ease; text-overflow: ellipsis; }
         select:hover { border-color: var(--border-soft); }
         select:focus { border-color: var(--btn-blue); box-shadow: 0 0 0 2px rgba(79,143,240,0.25); outline: none; }
         select option:disabled { color: #555; font-style: italic; }
+        #replaceMode { width: 132px; }
 
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
@@ -84,6 +85,9 @@
         .tiny-note { font-size: 11px; color: #aeb3c7; line-height: 1.2; }
         .inline-row { display: flex; gap: 6px; }
         .inline-row > * { flex: 1; }
+        .right-tools .inline-row { display: grid; grid-template-columns: 1fr 1fr; }
+        .right-tools .inline-row > *:last-child:nth-child(odd) { grid-column: 1 / -1; }
+        .right-tools .inline-row .btn-mini { white-space: nowrap; }
         .preload-panel { margin-top: auto; }
         .preload-row { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-size: 12px; color: #e2e5f4; }
         .preload-bar { height: 8px; overflow: hidden; border-radius: 999px; background: #191a24; border: 1px solid #3f4152; }
@@ -255,7 +259,7 @@
         }
 
         @media (max-width: 640px) {
-            body { padding: 10px 8px; }
+            body { padding: 10px 8px 70px; }
             .container { padding: 14px; gap: 14px; border-radius: 14px; }
             .sidebar, .right-tools { padding: 14px; border-radius: 12px; }
             .view-switch button { flex: 1; min-width: 0; padding: 10px 8px; font-size: 13px; }
@@ -267,6 +271,11 @@
             .modal-content { padding: 16px; }
             .cards-list { grid-template-columns: repeat(2, 1fr); }
             .release-toolbar { right: 8px; bottom: 8px; }
+            .form-group select { width: 138px; max-width: 60%; }
+            #replaceMode { width: 138px; }
+            .inline-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+            .inline-row > *:last-child:nth-child(odd) { grid-column: 1 / -1; }
+            .inline-row .btn-mini { white-space: nowrap; }
         }
 
         @media (max-width: 400px) {
@@ -613,6 +622,8 @@
                 <ul>
                     <li>Освежён тёмный дизайн: глубже фон, мягкие тени и градиенты на панелях и кнопках.</li>
                     <li>У кнопок появились состояния наведения, нажатия и фокуса; поля ввода подсвечиваются при фокусе.</li>
+                    <li>Выпадающие списки получили единую стрелку — длинный текст больше не обрезается.</li>
+                    <li>Ряды кнопок в инструментах выровнены в аккуратную сетку; плавающий бейдж версии не перекрывает блоки.</li>
                     <li>Улучшена адаптивность под телефон: колода-сетка и блоки больше не вылезают за экран.</li>
                 </ul>
             </div>
