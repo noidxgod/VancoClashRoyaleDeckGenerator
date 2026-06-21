@@ -101,6 +101,11 @@
         .stream-command-entry.done { border-color: #54d66f; }
         .stream-command-entry.blocked { border-color: #e24a4a; }
         .stream-command-entry .meta { color: #9ea8c8; }
+        .stream-access-gate { background: #1b1e2c; border: 1px solid #4a4f68; border-radius: 8px; padding: 8px; display: grid; gap: 7px; }
+        .stream-access-state { color: #ffe6a3; font-size: 11px; font-weight: 800; line-height: 1.25; }
+        .stream-access-gate.unlocked { border-color: #54d66f; }
+        .stream-access-gate.unlocked .stream-access-state { color: #9dffae; }
+        .stream-access-content.locked { display: none; }
 
         .main-area { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .top-decks-panel { width: 100%; max-width: none; background: #2b2d3a; border: 1px solid #3f4152; border-radius: 10px; padding: 10px; display: none; flex-direction: column; gap: 8px; }
@@ -446,47 +451,58 @@
         <div class="tool-panel" id="youtubeChatPanel">
             <div class="tool-title">YouTube чат</div>
             <div class="tiny-note">Режим: YouTube API напрямую, без backend.</div>
-            <input type="text" id="youtubeStreamInput" class="text-input" placeholder="Ссылка на стрим / videoId">
-            <div class="inline-row">
-                <button class="btn-blue btn-mini" onclick="connectYoutubeChat()">Подключить</button>
-                <button class="btn-filter btn-mini" onclick="disconnectYoutubeChat()">Отключить</button>
-            </div>
-            <label class="checkbox-group" style="gap:6px;">
-                <input type="checkbox" id="youtubeChatAutoExecute" checked>
-                <span>Выполнять команды</span>
-            </label>
-            <select id="youtubeChatPermission" class="chat-permission-select">
-                <option value="all">Команды от всех</option>
-                <option value="trusted">Только стример/модеры/спонсоры</option>
-                <option value="mods">Только стример/модеры</option>
-            </select>
-            <div class="stream-command-box">
-                <div class="stream-command-head">
-                    <span>Приём команд</span>
-                    <span class="stream-command-badge" id="streamCommandModeBadge">Авто</span>
-                </div>
-                <div class="stream-command-stats">
-                    <div class="stream-command-stat"><strong id="streamCommandReceived">0</strong><span>принято</span></div>
-                    <div class="stream-command-stat"><strong id="streamCommandExecuted">0</strong><span>выполнено</span></div>
-                    <div class="stream-command-stat"><strong id="streamCommandQueued">0</strong><span>в очереди</span></div>
-                    <div class="stream-command-stat"><strong id="streamCommandBlocked">0</strong><span>отклонено</span></div>
-                </div>
+            <div class="stream-access-gate" id="streamAccessGate">
+                <div class="stream-access-state" id="streamAccessState">Стрим-инструменты закрыты. API не используется.</div>
+                <input type="password" id="streamAccessInput" class="text-input" placeholder="Ключ стримера">
                 <div class="inline-row">
-                    <button class="btn-filter btn-mini" onclick="toggleStreamCommandIntake()" id="streamCommandPauseBtn">Пауза</button>
-                    <button class="btn-blue btn-mini" onclick="runQueuedStreamCommands()">Выполнить очередь</button>
+                    <button class="btn-blue btn-mini" onclick="unlockStreamAccess()">Открыть</button>
+                    <button class="btn-filter btn-mini" onclick="lockStreamAccess()">Закрыть</button>
                 </div>
-                <button class="btn-filter btn-mini" onclick="clearStreamCommandQueue()">Очистить приёмник</button>
-                <div class="stream-command-help" id="streamCommandHelp"></div>
-                <div class="tiny-note">Очередь и результат команд:</div>
-                <div class="stream-command-queue" id="streamCommandQueue"></div>
+                <div class="tiny-note">Без ключа нельзя вставить ссылку на стрим и вызвать YouTube API.</div>
             </div>
-            <div class="chat-status" id="youtubeChatStatus">Чат не подключён.</div>
-            <div class="tiny-note">Сообщения чата:</div>
-            <div class="chat-message-list" id="youtubeChatMessages"></div>
-            <div class="tiny-note">Найденные команды:</div>
-            <div class="chat-command-list" id="youtubeChatCommands"></div>
-            <div class="tiny-note">Золотые команды доступны только стримеру/модерам. Если выключить выполнение, команды будут попадать в очередь.</div>
-            <div class="tiny-note">Если чат не подключается, проверь ограничения API-ключа в Google Cloud.</div>
+            <div class="stream-access-content locked" id="streamAccessContent">
+                <input type="text" id="youtubeStreamInput" class="text-input" placeholder="Ссылка на стрим / videoId">
+                <div class="inline-row">
+                    <button class="btn-blue btn-mini" onclick="connectYoutubeChat()">Подключить</button>
+                    <button class="btn-filter btn-mini" onclick="disconnectYoutubeChat()">Отключить</button>
+                </div>
+                <label class="checkbox-group" style="gap:6px;">
+                    <input type="checkbox" id="youtubeChatAutoExecute" checked>
+                    <span>Выполнять команды</span>
+                </label>
+                <select id="youtubeChatPermission" class="chat-permission-select">
+                    <option value="all">Команды от всех</option>
+                    <option value="trusted">Только стример/модеры/спонсоры</option>
+                    <option value="mods">Только стример/модеры</option>
+                </select>
+                <div class="stream-command-box">
+                    <div class="stream-command-head">
+                        <span>Приём команд</span>
+                        <span class="stream-command-badge" id="streamCommandModeBadge">Авто</span>
+                    </div>
+                    <div class="stream-command-stats">
+                        <div class="stream-command-stat"><strong id="streamCommandReceived">0</strong><span>принято</span></div>
+                        <div class="stream-command-stat"><strong id="streamCommandExecuted">0</strong><span>выполнено</span></div>
+                        <div class="stream-command-stat"><strong id="streamCommandQueued">0</strong><span>в очереди</span></div>
+                        <div class="stream-command-stat"><strong id="streamCommandBlocked">0</strong><span>отклонено</span></div>
+                    </div>
+                    <div class="inline-row">
+                        <button class="btn-filter btn-mini" onclick="toggleStreamCommandIntake()" id="streamCommandPauseBtn">Пауза</button>
+                        <button class="btn-blue btn-mini" onclick="runQueuedStreamCommands()">Выполнить очередь</button>
+                    </div>
+                    <button class="btn-filter btn-mini" onclick="clearStreamCommandQueue()">Очистить приёмник</button>
+                    <div class="stream-command-help" id="streamCommandHelp"></div>
+                    <div class="tiny-note">Очередь и результат команд:</div>
+                    <div class="stream-command-queue" id="streamCommandQueue"></div>
+                </div>
+                <div class="chat-status" id="youtubeChatStatus">Чат не подключён.</div>
+                <div class="tiny-note">Сообщения чата:</div>
+                <div class="chat-message-list" id="youtubeChatMessages"></div>
+                <div class="tiny-note">Найденные команды:</div>
+                <div class="chat-command-list" id="youtubeChatCommands"></div>
+                <div class="tiny-note">Золотые команды доступны только стримеру/модерам. Если выключить выполнение, команды будут попадать в очередь.</div>
+                <div class="tiny-note">Если чат не подключается, проверь ограничения API-ключа в Google Cloud.</div>
+            </div>
         </div>
 
         <div class="tool-panel preload-panel" id="imagePreloadPanel">
@@ -507,7 +523,7 @@
 
 <div class="release-toolbar">
     <button class="changelog-trigger" onclick="toggleChangelogModal(true)">Что нового</button>
-    <div id="appVersionBadge" class="app-version">v4.27</div>
+    <div id="appVersionBadge" class="app-version">v4.28</div>
 </div>
 
 <div class="modal-overlay" id="filterModal">
@@ -538,6 +554,14 @@
         </div>
         <div class="tiny-note">Рабочий сайт живёт на ветке main, новые функции сначала проверяются в staging.</div>
         <div class="changelog-list">
+            <div class="changelog-entry">
+                <div class="changelog-entry-head"><span>v4.28</span><span class="changelog-entry-status">staging</span></div>
+                <ul>
+                    <li>Добавлен локальный ключ доступа к YouTube-чату, чтобы случайные посетители не тратили API quota.</li>
+                    <li>Запросы к YouTube API теперь блокируются, пока стрим-инструменты не открыты.</li>
+                    <li>Поле ссылки на стрим и кнопка подключения скрыты до ввода пароля.</li>
+                </ul>
+            </div>
             <div class="changelog-entry">
                 <div class="changelog-entry-head"><span>v4.27</span><span class="changelog-entry-status">staging</span></div>
                 <ul>
@@ -809,7 +833,7 @@ function preloadDeckImages(deck, options = {}) {
     return preloadImages(urls, options);
 }
 
-const APP_VERSION = '4.27';
+const APP_VERSION = '4.28';
 const MAX_SPECIAL_SLOTS = 3;
 const MAX_SPECIAL_PER_TYPE = 2;
 const TOP_DECK_SCAN_LIMIT = 10000;
@@ -817,6 +841,8 @@ const TOP_DECK_RENDER_LIMIT = 20;
 const YOUTUBE_CHAT_COMMAND_COOLDOWN_MS = 3500;
 const YOUTUBE_BROWSER_API_KEY = 'AIzaSyApSatdYHXuMVVo9iwsNrrqkRpAejfbqrg';
 const YOUTUBE_API_BASE = 'https://www.googleapis.com/youtube/v3';
+const STREAM_ACCESS_PASSWORD_SHA256 = 'dc4ec1898858938b3a70601a5f0baca1738ad2504b713008ab9e9bc8aff42962';
+const STREAM_ACCESS_STORAGE_KEY = 'crStreamToolsUnlocked';
 let targetDeckQueue = [], currentDeck = [], isRouletteRunning = false, isDeckPreparing = false;
 let selectedDeckSlotIndex = null;
 const replacedSlotHistory = new Set();
@@ -2889,6 +2915,65 @@ function saveYoutubeChatSettings() {
     if (permissionInput) localStorage.setItem('youtubeChatPermission', permissionInput.value);
 }
 
+async function sha256Hex(value) {
+    const data = new TextEncoder().encode(String(value || ''));
+    const hash = await crypto.subtle.digest('SHA-256', data);
+    return Array.from(new Uint8Array(hash)).map(byte => byte.toString(16).padStart(2, '0')).join('');
+}
+
+function hasStreamAccess() {
+    return localStorage.getItem(STREAM_ACCESS_STORAGE_KEY) === '1';
+}
+
+function updateStreamAccessUi(message = '') {
+    const unlocked = hasStreamAccess();
+    const gate = document.getElementById('streamAccessGate');
+    const content = document.getElementById('streamAccessContent');
+    const state = document.getElementById('streamAccessState');
+    if (gate) gate.classList.toggle('unlocked', unlocked);
+    if (content) content.classList.toggle('locked', !unlocked);
+    if (state) {
+        state.textContent = message || (unlocked
+            ? 'Стрим-инструменты открыты. YouTube API можно использовать.'
+            : 'Стрим-инструменты закрыты. API не используется.');
+    }
+}
+
+async function unlockStreamAccess() {
+    const input = document.getElementById('streamAccessInput');
+    const password = input?.value || '';
+    if (!password.trim()) {
+        updateStreamAccessUi('Введи пароль для стрим-инструментов.');
+        return;
+    }
+    try {
+        const digest = await sha256Hex(password);
+        if (digest !== STREAM_ACCESS_PASSWORD_SHA256) {
+            localStorage.removeItem(STREAM_ACCESS_STORAGE_KEY);
+            updateStreamAccessUi('Неверный пароль. API не используется.');
+            return;
+        }
+        localStorage.setItem(STREAM_ACCESS_STORAGE_KEY, '1');
+        if (input) input.value = '';
+        updateStreamAccessUi('Доступ открыт. Можно подключать YouTube-чат.');
+    } catch (e) {
+        localStorage.removeItem(STREAM_ACCESS_STORAGE_KEY);
+        updateStreamAccessUi('Не удалось проверить пароль в этом браузере.');
+    }
+}
+
+function lockStreamAccess() {
+    disconnectYoutubeChat(false);
+    localStorage.removeItem(STREAM_ACCESS_STORAGE_KEY);
+    updateStreamAccessUi('Доступ закрыт. API не используется.');
+}
+
+function requireStreamAccess() {
+    if (hasStreamAccess()) return true;
+    updateStreamAccessUi('Сначала введи пароль стримера. API не используется.');
+    return false;
+}
+
 function normalizeYoutubeText(value) {
     return String(value || '').trim();
 }
@@ -2917,6 +3002,7 @@ function isLikelyYoutubeLiveChatId(value) {
 }
 
 async function fetchYoutubeApi(path, params = {}) {
+    if (!requireStreamAccess()) throw new Error('Стрим-инструменты закрыты паролем.');
     const key = YOUTUBE_BROWSER_API_KEY.trim();
     if (!key) throw new Error('YouTube API key не задан.');
 
@@ -3416,6 +3502,7 @@ async function pollYoutubeChat() {
 }
 
 function connectYoutubeChat() {
+    if (!requireStreamAccess()) return;
     saveYoutubeChatSettings();
     disconnectYoutubeChat(false);
     youtubeChatState.connected = true;
@@ -3804,6 +3891,9 @@ document.getElementById('topLeaderboardSeason').addEventListener('change', loadT
 document.getElementById('topSimilarDiffCount').addEventListener('change', onTopSimilarDiffChange);
 document.getElementById('topRenderLimit').addEventListener('change', updateTopRenderLimit);
 document.getElementById('youtubeStreamInput').addEventListener('change', saveYoutubeChatSettings);
+document.getElementById('streamAccessInput').addEventListener('keydown', event => {
+    if (event.key === 'Enter') unlockStreamAccess();
+});
 document.getElementById('youtubeChatAutoExecute').addEventListener('change', () => {
     saveYoutubeChatSettings();
     updateStreamCommandUi();
@@ -3814,6 +3904,7 @@ document.getElementById('youtubeChatPermission').addEventListener('change', () =
 });
 
 loadYoutubeChatSettings();
+updateStreamAccessUi();
 renderStreamCommandHelp();
 updateStreamCommandUi();
 renderFilters();
